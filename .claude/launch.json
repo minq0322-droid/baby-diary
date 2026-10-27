@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mockup",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5178", "--directory", "docs/design"],
+      "port": 5178
+    },
+    {
+      "name": "artifact-dist",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5179", "--directory", "dist-artifact"],
+      "port": 5179
+    },
+    {
+      "name": "csp-test",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5180", "--directory", "C:/Users/ajou/AppData/Local/Temp/csp-test"],
+      "port": 5180
+    },
+    {
+      "name": "app",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "5173", "--strictPort"],
+      "port": 5173
+    }
+  ]
+}

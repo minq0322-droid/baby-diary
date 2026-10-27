@@ -1,0 +1,12 @@
+Phase 12 변경을 반영했습니다.
+
+- `exit()`는 애니메이션 완료·취소·거부 또는 400ms fallback 중 먼저 발생한 시점에 한 번만 실행됩니다. 모션 감소 설정에서는 즉시 실행됩니다.
+- 조사 유틸리티 `topic()`, `subject()`, `object()`와 테스트를 추가하고, 글쓰기 placeholder에 적용했습니다.
+- 댓글 시트 문구를 요청한 표현으로 바꿨습니다.
+- Artifact에는 제목 바로 뒤에 Gaegu Google Fonts 링크를 두고, Pretendard는 인라인으로 유지했습니다. 문서의 capability 선언도 `assets: { upload: "interact" }`로 갱신했습니다.
+
+**검증:** `npx.cmd tsc -b` 통과. 빌드와 Vitest 실행은 esbuild의 `Access is denied` 오류로 시작하지 못했습니다. 현재 `dist-artifact/page.html`은 이전 산출물이며 크기는 **3,011,331 bytes**입니다. 새 빌드 산출물 크기는 확인할 수 없어 리뷰어가 다시 빌드해 확인해야 합니다.
+
+**변경 파일:** [vite.config.ts](/C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/vite.config.ts), [artifact-build.md](/C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/docs/artifact-build.md), [PageScreen.tsx](/C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/src/features/page/PageScreen.tsx), [WritingArea.tsx](/C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/src/features/page/WritingArea.tsx), [CommentsSheet.tsx](/C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/src/features/page/CommentsSheet.tsx), [josa.ts](/C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/src/lib/josa.ts), [josa.test.ts](/C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/src/lib/josa.test.ts).
+
+**리뷰어 확인:** artifact 재빌드 후 `page.html` 크기와 네트워크 요청이 Google Fonts 및 assets capability가 반환한 URL에 한정되는지 확인해 주세요.

@@ -1,0 +1,9 @@
+Phase 4 — 설정 + export/import. Read AGENTS.md. Match the "③ 설정" phone in docs/design/mockup.html.
+
+- 아이 rows: avatar (first char of name, child color), name, subtitle = birth date + ageLabel, or "출산 예정일 YYYY. M. D · D-N", or "생일을 입력해 주세요". Tap → BottomSheet edit form: 이름, 태명, 상태 (태어남 / 출산 전 segmented), 생일 or 출산 예정일 date input, 저장. When 또이 is born, switching to 태어남 + 생일 keeps all prenatal entries.
+- 가족: 아빠/엄마 rows; in LocalStore mode a "이 기기 사용자" segmented control (아빠/엄마). In Supabase mode show which account is signed in + 로그아웃.
+- 태그: badges + "태그 추가·순서 변경" sheet: add (emoji + label + tone picker from existing tones), rename, reorder with ↑↓ buttons, delete custom tags (preset tags can be hidden but not deleted; hidden tags disappear from chips but still render on old entries).
+- 백업: "자동 백업" row shows last backup time if `VITE_BACKUP_STATUS_URL` is set (fetch JSON {lastBackupAt}), else "설정 안 됨". "지금 백업 내려받기" → sheet with two buttons: JSON (full restore format) and Markdown (readable). "백업에서 복원" → file input (.json), preview counts, then import merging by id (existing ids skipped), report "N개 추가, M개 건너뜀".
+- 화면: 다크 모드 segmented 시스템/라이트/다크 → data-theme on <html>, saved in localStorage.
+- src/lib/exportFormat.ts: toBackupJson(all) {version:1, exportedAt, children, members, tags, entries}, fromBackupJson (validate), toMarkdown(all, month?) grouped "# 2026년 10월 / ## 10월 26일 (월) / ### 조비안 / - 내용 `#태그` — 아빠". This module must be pure (no DOM) — phase 6 backup scripts reuse it. Tests for round-trip and markdown output.
+- Data only (no UI yet): add Comment and Reaction (see AGENTS.md) to types, DataStore (list/subscribe, createComment/updateComment/deleteComment, toggleReaction), LocalStore, and the backup JSON + Markdown (comments as indented "  - 💬 내용 — 엄마" lines under the entry, hearts as "❤️ 아빠"). Cascade delete with the entry; undo restores them too.

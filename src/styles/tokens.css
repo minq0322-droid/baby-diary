@@ -1,0 +1,59 @@
+
+/* ===== Design tokens ===== */
+:root {
+  --bg: #F6F5F2;
+  --card: #FFFFFF;
+  --surface: #FFFFFF;
+  --field: #F4F1EC;
+  --text: #1E1F24;
+  --sub: #74757C;
+  --line: #E6E4DF;
+  --kid1: #F28B6E;
+  --kid1-soft: #FDEDE7;
+  --kid2: #5BB8A6;
+  --kid2-soft: #E4F4F0;
+  --dad: #6E8FD6;
+  --mom: #D9849F;
+  --primary: #1E1F24;
+  --on-primary: #FFFFFF;
+  --shadow: 0 1px 2px rgba(30,31,36,.04), 0 8px 24px rgba(30,31,36,.06);
+  --scrim: rgba(43,41,37,.28);
+  --page: #EFEBE5;
+
+  --t-vax-bg: #E6EEFA; --t-vax: #3D5C8C;
+  --t-fever-bg: #FBE6E4; --t-fever: #9A3E36;
+  --t-hosp-bg: #E5F2F3; --t-hosp: #2F6C70;
+  --t-first-bg: #FBF1D9; --t-first: #8A6416;
+  --t-growth-bg: #EAF3E2; --t-growth: #4C6E2E;
+  --t-food-bg: #F6ECE2; --t-food: #85593A;
+  --t-sleep-bg: #ECE8F6; --t-sleep: #5A4C8A;
+  --t-med-bg: #F3E8F1; --t-med: #7E4373;
+  --t-prenatal-bg: #FCEBDD; --t-prenatal: #8C5527;
+
+  --r-card: 16px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #262638; --card: #31314A; --surface: #31314A; --field: #3B3B57; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --primary: #F1F0F7; --on-primary: #262638;
+    --kid1: #F49A80; --kid1-soft: #3A2620; --kid2: #6CC6B4; --kid2-soft: #1E322D;
+    --dad: #8AA6E3; --mom: #E39BB3;
+    --shadow: 0 1px 2px rgba(0,0,0,.3); --scrim: rgba(0,0,0,.5); --page: #0F0E0D;
+    --t-vax-bg: #22304A; --t-vax: #AFC6EE; --t-fever-bg: #3E2422; --t-fever: #F0B3AC;
+    --t-hosp-bg: #1D3536; --t-hosp: #A3D6D8; --t-first-bg: #3A3020; --t-first: #EBCB86;
+    --t-growth-bg: #26331D; --t-growth: #B8D99A; --t-food-bg: #36291F; --t-food: #E2BC9D;
+    --t-sleep-bg: #2A2640; --t-sleep: #C4B8EC; --t-med-bg: #372434; --t-med: #E2B0D8;
+    --t-prenatal-bg: #3A2A1E; --t-prenatal: #EDC3A0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #262638; --card: #31314A; --surface: #31314A; --field: #3B3B57; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --primary: #F1F0F7; --on-primary: #262638;
+  --kid1: #F49A80; --kid1-soft: #3A2620; --kid2: #6CC6B4; --kid2-soft: #1E322D;
+  --dad: #8AA6E3; --mom: #E39BB3;
+  --shadow: 0 1px 2px rgba(0,0,0,.3); --scrim: rgba(0,0,0,.5); --page: #0F0E0D;
+  --t-vax-bg: #22304A; --t-vax: #AFC6EE; --t-fever-bg: #3E2422; --t-fever: #F0B3AC;
+  --t-hosp-bg: #1D3536; --t-hosp: #A3D6D8; --t-first-bg: #3A3020; --t-first: #EBCB86;
+  --t-growth-bg: #26331D; --t-growth: #B8D99A; --t-food-bg: #36291F; --t-food: #E2BC9D;
+  --t-sleep-bg: #2A2640; --t-sleep: #C4B8EC; --t-med-bg: #372434; --t-med: #E2B0D8;
+  --t-prenatal-bg: #3A2A1E; --t-prenatal: #EDC3A0;
+}

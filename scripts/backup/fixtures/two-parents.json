@@ -1,0 +1,36 @@
+{
+  "children": [{ "id": "kid1", "name": "조비안" }],
+  "members": [
+    { "id": "mom", "color": "mom", "displayName": "엄마" },
+    { "id": "dad", "color": "dad", "displayName": "아빠" }
+  ],
+  "tags": [],
+  "pages": [
+    {
+      "id": "2026-10-26__kid1__mom",
+      "childId": "kid1",
+      "authorId": "mom",
+      "date": "2026-10-26",
+      "text": "엄마 기록",
+      "drawing": [],
+      "photos": [],
+      "tagIds": [],
+      "createdAt": "2026-10-26T00:00:00Z",
+      "updatedAt": "2026-10-26T00:00:00Z"
+    },
+    {
+      "id": "2026-10-26__kid1__dad",
+      "childId": "kid1",
+      "authorId": "dad",
+      "date": "2026-10-26",
+      "text": "아빠 기록",
+      "drawing": [],
+      "photos": [],
+      "tagIds": [],
+      "createdAt": "2026-10-26T00:00:00Z",
+      "updatedAt": "2026-10-26T00:00:00Z"
+    }
+  ],
+  "comments": [],
+  "reactions": []
+}

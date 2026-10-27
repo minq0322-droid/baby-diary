@@ -1,0 +1,1 @@
+One failing test after fix-8: src/data/artifactStore.test.ts "uploads through assets, retains unlimited history…" expects children.kid2 without the new `status: 'expecting'` field that the migration now adds. Update the test's expected value (include status), do not change the store. Change nothing else.

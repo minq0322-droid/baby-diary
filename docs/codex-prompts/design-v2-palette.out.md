@@ -1,0 +1,3 @@
+[docs/design/mockup-v2.html](C:/Users/ajou/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/466f5000-1e6c-4f1a-bc23-87c5136c9472/2f479da0-d026-4870-87a4-f1bad8f9e420/scratch-2026-10-26-e2f7f6/docs/design/mockup-v2.html) now has the 16 color choices in two rows, with Korean labels. The samples use 벚꽃 for 조비안, 박하 for 또이, and 귤 on another page. The notes token list updates from the new palette.
+
+I set light ink for 숲 and 밤; the other light colors use dark ink. Dark variants use light ink. I did not run tests; this is an HTML mockup change only.

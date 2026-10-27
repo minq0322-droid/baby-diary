@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>A · 큐빅 아트 — 작은 밤의 집</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap"><style>
+:root{
+  color-scheme:light;
+  --bg:#f5f4f0;
+  --surface:#fffefa;
+  --text:#293f3b;
+  --sub:#718880;
+  --line:#dbe6df;
+  --mint:#dceee7;
+  --card:#f9fcf8;
+  --accent:#315f55;
+  --on:#fff;
+  --sky:#e6eeed;
+  --hill:#bfd3b7;
+  --hill2:#d4dfc4;
+  --night1:#173738;
+  --night2:#42405c;
+  --shadow:#719e8b25}
+
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#212735;
+  --surface:#303849;
+  --text:#eef2e9;
+  --sub:#a6bdb6;
+  --line:#455464;
+  --mint:#2c4a48;
+  --card:#344a49;
+  --accent:#bbdfd0;
+  --on:#243c36;
+  --sky:#303f54;
+  --hill:#465f59;
+  --hill2:#53685f;
+  --night1:#10282f;
+  --night2:#343149;
+  --shadow:#10162455}
+}
+
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#212735;
+  --surface:#303849;
+  --text:#eef2e9;
+  --sub:#a6bdb6;
+  --line:#455464;
+  --mint:#2c4a48;
+  --card:#344a49;
+  --accent:#bbdfd0;
+  --on:#243c36;
+  --sky:#303f54;
+  --hill:#465f59;
+  --hill2:#53685f;
+  --night1:#10282f;
+  --night2:#343149;
+  --shadow:#10162455}
+
+*{
+  box-sizing:border-box}
+body{
+  margin:0;
+  padding:42px 16px 70px;
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.55 Pretendard,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+button,input{
+  font:inherit;
+  color:inherit}
+button{
+  cursor:pointer;
+  border:0;
+  background:none;
+  min-width:44px;
+  min-height:44px;
+  padding:10px;
+  touch-action:manipulation}
+button:focus-visible,input:focus-visible,canvas:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid #d39a55;
+  outline-offset:3px}
+button:disabled{
+  cursor:default}
+h1,h2,h3,p{
+  margin:0}
+button,small,p,h1,h2,h3{
+  word-break:keep-all}
+header,.notes{
+  max-width:690px;
+  margin:auto}
+header{
+  margin-bottom:28px}
+.eyebrow{
+  font-size:11px;
+  letter-spacing:.2em;
+  color:var(--sub)}
+h1{
+  font-size:29px;
+  letter-spacing:-.055em;
+  margin:6px 0}
+header p,.notes p{
+  color:var(--sub);
+  font-size:14px}
+.theme{
+  display:flex;
+  width:fit-content;
+  background:var(--surface);
+  padding:4px;
+  border-radius:30px;
+  margin-top:20px;
+  border:1px solid var(--line)}
+.theme button{
+  border-radius:24px;
+  font-size:13px;
+  padding-inline:18px}
+.theme [aria-pressed=true]{
+  background:var(--text);
+  color:var(--bg)}
+main{
+  display:flex;
+  align-items:center;
+  flex-direction:column;
+  gap:38px}
+figure{
+  margin:0;
+  width:375px;
+  max-width:100%}
+figcaption{
+  font-size:12px;
+  color:var(--sub);
+  margin:0 0 10px 8px;
+  letter-spacing:.025em}
+.phone{
+  position:relative;
+  width:375px;
+  height:812px;
+  max-width:100%;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:39px;
+  background:var(--mint);
+  isolation:isolate;
+  box-shadow:0 22px 70px var(--shadow)}
+.home{
+  position:absolute;
+  inset:0;
+  overflow:hidden}
+.date{
+  position:absolute;
+  top:68px;
+  left:0;
+  right:0;
+  text-align:center;
+  font-size:13px;
+  letter-spacing:.06em;
+  z-index:2}
+.status{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:43px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 25px 0;
+  font-size:11px;
+  z-index:8;
+  pointer-events:none}
+.status b{
+  font-size:12px}
+.island{
+  position:absolute;
+  left:50%;
+  top:12px;
+  width:82px;
+  height:19px;
+  background:currentColor;
+  border-radius:24px;
+  transform:translateX(-50%);
+  opacity:.85}
+.homebar{
+  position:absolute;
+  bottom:max(9px,env(safe-area-inset-bottom));
+  left:calc(50% - 54px);
+  height:4px;
+  width:108px;
+  background:currentColor;
+  opacity:.28;
+  border-radius:5px;
+  z-index:12;
+  pointer-events:none}
+.photo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  display:block}
+.portrait{
+  border-radius:50%;
+  overflow:hidden;
+  display:block}
+.primary{
+  display:block;
+  width:100%;
+  border-radius:30px;
+  min-height:54px;
+  background:var(--accent);
+  color:var(--on);
+  font-weight:600}
+.secondary{
+  border:1px solid var(--line);
+  border-radius:25px;
+  background:var(--surface)}
+.notes{
+  margin-top:38px;
+  padding-top:26px;
+  border-top:1px solid var(--line)}
+.notes h2{
+  font-size:17px;
+  margin-bottom:10px}
+.notes p+p{
+  margin-top:9px}
+.options{
+  display:flex;
+  justify-content:center;
+  gap:4px;
+  margin-bottom:14px}
+.options button{
+  font-size:12px;
+  border-radius:24px;
+  border:1px solid var(--line)}
+.options [aria-pressed=true]{
+  background:var(--text);
+  color:var(--bg)}
+
+.page{
+  position:absolute;
+  inset:0;
+  background:#f4d7cc;
+  color:#4b403d;
+  z-index:9;
+  padding:65px 24px 30px;
+  display:none;
+  transform-origin:50% 43%;
+  overflow:hidden}
+.page.open{
+  display:block}
+.page .back{
+  margin-left:-12px}
+.page h2{
+  font:700 32px Gaegu,cursive;
+  margin-top:46px}
+.page .paper-art{
+  margin:58px auto 35px;
+  width:150px;
+  opacity:.7}
+.page p{
+  font:24px/1.7 Gaegu,cursive}
+.page .page-caption{
+  font:12px Pretendard,sans-serif;
+  margin-top:36px;
+  opacity:.65}
+.page .line{
+  height:1px;
+  background:#806b5a24;
+  margin-top:36px}
+
+.flow-bg{
+  position:absolute;
+  inset:0;
+  background:var(--sky)}
+.flow-bg .preview-portrait{
+  position:absolute;
+  width:138px;
+  height:138px;
+  left:118px;
+  top:125px;
+  box-shadow:0 0 0 14px #fff2}
+.flow-bg .flow-date{
+  position:absolute;
+  top:75px;
+  left:0;
+  right:0;
+  text-align:center;
+  font-size:12px}
+.flow-bg .result-label{
+  position:absolute;
+  top:290px;
+  left:0;
+  right:0;
+  text-align:center;
+  font-size:14px}
+.flow-bg .reopen{
+  position:absolute;
+  top:340px;
+  left:82px;
+  width:210px}
+.flow-bg .switch-kid{
+  position:absolute;
+  bottom:57px;
+  left:24px;
+  right:24px;
+  display:flex;
+  justify-content:center;
+  gap:8px}
+.switch-kid button{
+  border-radius:24px;
+  background:var(--surface);
+  font-size:13px}
+.switch-kid [aria-pressed=true]{
+  background:var(--accent);
+  color:var(--on)}
+.sheet{
+  position:absolute;
+  z-index:10;
+  bottom:0;
+  left:0;
+  right:0;
+  border-radius:30px 30px 0 0;
+  background:var(--surface);
+  padding:12px 22px 30px;
+  box-shadow:0 -20px 80px #122c3222;
+  max-height:730px;
+  overflow-y:auto;
+  scrollbar-width:thin}
+.handle{
+  height:4px;
+  width:36px;
+  background:var(--line);
+  border-radius:4px;
+  margin:0 auto 8px}
+.sheet-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between}
+.sheet-head h2{
+  font-size:19px;
+  letter-spacing:-.04em}
+.sheet-head button{
+  font-size:23px}
+.sheet .intro{
+  font-size:12px;
+  color:var(--sub);
+  margin:0 0 15px}
+.choose{
+  width:100%;
+  background:var(--mint);
+  border-radius:18px;
+  text-align:left;
+  padding:16px;
+  margin-bottom:12px;
+  font-weight:600}
+.choose span{
+  float:right}
+.demo{
+  width:100%;
+  font-size:13px;
+  color:var(--sub)}
+.editor{
+  display:none}
+.editor canvas{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:18px;
+  touch-action:none;
+  background:#c3c8c3;
+  cursor:grab}
+.editor canvas:active{
+  cursor:grabbing}
+.zoom{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:8px 0}
+.zoom input{
+  min-height:44px;
+  width:100%;
+  accent-color:var(--accent)}
+.zoom span{
+  font-size:12px}
+.help{
+  font-size:11px;
+  color:var(--sub);
+  margin:6px 0}
+.history-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-top:20px}
+.history-head h3{
+  font-size:13px}
+.history-head span{
+  font-size:10px;
+  color:var(--sub)}
+.history{
+  display:flex;
+  gap:12px;
+  padding:12px 0 5px;
+  overflow-x:auto;
+  min-height:92px}
+.past{
+  position:relative;
+  flex:0 0 68px}
+.past .reuse{
+  width:64px;
+  height:64px;
+  padding:0;
+  border:3px solid var(--surface);
+  border-radius:50%;
+  box-shadow:0 0 0 1px var(--line)}
+.past .delete{
+  position:absolute;
+  right:-10px;
+  top:-12px;
+  width:44px;
+  height:44px;
+  padding:0;
+  display:grid;
+  place-items:center}
+.past .delete span{
+  background:var(--text);
+  color:var(--bg);
+  border:2px solid var(--surface);
+  width:21px;
+  height:21px;
+  border-radius:50%;
+  font-size:13px;
+  line-height:16px}
+.past small{
+  display:block;
+  font-size:9px;
+  color:var(--sub);
+  text-align:center;
+  margin-top:3px}
+.empty{
+  font-size:12px;
+  color:var(--sub)}
+.confirm{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  background:#101b2a66;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:28px}
+.confirm.open{
+  display:flex}
+.confirm-box{
+  background:var(--surface);
+  padding:24px;
+  border-radius:24px;
+  width:100%}
+.confirm-box p{
+  font-size:13px;
+  color:var(--sub);
+  margin:8px 0 20px}
+.confirm-actions{
+  display:flex;
+  gap:8px}
+.confirm-actions button{
+  width:50%;
+  border-radius:24px;
+  background:var(--mint)}
+.confirm-actions .remove{
+  background:var(--accent);
+  color:var(--on)}
+.notice{
+  min-height:20px;
+  font-size:12px;
+  color:var(--sub);
+  margin-top:8px}
+.hidden{
+  display:none!important}
+
+/* A · 작은 밤의 건축 */
+.concept-a .home,.concept-a .flow-bg{
+  background:radial-gradient(ellipse at 48% 47%,#73988922,transparent 50%),linear-gradient(165deg,var(--night1),var(--night2));
+  color:#f1efdf}
+.concept-a .status,.concept-a .homebar{
+  color:#e4e9df}
+.stars{
+  position:absolute;
+  inset:0;
+  pointer-events:none}
+.star{
+  position:absolute;
+  background:#f6f6dc;
+  border-radius:1px;
+  transform:rotate(45deg)}
+.shooting{
+  position:absolute;
+  width:105px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#f7f5d5aa);
+  opacity:0;
+  transform:rotate(32deg);
+  pointer-events:none}
+.poem{
+  position:absolute;
+  top:138px;
+  left:0;
+  right:0;
+  text-align:center;
+  color:#d9e2d3a6;
+  font:20px/1.7 Gaegu,cursive;
+  letter-spacing:.06em}
+.stage{
+  position:absolute;
+  top:280px;
+  left:0;
+  width:100%;
+  height:340px;
+  touch-action:pan-y;
+  perspective:2200px;
+  cursor:grab}
+.stage:active{
+  cursor:grabbing}
+.island-base{
+  position:absolute;
+  left:36px;
+  top:185px;
+  width:300px;
+  height:175px;
+  filter:drop-shadow(0 25px 30px #0d1c3355);
+  pointer-events:none}
+.rotor{
+  position:absolute;
+  left:107px;
+  top:27px;
+  width:160px;
+  height:235px;
+  transform-style:preserve-3d;
+  transform:rotateX(-17deg) rotateY(-25deg)}
+.wall{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  background:#b7b5bc;
+  border:1px solid #aaa9b3}
+.wall:nth-child(1){
+  transform:translateZ(80px);
+  background:#d2cece}
+.wall:nth-child(2){
+  transform:rotateY(90deg) translateZ(80px);
+  background:#a4a6b1}
+.wall:nth-child(3){
+  transform:rotateY(180deg) translateZ(80px);
+  background:#c4c6bf}
+.wall:nth-child(4){
+  transform:rotateY(270deg) translateZ(80px);
+  background:#aca8b5}
+.wall svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none}
+.roof{
+  position:absolute;
+  width:160px;
+  height:160px;
+  background:#e7e4d4;
+  transform:rotateX(90deg);
+  top:-80px;
+  border:8px solid #c5c7be}
+.roof:after{
+  content:'';
+  position:absolute;
+  inset:21px;
+  border:1px solid #a8b6ad}
+.window{
+  position:absolute;
+  left:40px;
+  top:45px;
+  width:80px;
+  height:94px;
+  padding:6px;
+  border-radius:45px 45px 5px 5px;
+  background:#637a7a;
+  box-shadow:0 0 0 6px #e1dece,0 9px 0 6px #b4b4af;
+  opacity:.45}
+.window.front{
+  opacity:1;
+  box-shadow:0 0 0 6px #e8e7d2,0 0 28px #fff3b866,0 9px 0 6px #b4b4af}
+.window .portrait{
+  width:66px;
+  height:66px}
+.wall:nth-child(even) .window{
+  top:105px}
+.quiet{
+  position:absolute;
+  bottom:159px;
+  left:0;
+  right:0;
+  text-align:center;
+  color:#e4e4dc9c;
+  font-size:12px}
+.rotate-controls{
+  position:absolute;
+  top:558px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:130px;
+  color:#e6e8db99}
+.rotate-controls button{
+  font-size:24px}
+.quick{
+  position:absolute;
+  bottom:59px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:26px}
+.quick button{
+  width:59px;
+  height:59px;
+  padding:5px;
+  border:1px solid #e2e8dd38;
+  border-radius:50%;
+  background:#e2e8dd0b}
+.concept-a .flow-bg .preview-portrait{
+  box-shadow:0 0 0 10px #dee7cf18,0 0 60px #b8d5b127}
+.concept-a .sheet{
+  border:1px solid var(--line)}
+
+/* B · 민트빛 하루 */
+.concept-b .home{
+  background:radial-gradient(ellipse at 10% 22%,var(--surface),transparent 60%),var(--mint)}
+.b-head{
+  position:absolute;
+  top:88px;
+  left:27px;
+  right:27px}
+.b-head small{
+  font-size:12px;
+  color:var(--sub)}
+.b-head h2{
+  font-size:28px;
+  letter-spacing:-.055em;
+  line-height:1.35;
+  margin-top:8px}
+.leaf{
+  position:absolute;
+  right:5px;
+  top:23px;
+  color:#79af9e;
+  font-size:34px;
+  transform:rotate(-22deg)}
+.cards{
+  position:absolute;
+  top:216px;
+  left:0;
+  right:0;
+  display:flex;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  padding:8px 23px 30px;
+  gap:14px}
+.cards::-webkit-scrollbar{
+  display:none}
+.kid-card{
+  flex:0 0 327px;
+  scroll-snap-align:center;
+  border-radius:28px;
+  background:var(--card);
+  padding:25px 24px 24px;
+  box-shadow:8px 12px 24px var(--shadow),-6px -6px 20px #ffffff18}
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center}
+.kid-name{
+  font-size:18px;
+  font-weight:600;
+  letter-spacing:-.04em}
+.card-top small{
+  display:block;
+  color:var(--sub);
+  font-size:11px;
+  margin-top:3px}
+.card-face{
+  width:88px;
+  height:88px;
+  padding:5px;
+  border-radius:50%;
+  background:var(--mint);
+  box-shadow:inset 3px 3px 7px var(--shadow),3px 3px 10px var(--shadow)}
+.big-age{
+  font-size:27px;
+  letter-spacing:-.065em;
+  font-weight:650;
+  margin-top:26px;
+  white-space:nowrap}
+.state{
+  font-size:12px;
+  color:var(--sub);
+  margin-top:5px}
+.strip-title{
+  font-size:11px;
+  color:var(--sub);
+  margin-top:30px;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between}
+.strip-title b{
+  font-weight:500;
+  color:var(--text)}
+.dots{
+  display:grid;
+  grid-template-columns:repeat(15,1fr);
+  gap:8px 7px}
+.dot{
+  height:10px;
+  width:10px;
+  background:var(--line);
+  border-radius:50%}
+.dot.filled{
+  background:#8ebbaa}
+.dot.today{
+  outline:1px solid var(--accent);
+  outline-offset:3px}
+.dot-labels{
+  display:flex;
+  justify-content:space-between;
+  font-size:9px;
+  color:var(--sub);
+  margin-top:10px}
+.counts{
+  display:flex;
+  justify-content:space-between;
+  margin:25px 0 24px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  font-size:12px}
+.counts small{
+  color:var(--sub);
+  font-size:10px}
+.kid-card .primary{
+  font-size:16px;
+  box-shadow:0 6px 13px var(--shadow)}
+.page-dots{
+  position:absolute;
+  bottom:80px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:0}
+.page-dots button{
+  position:relative}
+.page-dots button:after{
+  content:'';
+  display:block;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--sub);
+  opacity:.3;
+  margin:auto}
+.page-dots [aria-pressed=true]:after{
+  background:var(--accent);
+  opacity:1;
+  width:20px;
+  border-radius:5px}
+.b-footer{
+  position:absolute;
+  bottom:47px;
+  left:0;
+  right:0;
+  text-align:center;
+  font:16px Gaegu,cursive;
+  color:var(--sub)}
+
+/* C · 얼굴이 뜨는 하늘 */
+.concept-c .home,.concept-c .flow-bg{
+  background:var(--sky)}
+.scenery{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0}
+.landscape .scenery{
+  opacity:1}
+.cloud{
+  position:absolute;
+  top:190px;
+  left:-30px;
+  width:180px;
+  height:54px;
+  border-radius:70px;
+  background:var(--surface);
+  opacity:.5}
+.cloud:before,.cloud:after{
+  content:'';
+  position:absolute;
+  background:inherit;
+  border-radius:50%;
+  width:76px;
+  height:76px;
+  left:28px;
+  bottom:0}
+.cloud:after{
+  left:85px;
+  width:60px;
+  height:60px}
+.cloud.two{
+  left:250px;
+  top:370px;
+  transform:scale(.65)}
+.hill{
+  position:absolute;
+  bottom:-130px;
+  left:-145px;
+  width:540px;
+  height:320px;
+  border-radius:50%;
+  background:var(--hill2);
+  transform:rotate(13deg)}
+.hill.second{
+  background:var(--hill);
+  left:70px;
+  bottom:-165px;
+  transform:rotate(-18deg)}
+.float-kid{
+  position:absolute;
+  width:160px;
+  height:160px;
+  padding:23px;
+  left:108px;
+  top:210px;
+  border-radius:50%;
+  touch-action:manipulation}
+.float-kid.second{
+  width:138px;
+  height:138px;
+  left:126px;
+  top:460px;
+  padding:22px}
+.float-kid .portrait{
+  box-shadow:0 8px 28px #8f8f6b20;
+  position:relative}
+.rays{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  color:#e8c888;
+  overflow:visible}
+.second .rays{
+  color:#bacba5}
+.sparkle{
+  position:absolute;
+  top:4px;
+  right:8px;
+  color:var(--accent);
+  font-size:23px;
+  pointer-events:none}
+.concept-c .flow-bg .preview-portrait{
+  box-shadow:0 0 0 15px #dfcc9e44,0 0 0 27px #dfcc9e18}
+
+.sheet .switch-kid{
+  display:flex;
+  gap:6px;
+  margin-bottom:12px}
+.sheet .switch-kid button{
+  background:var(--mint);
+  padding:8px 19px}
+.sheet .switch-kid [aria-pressed=true]{
+  background:var(--accent)}
+
+.lantern{
+  position:absolute;
+  left:39px;
+  top:-65px;
+  width:82px;
+  height:65px;
+  transform-style:preserve-3d;
+  pointer-events:none}
+.lantern i{
+  position:absolute;
+  inset:0;
+  background:#d0d1c5;
+  border:4px solid #e2e2d1;
+  backface-visibility:hidden}
+.lantern i:after{
+  content:'';
+  position:absolute;
+  left:24px;
+  top:10px;
+  width:23px;
+  height:37px;
+  border-radius:18px 18px 0 0;
+  background:#627b7b;
+  box-shadow:inset 4px 0 #80918a}
+.lantern i:nth-child(1){
+  transform:translateZ(41px)}
+.lantern i:nth-child(2){
+  transform:rotateY(90deg) translateZ(41px);
+  background:#a9b6b1}
+.lantern i:nth-child(3){
+  transform:rotateY(180deg) translateZ(41px)}
+.lantern i:nth-child(4){
+  transform:rotateY(270deg) translateZ(41px);
+  background:#a9b6b1}
+.lantern b{
+  position:absolute;
+  top:-41px;
+  width:82px;
+  height:82px;
+  transform:rotateX(90deg);
+  background:#eee9d5;
+  border:5px solid #c7ccbe}
+
+@media(max-width:410px){
+  body{
+  padding:24px 8px 50px}
+header,.notes{
+  padding-inline:12px}
+.phone{
+  border-radius:30px}
+h1{
+  font-size:26px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{
+  scroll-behavior:auto!important;
+  animation:none!important;
+  transition:none!important}
+}
+
+</style></head>
+<body class="concept-a" data-concept="a"><header><div class="eyebrow">아이들의 하루 · HOME STUDY A</div><h1>작은 밤의 집</h1><p>한 층 한 층, 우리의 이야기가 쌓이는 곳.</p><div class="theme" role="group" aria-label="테마"><button data-theme-choice="light" aria-pressed="false">라이트</button><button data-theme-choice="dark" aria-pressed="false">다크</button><button data-theme-choice="system" aria-pressed="true">시스템</button></div></header><main><figure><figcaption>01 &nbsp; A · 큐빅 아트 · 홈</figcaption><div class="phone"><div class="status" aria-hidden="true"><b>9:41</b><i class="island"></i><span>▂▄▆ &nbsp; ▰</span></div><div class="homebar" aria-hidden="true"></div><section class="home" id="main-home" aria-label="아이 선택 홈"><div class="stars" aria-hidden="true"></div><div class="shooting" aria-hidden="true"></div><p class="date">10월 26일</p><p class="poem">우리가 쌓아 가는<br>작고 다정한 날들</p><div class="stage" tabindex="0" role="group" aria-label="아이의 집. 좌우로 드래그하거나 방향키로 회전하세요"><svg class="island-base" viewBox="0 0 300 175" aria-hidden="true"><path d="M150 10L292 78L150 152L8 78Z" fill="#c9cfbf"/><path d="M8 78L150 152V170L8 98Z" fill="#8a999c"/><path d="M150 152L292 78V98L150 170Z" fill="#657884"/><path d="M150 25L265 80L150 138L35 80Z" fill="none" stroke="#a8b7ac"/><path d="M56 91l68 33 36-18-68-34Z" fill="#e6e1ca"/><path d="M56 91v12l68 33v-12M70 85v12l68 33v-12M84 78v12l68 33v-12M98 71v12l68 33v-12" fill="none" stroke="#a1aea5" stroke-width="4"/></svg><div class="rotor"><div class="wall"><svg viewBox="0 0 160 235" aria-hidden="true"><path d="M9 8H151V226H9Z M17 17H143 M17 215H143" fill="none" stroke="#59646c" stroke-opacity=".2"/><path d="M17 160H143V171H17Z M17 194H143V202H17Z" fill="#eeead8" opacity=".35"/><path d="M60 234V204Q80 175 100 204V234" fill="#526674"/><path d="M52 234V205Q80 163 108 205V234" fill="none" stroke="#ece8d4" stroke-width="6"/><path d="M18 27l20 10M122 37l20-10M18 180l23 8M120 188l22-8" stroke="#657078" opacity=".25"/></svg><button class="window front" data-open-kid="0" aria-label="조비안, 생후 1,169일의 오늘 페이지 열기"><span class="portrait"><img class="photo" data-photo="0" alt="조비안의 짧은 머리 일러스트"></span></button></div><div class="wall"><svg viewBox="0 0 160 235" aria-hidden="true"><path d="M9 8H151V226H9Z M17 17H143 M17 215H143" fill="none" stroke="#59646c" stroke-opacity=".2"/><path d="M17 160H143V171H17Z M17 194H143V202H17Z" fill="#eeead8" opacity=".35"/><path d="M60 234V204Q80 175 100 204V234" fill="#526674"/><path d="M52 234V205Q80 163 108 205V234" fill="none" stroke="#ece8d4" stroke-width="6"/><path d="M18 27l20 10M122 37l20-10M18 180l23 8M120 188l22-8" stroke="#657078" opacity=".25"/></svg><button class="window" data-open-kid="1" aria-label="또이, 만나기까지 D-34의 오늘 페이지 열기"><span class="portrait"><img class="photo" data-photo="1" alt="또이의 작은 콩알 아기 일러스트"></span></button></div><div class="wall"><svg viewBox="0 0 160 235" aria-hidden="true"><path d="M9 8H151V226H9Z M17 17H143 M17 215H143" fill="none" stroke="#59646c" stroke-opacity=".2"/><path d="M17 160H143V171H17Z M17 194H143V202H17Z" fill="#eeead8" opacity=".35"/><path d="M60 234V204Q80 175 100 204V234" fill="#526674"/><path d="M52 234V205Q80 163 108 205V234" fill="none" stroke="#ece8d4" stroke-width="6"/><path d="M18 27l20 10M122 37l20-10M18 180l23 8M120 188l22-8" stroke="#657078" opacity=".25"/></svg><button class="window" data-open-kid="0" aria-label="조비안, 생후 1,169일의 오늘 페이지 열기"><span class="portrait"><img class="photo" data-photo="0" alt="조비안의 짧은 머리 일러스트"></span></button></div><div class="wall"><svg viewBox="0 0 160 235" aria-hidden="true"><path d="M9 8H151V226H9Z M17 17H143 M17 215H143" fill="none" stroke="#59646c" stroke-opacity=".2"/><path d="M17 160H143V171H17Z M17 194H143V202H17Z" fill="#eeead8" opacity=".35"/><path d="M60 234V204Q80 175 100 204V234" fill="#526674"/><path d="M52 234V205Q80 163 108 205V234" fill="none" stroke="#ece8d4" stroke-width="6"/><path d="M18 27l20 10M122 37l20-10M18 180l23 8M120 188l22-8" stroke="#657078" opacity=".25"/></svg><button class="window" data-open-kid="1" aria-label="또이, 만나기까지 D-34의 오늘 페이지 열기"><span class="portrait"><img class="photo" data-photo="1" alt="또이의 작은 콩알 아기 일러스트"></span></button></div><div class="roof"></div><div class="lantern" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div></div></div><div class="rotate-controls"><button data-rotate="1" aria-label="집을 왼쪽으로 회전">‹</button><button data-rotate="-1" aria-label="집을 오른쪽으로 회전">›</button></div><p class="quiet">돌려서 아이를 골라요</p><div class="quick"><button data-open-kid="0" aria-label="조비안, 생후 1,169일. 오늘 페이지 바로 열기"><span class="portrait"><img class="photo" data-photo="0" alt="조비안의 짧은 머리 일러스트"></span></button><button data-open-kid="1" aria-label="또이, 만나기까지 D-34. 오늘 페이지 바로 열기"><span class="portrait"><img class="photo" data-photo="1" alt="또이의 작은 콩알 아기 일러스트"></span></button></div></section><section class="page" id="home-page" aria-label="오늘 페이지 미리보기" aria-hidden="true"><button class="back" aria-label="홈으로 돌아가기">← 돌아가기</button><h2 class="page-title"></h2><p style="font:12px Pretendard;margin-top:7px">2026년 10월 26일 월요일</p><div class="paper-art"></div><p>오늘도 너의 하루를<br>오래 기억하고 싶어.</p><div class="line"></div><div class="line"></div><p class="page-caption">전환을 확인하기 위한 페이지 미리보기예요.</p></section></div></figure><figure><figcaption>02 &nbsp; 프로필 사진 · 선택 → 원형 크롭 → 적용</figcaption><div class="phone" id="profile-phone"><div class="status" aria-hidden="true"><b>9:41</b><i class="island"></i><span>▂▄▆ &nbsp; ▰</span></div><div class="homebar" aria-hidden="true"></div><div class="flow-bg"><div class="scenery" aria-hidden="true"><div class="cloud"></div><div class="cloud two"></div><div class="hill"></div><div class="hill second"></div></div><div class="flow-date">10월 26일</div><span class="preview-portrait portrait"><img class="photo" alt="선택한 아이의 현재 프로필"></span><p class="result-label" aria-live="polite">작은 얼굴에 담긴, 오늘의 우리</p><button class="reopen secondary">프로필 사진 바꾸기</button></div><section class="sheet" aria-label="프로필 사진 편집"><div class="handle"></div><div class="sheet-head"><h2 class="profile-name">조비안 · 프로필 사진</h2><button class="close-sheet" aria-label="프로필 사진 닫기">×</button></div><p class="intro">가장 사랑스러운 순간을 골라 주세요.</p><div class="switch-kid"><button data-profile-kid="0" aria-pressed="true">조비안</button><button data-profile-kid="1" aria-pressed="false">또이</button></div><button class="choose">사진첩에서 고르기 <span aria-hidden="true">↗</span></button><input id="file" type="file" accept="image/*" hidden><button class="demo">일러스트로 크롭 미리보기 →</button><div class="editor"><canvas id="crop" width="600" height="600" tabindex="0" role="img" aria-label="원형 사진 크롭. 드래그 또는 방향키로 이동하고 아래 슬라이더로 확대하세요."></canvas><p class="help">드래그로 이동 · 두 손가락으로 확대 · 방향키 지원</p><label class="zoom"><span>−</span><input id="zoom" type="range" min="1" max="3" step="0.01" value="1" aria-label="사진 확대"><span>＋</span></label><button class="primary crop-confirm">확정</button></div><div class="history-head"><h3>지난 프로필 사진</h3><span>눌러서 재사용 · 길게 눌러 삭제</span></div><div class="history"></div><p class="notice" role="status"></p></section><div class="confirm" role="dialog" aria-modal="true" aria-labelledby="delete-title"><div class="confirm-box"><h3 id="delete-title">이 사진을 지울까요?</h3><p>지난 프로필 사진 목록에서 삭제해요.<br>현재 프로필 사진은 그대로예요.</p><div class="confirm-actions"><button class="cancel-delete">취소</button><button class="remove">삭제</button></div></div></div></div></figure></main><section class="notes"><h2>이 시안의 생각</h2><p>서로 다른 층과 면의 창문에 아이가 살아요. 빛나는 창문이 지금 고를 아이예요. 아래 두 얼굴로도 바로 들어갈 수 있어요.</p><p>집을 좌우로 돌리면 네 방향으로 부드럽게 멈춰요. 화살표 버튼·키보드도 지원해요. 창문을 누르면 집 안으로 가까워지듯 오늘 페이지가 나타나요.</p><p>CSS 3D와 SVG만 사용해요. 4–8초 사이의 희미한 별똥별과 느린 별 반짝임은 하나의 시간 기반 프레임 루프로 그려요.</p><p>사진 흐름: 사진첩에서 고르기 → 원형 마스크 안에서 이동·확대 → 확정. 아래 지난 사진을 눌러 다시 쓰거나 길게 누르기·×로 삭제할 수 있어요. 사진은 512px 원형 캔버스로 만들어 두 프레임에 함께 반영해요.</p><p>사진과 기록은 이 탭의 메모리에만 보관해요. 새로고침하면 초기화돼요. 모션 줄이기 설정에서는 정지하며, 다른 탭으로 이동하면 애니메이션을 멈춰요. 실제 기기 성능은 별도 측정이 필요해요.</p></section><script>
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const names = ['조비안', '또이'];
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const concept = document.body.dataset.concept;
+function illustration(kid, variant = 0) {
+  const bg = kid ? ['#d8e8c9', '#f3ddc6', '#d7e7eb'][variant % 3] : ['#f2d4bd', '#e4dded', '#d9e7d7'][variant % 3];
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><rect width="200" height="200" fill="' + bg + '"/><ellipse cx="100" cy="205" rx="65" ry="53" fill="' + (kid ? '#f6f0dd' : '#8ca8a0') + '"/>' + (kid ? '<path d="M67 62C97 26 143 55 139 95C157 139 125 164 91 157C54 151 43 106 67 62Z" fill="#f9e2c7"/><path d="M99 52q-6-22 9-23q15 3 0 12" fill="none" stroke="#8a7056" stroke-width="4" stroke-linecap="round"/>' : '<ellipse cx="100" cy="103" rx="59" ry="65" fill="#f6dcc1"/><path d="M42 89C30 36 69 25 105 30C146 24 164 61 155 93L140 75L130 57L112 69L100 54L79 71L66 62L53 86Z" fill="#4d4941"/>') + '<path d="M73 102q5-6 10 0M117 102q5-6 10 0" fill="none" stroke="#655344" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="67" cy="118" rx="10" ry="6" fill="#ecb0a1" opacity=".55"/><ellipse cx="134" cy="118" rx="10" ry="6" fill="#ecb0a1" opacity=".55"/><path d="M91 125q9 10 18 0" fill="none" stroke="#ad7565" stroke-width="3" stroke-linecap="round"/>' + (kid ? '<path d="M89 165l11 12 12-12" fill="none" stroke="#ccb98e" stroke-width="3"/>' : '<path d="M85 165l15 16 15-16" fill="none" stroke="#eef1dc" stroke-width="4"/>') + '</svg>';
+}
+const faceURL = (kid, variant = 0) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(illustration(kid, variant));
+const current = [faceURL(0), faceURL(1)];
+const histories = [0, 1].map(kid => [1, 2].map((v, i) => ({src: faceURL(kid, v), date: ['10.19', '10.05'][i]})));
+function updateFaces() {
+  $$('[data-photo]').forEach(img => { img.src = current[Number(img.dataset.photo)]; });
+  $('.preview-portrait img').src = current[selectedKid];
+}
+$$('[data-theme-choice]').forEach(button => button.addEventListener('click', () => {
+  const value = button.dataset.themeChoice;
+  if (value === 'system') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = value;
+  $$('[data-theme-choice]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+}));
+let transition = null;
+let cardTween = null;
+function openPage(kid) {
+  const page = $('#home-page');
+  $('.page-title', page).textContent = names[kid] + '의 오늘 페이지';
+  $('.paper-art', page).innerHTML = illustration(kid);
+  page.style.background = kid ? '#d9e8d7' : '#f4d7cc';
+  page.classList.add('open');
+  $('#main-home').inert = true;
+  page.setAttribute('aria-hidden', 'false');
+  transition = {start: null, kid};
+  if (reduced.matches) { page.style.transform = ''; page.style.opacity = '1'; transition = null; }
+  $('.back', page).focus({preventScroll:true});
+}
+let returnTarget;
+$$('[data-open-kid]').forEach(button => button.addEventListener('click', () => {returnTarget = button; openPage(Number(button.dataset.openKid));}));
+$('.page .back').addEventListener('click', () => {
+  $('#home-page').classList.remove('open');
+  $('#home-page').setAttribute('aria-hidden', 'true');
+  $('#main-home').inert = false;
+  transition = null;
+  returnTarget?.focus({preventScroll:true});
+});
+let selectedKid = 0;
+let source = null;
+let zoom = 1;
+let offsetX = 0;
+let offsetY = 0;
+let loadToken = 0;
+let deleteIndex = -1;
+const canvas = $('#crop');
+const ctx = canvas.getContext('2d');
+const size = 600;
+const radius = 240;
+const pointers = new Map();
+let gesture = null;
+function bounds() {
+  if (!source) return;
+  const scale = Math.max(480 / source.width, 480 / source.height) * zoom;
+  offsetX = Math.max(-(source.width * scale / 2 - radius), Math.min(source.width * scale / 2 - radius, offsetX));
+  offsetY = Math.max(-(source.height * scale / 2 - radius), Math.min(source.height * scale / 2 - radius, offsetY));
+}
+function drawCrop() {
+  if (!source) return;
+  bounds();
+  ctx.clearRect(0, 0, size, size);
+  ctx.fillStyle = '#bdc7c2'; ctx.fillRect(0, 0, size, size);
+  const scale = Math.max(480 / source.width, 480 / source.height) * zoom;
+  ctx.drawImage(source, 300 + offsetX - source.width * scale / 2, 300 + offsetY - source.height * scale / 2, source.width * scale, source.height * scale);
+  ctx.fillStyle = '#12242b99'; ctx.beginPath(); ctx.rect(0, 0, size, size); ctx.arc(300, 300, radius, 0, Math.PI * 2, true); ctx.fill('evenodd');
+  ctx.strokeStyle = '#ffffffdf'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(300, 300, radius, 0, Math.PI * 2); ctx.stroke();
+  $('#zoom').value = String(zoom);
+}
+async function loadImage(src) {
+  const token = ++loadToken;
+  const img = new Image();
+  img.src = src;
+  try { await img.decode(); } catch { $('.notice').textContent = '사진을 열 수 없어요. JPG, PNG 등 다른 사진을 골라 주세요.'; return; }
+  if (token !== loadToken) return;
+  source = img; zoom = 1; offsetX = 0; offsetY = 0;
+  $('.editor').style.display = 'block';
+  $('.demo').classList.add('hidden');
+  $('.notice').textContent = '';
+  drawCrop();
+}
+function renderHistory() {
+  const row = $('.history'); row.replaceChildren();
+  histories[selectedKid].forEach((entry, index) => {
+    const item = document.createElement('div'); item.className = 'past';
+    const reuse = document.createElement('button'); reuse.className = 'reuse'; reuse.setAttribute('aria-label', names[selectedKid] + ' ' + entry.date + ' 프로필 사진 다시 쓰기');
+    const image = document.createElement('img'); image.className = 'photo'; image.alt = ''; image.src = entry.src; reuse.append(image);
+    let timer; let held = false;
+    reuse.addEventListener('pointerdown', () => {held = false; timer = setTimeout(() => { held = true; askDelete(index); }, 650);});
+    ['pointerup','pointerleave','pointercancel'].forEach(event => reuse.addEventListener(event, () => clearTimeout(timer)));
+    reuse.addEventListener('click', () => {if (!held) applyPhoto(entry.src);});
+    const del = document.createElement('button'); del.className = 'delete'; del.setAttribute('aria-label', entry.date + ' 사진 삭제'); del.innerHTML = '<span aria-hidden="true">×</span>'; del.addEventListener('click', () => askDelete(index));
+    const date = document.createElement('small'); date.textContent = entry.date;
+    item.append(reuse, del, date); row.append(item);
+  });
+  if (!row.children.length) {const empty = document.createElement('p'); empty.className = 'empty'; empty.textContent = '아직 지난 사진이 없어요.'; row.append(empty);}
+}
+function askDelete(index) {deleteIndex = index; $('.confirm').classList.add('open'); $('.sheet').inert = true; $('.cancel-delete').focus({preventScroll:true});}
+function closeConfirm() {$('.confirm').classList.remove('open'); $('.sheet').inert = false; $('.history .reuse')?.focus({preventScroll:true});}
+$('.cancel-delete').addEventListener('click', closeConfirm);
+$('.remove').addEventListener('click', () => {histories[selectedKid].splice(deleteIndex, 1); renderHistory(); closeConfirm();});
+function applyPhoto(src) {
+  const old = current[selectedKid];
+  if (old !== src && !histories[selectedKid].some(entry => entry.src === old)) histories[selectedKid].unshift({src: old, date:'10.26'});
+  current[selectedKid] = src;
+  updateFaces(); renderHistory();
+  $('.sheet').classList.add('hidden');
+  $('.result-label').textContent = names[selectedKid] + '의 프로필을 바꿨어요';
+  $('.reopen').focus({preventScroll:true});
+}
+$('.crop-confirm').addEventListener('click', () => {
+  if (!source) return;
+  const result = document.createElement('canvas'); result.width = 512; result.height = 512;
+  const output = result.getContext('2d');
+  output.beginPath(); output.arc(256, 256, 256, 0, Math.PI * 2); output.clip();
+  const scale = Math.max(480 / source.width, 480 / source.height) * zoom;
+  const factor = 512 / 480;
+  output.drawImage(source, (240 + offsetX - source.width * scale / 2) * factor, (240 + offsetY - source.height * scale / 2) * factor, source.width * scale * factor, source.height * scale * factor);
+  applyPhoto(result.toDataURL('image/png'));
+});
+$('.choose').addEventListener('click', () => $('#file').click());
+$('#file').addEventListener('change', async event => {
+  const file = event.target.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  await loadImage(url); URL.revokeObjectURL(url); event.target.value = '';
+});
+$('.demo').addEventListener('click', () => loadImage(current[selectedKid]));
+function showSheet() {
+  $('.sheet').classList.remove('hidden');
+  $('.editor').style.display = 'none'; $('.demo').classList.remove('hidden');
+  $('.profile-name').textContent = names[selectedKid] + ' · 프로필 사진';
+  $('.notice').textContent = '';
+  renderHistory(); $('.choose').focus({preventScroll:true});
+}
+$('.reopen').addEventListener('click', showSheet);
+$('.close-sheet').addEventListener('click', () => {$('.sheet').classList.add('hidden'); $('.reopen').focus({preventScroll:true});});
+$$('[data-profile-kid]').forEach(button => button.addEventListener('click', () => {
+  selectedKid = Number(button.dataset.profileKid); loadToken++; source = null;
+  $$('[data-profile-kid]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  updateFaces(); showSheet();
+}));
+$('#zoom').addEventListener('input', event => {zoom = Number(event.target.value); drawCrop();});
+function localPoint(event) {const box = canvas.getBoundingClientRect(); return {x:(event.clientX - box.left) * size / box.width, y:(event.clientY - box.top) * size / box.height};}
+function resetGesture() {
+  const points = [...pointers.values()];
+  gesture = points.length > 1 ? {x:(points[0].x+points[1].x)/2, y:(points[0].y+points[1].y)/2, distance:Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y), zoom, ox:offsetX, oy:offsetY} : points.length ? {...points[0], ox:offsetX, oy:offsetY} : null;
+}
+canvas.addEventListener('pointerdown', event => {canvas.setPointerCapture(event.pointerId); pointers.set(event.pointerId, localPoint(event)); resetGesture();});
+canvas.addEventListener('pointermove', event => {
+  if (!pointers.has(event.pointerId) || !gesture) return;
+  pointers.set(event.pointerId, localPoint(event)); const points = [...pointers.values()];
+  if (points.length > 1 && gesture.distance) {
+    const distance = Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y);
+    zoom = Math.max(1, Math.min(3, gesture.zoom * distance / Math.max(1, gesture.distance)));
+    const ratio = zoom / gesture.zoom;
+    offsetX = (points[0].x+points[1].x)/2 - 300 - (gesture.x - 300 - gesture.ox) * ratio;
+    offsetY = (points[0].y+points[1].y)/2 - 300 - (gesture.y - 300 - gesture.oy) * ratio;
+  } else {offsetX = gesture.ox + points[0].x - gesture.x; offsetY = gesture.oy + points[0].y - gesture.y;}
+  drawCrop();
+});
+['pointerup','pointercancel','lostpointercapture'].forEach(type => canvas.addEventListener(type, event => {pointers.delete(event.pointerId); resetGesture();}));
+canvas.addEventListener('keydown', event => {
+  const delta = {ArrowLeft:[-12,0],ArrowRight:[12,0],ArrowUp:[0,-12],ArrowDown:[0,12]}[event.key];
+  if (!delta) return; event.preventDefault(); offsetX += delta[0]; offsetY += delta[1]; drawCrop();
+});
+document.addEventListener('keydown', event => {if (event.key === 'Escape') {if ($('.confirm').classList.contains('open')) closeConfirm(); else if (!$('.sheet').classList.contains('hidden')) $('.close-sheet').click();}});
+// Keep focus inside the in-page delete confirmation.
+$('.confirm').addEventListener('keydown', event => {if (event.key !== 'Tab') return; event.preventDefault(); const cancel = $('.cancel-delete'); const remove = $('.remove'); (document.activeElement === cancel ? remove : cancel).focus();});
+
+let angle = -25, targetAngle = -25, drag = null, lastDrag = false;
+if (concept === 'a') {
+  const stars = $('.stars');
+  for (let i = 0; i < 37; i++) {const star = document.createElement('i'); star.className = 'star'; star.style.cssText = 'left:' + ((i * 47.13 + 9) % 96) + '%;top:' + ((i * 23.7 + 4) % 90) + '%;width:' + (i%5 ? 1.5 : 3) + 'px;height:' + (i%5 ? 1.5 : 3) + 'px'; stars.append(star);}
+  const stage = $('.stage');
+  stage.addEventListener('pointerdown', event => {drag = {x:event.clientX, angle}; lastDrag = false;});
+  stage.addEventListener('pointermove', event => {if (!drag) return; const dx = event.clientX - drag.x; if (Math.abs(dx)>7) {lastDrag=true; stage.setPointerCapture(event.pointerId);} angle = drag.angle + dx * .65; targetAngle = angle; renderTower();});
+  function snap() {if (!drag) return; drag = null; $('.quiet').textContent = '밝아진 창문을 눌러 보세요'; targetAngle = Math.round((angle + 25) / 90) * 90 - 25; if (reduced.matches) {angle = targetAngle; renderTower();}}
+  ['pointerup','pointercancel','lostpointercapture'].forEach(type => stage.addEventListener(type, snap));
+  stage.addEventListener('click', event => {if(lastDrag) {event.stopImmediatePropagation(); event.preventDefault();}}, true);
+  $$('[data-rotate]').forEach(button => button.addEventListener('click', () => {targetAngle += Number(button.dataset.rotate) * 90; $('.quiet').textContent = '밝아진 창문을 눌러 보세요'; if(reduced.matches) {angle=targetAngle;renderTower();}}));
+  stage.addEventListener('keydown', event => {if(event.key==='ArrowLeft' || event.key==='ArrowRight') {event.preventDefault(); targetAngle += event.key==='ArrowLeft' ? 90 : -90; if(reduced.matches){angle=targetAngle;renderTower();}}});
+}
+function renderTower() {
+  if(concept !== 'a') return;
+  $('.rotor').style.transform = 'rotateX(-17deg) rotateY(' + angle + 'deg)';
+  $$('.window').forEach((button,index) => {const rotation = ((angle + index*90 + 180) % 360 + 360) % 360 - 180; const front = Math.abs(rotation) < 48; button.classList.toggle('front', front); button.disabled = !front; button.tabIndex = front ? 0 : -1;});
+}
+if (concept === 'b') {
+  const cards = $('.cards');
+  $$('[data-card]').forEach(button => button.addEventListener('click', () => {
+    const destination = Number(button.dataset.card) * 341;
+    if (reduced.matches) cards.scrollLeft = destination;
+    else cardTween = {from:cards.scrollLeft, to:destination, start:null};
+  }));
+  cards.addEventListener('pointerdown', () => {cardTween = null;});
+  cards.addEventListener('scroll', () => {const index = Math.round(cards.scrollLeft / 341); $$('[data-card]').forEach((button,i) => button.setAttribute('aria-pressed', String(i === index)));}, {passive:true});
+}
+if (concept === 'c') $$('[data-landscape]').forEach(button => button.addEventListener('click', () => {
+  $('#main-home').classList.toggle('landscape', button.dataset.landscape==='yes');
+  $$('.flow-bg').forEach(bg => bg.classList.toggle('landscape',button.dataset.landscape==='yes'));
+  $$('[data-landscape]').forEach(item => item.setAttribute('aria-pressed',String(item===button)));
+}));
+let frameId = 0, previous = null, elapsed = 0;
+let nextMeteor = 4.8, meteorStart = -100;
+function animate(now) {
+  const dt = previous === null ? 0 : Math.min((now-previous)/1000,.08); previous=now;
+  if(!reduced.matches) elapsed += dt;
+  if(concept === 'a') {
+    if(!drag && Math.abs(targetAngle-angle)>.01) {angle += (targetAngle-angle)*(1-Math.exp(-dt*9));renderTower();}
+    $$('.star').forEach((star,i) => {star.style.opacity = reduced.matches ? '.5' : String(.22 + .45*(.5+.5*Math.sin(elapsed*.65+i*2.1)));});
+    if(!reduced.matches && elapsed>=nextMeteor) {meteorStart=elapsed;nextMeteor=elapsed+4+Math.random()*4;$('.shooting').style.left=(5+Math.random()*45)+'%';$('.shooting').style.top=(16+Math.random()*18)+'%';}
+    const progress=(elapsed-meteorStart)/1.8;
+    $('.shooting').style.opacity = !reduced.matches && progress>=0 && progress<=1 ? String(Math.sin(progress*Math.PI)*.5) : '0';
+    $('.shooting').style.transform='translate('+(progress*110)+'px,'+(progress*65)+'px) rotate(32deg)';
+  }
+  if(concept==='c') {
+    $$('.float-kid').forEach((button,i) => {const t=reduced.matches?0:elapsed; const x=Math.sin(t*.2+i*2)*39; const y=Math.cos(t*.27+i*2)*22; button.style.transform='translate('+x+'px,'+y+'px)'; $('.rays',button).style.transform='rotate('+(t*(i? -1.3:1.6))+'deg)';});
+    const sparkle=$('.sparkle'); sparkle.style.opacity=reduced.matches?'.5':String(.25+.5*(.5+.5*Math.sin(elapsed*1.4)));
+  }
+  if(cardTween) {
+    if(cardTween.start === null) cardTween.start = now;
+    const progress = Math.min(1, (now - cardTween.start) / 450);
+    $('.cards').style.scrollSnapType = 'none';
+    $('.cards').scrollLeft = cardTween.from + (cardTween.to - cardTween.from) * (1 - Math.pow(1 - progress, 3));
+    if(progress === 1) {cardTween = null; $('.cards').style.scrollSnapType = '';}
+  }
+  if(transition) {
+    if(transition.start===null) transition.start=now;
+    const p=Math.min(1,(now-transition.start)/650), ease=1-Math.pow(1-p,3);
+    const page=$('#home-page');
+    if(concept==='c') {page.style.clipPath='circle('+(8+ease*115)+'% at 50% '+(transition.kid?65:36)+'%)';page.style.opacity='1';}
+    else {page.style.opacity=String(ease);page.style.transform=concept==='a'?'scale('+(1.08-.08*ease)+')':'translateX('+((1-ease)*100)+'%)';}
+    if(p===1) {page.style.clipPath=''; page.style.transform='';transition=null;}
+  }
+  if((!reduced.matches && concept !== 'b') || transition || cardTween) frameId=requestAnimationFrame(animate); else frameId=0;
+}
+function start() {if(!frameId && !document.hidden) {previous=null;frameId=requestAnimationFrame(animate);}}
+document.addEventListener('visibilitychange', () => {if(document.hidden) {cancelAnimationFrame(frameId);frameId=0;previous=null;}else start();});
+reduced.addEventListener('change', () => {if(reduced.matches) {angle=targetAngle;renderTower();}start();});
+// A still needs a frame after a user-triggered transition in reduced-motion mode.
+document.addEventListener('click', start);
+renderTower(); updateFaces(); renderHistory(); start();
+</script></body></html>

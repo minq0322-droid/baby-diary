@@ -1,0 +1,527 @@
+﻿/* Full viewport scene; only artwork crossfades, never the interactive controls. */
+.app-shell.home-shell {
+  max-width: none;
+  padding: 0;
+}
+.home-scene {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: #203e39;
+  background:
+    radial-gradient(ellipse at 45% 18%, #bed1bb88, transparent 62%),
+    linear-gradient(165deg, #91b7b1, #769e94 62%, #527c70);
+}
+.night-background,
+.home-garden,
+.home-sky,
+.distant-lanterns {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.night-background {
+  background:
+    radial-gradient(ellipse at 48% 47%, #456b6214, transparent 58%),
+    linear-gradient(165deg, #0c2228, #141e31 55%, #29233e);
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+.home-garden {
+  opacity: 0.94;
+  transition: opacity 600ms ease;
+}
+.home-sky {
+  z-index: 1;
+}
+.scene-night {
+  color: #f1efdf;
+}
+.scene-night .night-background {
+  opacity: 1;
+}
+.scene-night .home-garden {
+  opacity: 0;
+}
+.scene-date {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: calc(34px + env(safe-area-inset-top)) 16px 0;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+.face-slots {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  min-height: calc(
+    100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  );
+  padding: 30px 0;
+}
+/* 188px artwork spans y=-32..198: 270px + 16px float envelope.
+   Each 300px slot contains the complete lantern/beads plus 24px clearance. */
+.face-slot {
+  height: 300px;
+  width: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+.home-face {
+  position: relative;
+  display: block;
+  width: 188px;
+  height: 188px;
+  padding: 30px;
+  border-radius: 50%;
+  touch-action: manipulation;
+  will-change: transform;
+}
+.face-slot:nth-child(2) .home-face {
+  width: 166px;
+  height: 166px;
+  padding: 26.5px;
+}
+.home-face:focus-visible {
+  outline: 2px solid #f6efce;
+  outline-offset: 30px;
+}
+.home-portrait {
+  display: block;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid #fff1ba9c;
+  box-shadow:
+    0 0 9px #fff2b677,
+    0 0 30px #ffe5a34d,
+    0 0 65px #ffe5a34d,
+    7px 12px 22px #22362f30;
+  transition:
+    border-color 600ms,
+    box-shadow 600ms;
+}
+.profile-image,
+.profile-placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-portrait::after,
+.home-portrait::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: opacity 600ms;
+}
+.home-portrait::after {
+  background:
+    radial-gradient(circle at 26% 22%, #fffbe45c, transparent 48%),
+    radial-gradient(
+      circle at 28% 26%,
+      transparent 38%,
+      #79501e26 72%,
+      #2d281a91 100%
+    );
+  box-shadow:
+    inset 2px 2px 5px #fff9dbb3,
+    inset -6px -8px 13px #49362355;
+}
+.home-portrait::before {
+  z-index: 1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 23% 19%, #e3f3ff70, transparent 48%),
+    radial-gradient(
+      circle at 28% 24%,
+      transparent 36%,
+      #293b5b2b 70%,
+      #101a3b91 100%
+    );
+  box-shadow:
+    inset 2px 3px 7px #e8f6ffcc,
+    inset -7px -9px 16px #14233d66;
+}
+.scene-night .home-portrait::after {
+  opacity: 0;
+}
+.scene-night .home-portrait::before {
+  opacity: 1;
+}
+.scene-night .home-portrait {
+  border-color: #d3edffb3;
+  box-shadow:
+    0 0 10px #d2edff66,
+    0 0 32px #a8caff33,
+    0 0 65px #93b7f329,
+    7px 12px 22px #0c142c40;
+}
+.moon-texture {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 600ms;
+  background:
+    radial-gradient(
+      circle at 19% 62%,
+      transparent 6%,
+      #324869 7%,
+      transparent 10%
+    ),
+    radial-gradient(circle at 72% 23%, #eff7ff 3%, #405777 5%, transparent 8%),
+    radial-gradient(
+      circle at 75% 78%,
+      transparent 8%,
+      #354b70 9%,
+      transparent 12%
+    );
+}
+.scene-night.night-moon .moon-texture {
+  opacity: 0.055;
+}
+.sun-art,
+.moon-art,
+.lantern-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  transition: opacity 600ms;
+}
+.moon-art,
+.lantern-art {
+  opacity: 0;
+}
+.scene-night .sun-art {
+  opacity: 0;
+}
+.scene-night.night-moon .moon-art,
+.scene-night.night-lantern .lantern-art {
+  opacity: 1;
+}
+.unlit-ray {
+  stroke: #d4be8e;
+  stroke-opacity: 0.28;
+  stroke-width: 0.8;
+}
+.lit-star {
+  fill: #e5f5ff;
+  filter: drop-shadow(0 0 1.6px #bedfff);
+}
+.lit-bead {
+  fill: #ffe0a3;
+  filter: drop-shadow(0 0 1.6px #ffc26e);
+}
+.unlit-bead {
+  fill: #926a47;
+  opacity: 0.5;
+}
+.paper-rib {
+  fill: none;
+  stroke: #80512e;
+  stroke-opacity: 0.2;
+  stroke-width: 0.7;
+}
+.scene-night.night-lantern .home-portrait {
+  border-color: #ffe4b6a6;
+  box-shadow:
+    0 0 9px #ffd99055,
+    inset 0 0 6px #ffda91;
+}
+.scene-night.night-lantern .home-portrait::before {
+  background:
+    radial-gradient(circle at 50% 90%, #ffd48755, transparent 65%),
+    radial-gradient(
+      circle at 28% 24%,
+      transparent 36%,
+      #6e3c262b 70%,
+      #42241b80 100%
+    );
+  box-shadow:
+    inset 2px 3px 7px #ffeed5aa,
+    inset -7px -9px 16px #78472166;
+}
+.complete .home-portrait {
+  filter: brightness(1.12) saturate(1.08);
+}
+.home-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 16px);
+  width: max-content;
+  max-width: 240px;
+  transform: translateX(-50%);
+  border-radius: 18px;
+  padding: 9px 13px;
+  color: #fff4d8;
+  background: #253b3bf2;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+}
+.home-bubble.visible {
+  opacity: 1;
+}
+.home-navigation {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  padding: 8px 12px;
+  align-self: center;
+  margin-bottom: calc(14px + env(safe-area-inset-bottom));
+  border-radius: 40px;
+  background: #f4ebdded;
+  color: #343b36;
+  backdrop-filter: blur(12px);
+}
+.home-navigation button {
+  min-width: 56px;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: inherit;
+  opacity: 1;
+  font-size: 11px;
+  word-break: keep-all;
+}
+.scene-night .home-navigation {
+  background: transparent;
+  color: inherit;
+}
+.scene-night .home-navigation button {
+  opacity: 0.7;
+}
+.home-navigation button:hover,
+.home-navigation button:focus-visible {
+  opacity: 1;
+}
+.home-navigation .icon {
+  width: 18px;
+  height: 18px;
+}
+.distant-lanterns {
+  opacity: 0;
+  transition: opacity 600ms;
+}
+.scene-night.night-lantern .distant-lanterns {
+  opacity: 0.45;
+}
+.distant-lantern {
+  position: absolute;
+  width: 8px;
+  height: 13px;
+  background: linear-gradient(#b88a63, #f0c183);
+  border-radius: 3px 3px 4px 4px;
+  box-shadow: 0 0 12px #ffcb7455;
+}
+.distant-0 {
+  left: 14%;
+  top: 21%;
+}
+.distant-1 {
+  left: 82%;
+  top: 31%;
+}
+.distant-2 {
+  left: 22%;
+  top: 53%;
+}
+.distant-3 {
+  left: 79%;
+  top: 74%;
+}
+.distant-4 {
+  left: 57%;
+  top: 15%;
+}
+.profile-menu,
+.profile-photo-flow {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 16px;
+  word-break: keep-all;
+}
+.profile-current {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+.crop-editor {
+  display: grid;
+  gap: 12px;
+}
+.crop-editor canvas {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+  border-radius: 16px;
+  touch-action: none;
+}
+.crop-help {
+  color: var(--sub);
+  font-size: 12px;
+}
+.crop-zoom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.crop-zoom input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+}
+.profile-history {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-top: 16px;
+}
+.profile-past {
+  position: relative;
+  flex: 0 0 88px;
+  text-align: center;
+}
+.profile-past > button:first-child {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.profile-past small {
+  display: block;
+  color: var(--sub);
+  font-size: 11px;
+}
+.profile-delete {
+  position: absolute;
+  right: -2px;
+  top: -15px;
+  width: 44px;
+  height: 44px;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: 22px;
+}
+.profile-confirm,
+.profile-error {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--field);
+}
+.profile-confirm button,
+.profile-error button {
+  min-width: 64px;
+  min-height: 44px;
+}
+.profile-confirm p {
+  font-size: 13px;
+  color: var(--sub);
+}
+.profile-photo-flow button {
+  min-height: 44px;
+}
+.setting-label {
+  display: block;
+  padding: 14px 0 6px;
+  font-size: 14px;
+}
+@media (max-height: 750px) {
+  .face-slots {
+    gap: 0;
+    padding: 0;
+  }
+  .face-slot {
+    height: 270px;
+  }
+  .home-face {
+    width: 160px;
+    height: 160px;
+    padding: 25.5px;
+  }
+  .face-slot:nth-child(2) .home-face {
+    width: 148px;
+    height: 148px;
+    padding: 23.6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-scene *,
+  .home-scene *::before,
+  .home-scene *::after {
+    transition: none !important;
+  }
+}
+/* Keep the scene behind the device safe areas and anchor its quiet navigation. */
+body:has(.home-shell)::before {
+  background: transparent;
+}
+.home-scene {
+  display: flex;
+  flex-direction: column;
+}
+.scene-date,
+.home-navigation {
+  flex-shrink: 0;
+}
+.face-slots {
+  flex: 1;
+  min-height: max(
+    684px,
+    calc(
+      100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+    )
+  );
+}
+@media (max-height: 750px) {
+  .face-slots {
+    min-height: 540px;
+  }
+}
+@media (max-height: 650px) {
+  .face-slots {
+    min-height: 448px;
+  }
+  .face-slot {
+    height: 224px;
+  }
+  .home-face {
+    width: 128px;
+    height: 128px;
+    padding: 20.4px;
+  }
+  .face-slot:nth-child(2) .home-face {
+    width: 112px;
+    height: 112px;
+    padding: 17.9px;
+  }
+}

@@ -1,0 +1,16 @@
+project_id = "baby-diary"
+
+[auth]
+enabled = true
+site_url = "https://minq0322-droid.github.io/baby-diary/"
+additional_redirect_urls = ["http://localhost:5173", "http://localhost:5173/baby-diary/"]
+enable_signup = true
+enable_anonymous_sign_ins = true
+
+[auth.email]
+enable_signup = false
+enable_confirmations = false
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed/family_seed.sql"]

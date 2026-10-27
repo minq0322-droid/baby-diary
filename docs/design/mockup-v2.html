@@ -1,0 +1,583 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F4EBDD">
+  <title>한 장 일기 — 조비안과 또이</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Pen+Script&display=swap">
+  <style>
+    :root {
+      color-scheme: light;
+            --cherry: #F4B9B8; --apricot: #FFCBA4; --lemon: #FFEB8A; --pahha: #CDEFE2;
+      --lime: #CFE6A0; --sky: #A9D8F5; --lilac: #D8CBF3; --paper: #F4EBDD;
+      --orange: #F59157; --tomato: #EE6A5A; --forsythia: #FFD23F; --mint: #8FDCC2;
+      --blue: #7CC7F5; --lavender: #B8A4F2; --forest: #0F4D3A; --night: #2E3550;
+      --dark-ink: #1E2326; --light-ink: #F5F0E1;
+      --bg: #F4EBDD; --surface: #F4EBDD; --ink: #1E2326; --outline: #1E2326;
+            --cherry-ink: var(--dark-ink); --apricot-ink: var(--dark-ink); --lemon-ink: var(--dark-ink); --pahha-ink: var(--dark-ink);
+      --lime-ink: var(--dark-ink); --sky-ink: var(--dark-ink); --lilac-ink: var(--dark-ink); --paper-ink: var(--dark-ink);
+      --orange-ink: var(--dark-ink); --tomato-ink: var(--dark-ink); --forsythia-ink: var(--dark-ink); --mint-ink: var(--dark-ink);
+      --blue-ink: var(--dark-ink); --lavender-ink: var(--dark-ink); --forest-ink: var(--light-ink); --night-ink: var(--light-ink);
+      --font: 'Gaegu', 'Nanum Pen Script', system-ui, sans-serif;
+      --text-sm: 15px; --text: 18px; --note: 22px; --title: 30px;
+      --stroke: 2.2px; --duration: 220ms; --ease: cubic-bezier(.2,.7,.3,1);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #2B2F3A; --surface: #353A47; --ink: #F5F0E1; --outline: #F5F0E1;
+        --cherry:#8E5154; --apricot:#94613D; --lemon:#806B22; --pahha:#3F7868; --lime:#536E2B; --sky:#3F6F8D; --lilac:#645580; --paper:#776B55; --orange:#98512B; --tomato:#963D35; --forsythia:#80651C; --mint:#34715E; --blue:#3E7695; --lavender:#594785; --forest:#0F4D3A; --night:#2E3550;
+        --cherry-ink:var(--light-ink); --apricot-ink:var(--light-ink); --lemon-ink:var(--light-ink); --pahha-ink:var(--light-ink); --lime-ink:var(--light-ink); --sky-ink:var(--light-ink); --lilac-ink:var(--light-ink); --paper-ink:var(--light-ink); --orange-ink:var(--light-ink); --tomato-ink:var(--light-ink); --forsythia-ink:var(--light-ink); --mint-ink:var(--light-ink); --blue-ink:var(--light-ink); --lavender-ink:var(--light-ink); --forest-ink:var(--light-ink); --night-ink:var(--light-ink);
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #2B2F3A; --surface: #353A47; --ink: #F5F0E1; --outline: #F5F0E1;
+        --cherry:#8E5154; --apricot:#94613D; --lemon:#806B22; --pahha:#3F7868; --lime:#536E2B; --sky:#3F6F8D; --lilac:#645580; --paper:#776B55; --orange:#98512B; --tomato:#963D35; --forsythia:#80651C; --mint:#34715E; --blue:#3E7695; --lavender:#594785; --forest:#0F4D3A; --night:#2E3550;
+        --cherry-ink:var(--light-ink); --apricot-ink:var(--light-ink); --lemon-ink:var(--light-ink); --pahha-ink:var(--light-ink); --lime-ink:var(--light-ink); --sky-ink:var(--light-ink); --lilac-ink:var(--light-ink); --paper-ink:var(--light-ink); --orange-ink:var(--light-ink); --tomato-ink:var(--light-ink); --forsythia-ink:var(--light-ink); --mint-ink:var(--light-ink); --blue-ink:var(--light-ink); --lavender-ink:var(--light-ink); --forest-ink:var(--light-ink); --night-ink:var(--light-ink);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 36px 24px 60px; background: var(--bg); color: var(--ink); font: var(--text)/1.35 var(--font); }
+    button, input, textarea { font: inherit; color: inherit; }
+    button { border: 0; background: none; padding: 8px; min-width: 44px; min-height: 44px; cursor: pointer; position: relative; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px dashed currentColor; outline-offset: 3px; }
+    button:hover { transform: rotate(-1deg); }
+    svg { fill: none; stroke: currentColor; stroke-width: var(--stroke); stroke-linecap: round; stroke-linejoin: round; }
+    .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .icon { width: 27px; height: 27px; vertical-align: middle; flex: none; }
+    .sketch { position: relative; }
+    .outline { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+    .top, .phones, .rules { max-width: 1250px; margin-inline: auto; }
+    .top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-bottom: 36px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 36px; font-weight: 400; }
+    .intro { margin-top: 6px; }
+    .themes { display: flex; gap: 6px; }
+    .themes button { padding: 8px 15px; }
+    .themes [aria-pressed="true"]::after { content: ''; position: absolute; left: 13px; right: 10px; bottom: 5px; border-bottom: 2px solid currentColor; transform: rotate(-3deg); }
+    .phones { display: grid; grid-template-columns: repeat(3, 375px); justify-content: space-between; gap: 38px 28px; }
+    figure { margin: 0; min-width: 0; }
+    figcaption { margin: 0 0 12px 5px; font-size: 18px; }
+    .phone { width: 375px; height: 812px; position: relative; border: 2px solid var(--outline); border-radius: 36px; overflow: hidden; background: var(--surface); color: var(--ink); isolation: isolate; }
+    .status { height: 41px; padding: 12px 24px 0; display: flex; align-items: flex-start; justify-content: space-between; font-size: 15px; position: relative; z-index: 2; }
+    .status .island { position: absolute; top: 11px; left: 147px; width: 77px; height: 19px; background: currentColor; border-radius: 20px; }
+    .status .battery { width: 24px; height: 13px; margin-top: 2px; }
+    .page { --page-color: var(--sky); --page-ink: var(--sky-ink); background: var(--page-color); color: var(--page-ink); }
+    [data-color="cherry"] { --page-color: var(--cherry); --page-ink: var(--cherry-ink); }
+    [data-color="apricot"] { --page-color: var(--apricot); --page-ink: var(--apricot-ink); }
+    [data-color="lemon"] { --page-color: var(--lemon); --page-ink: var(--lemon-ink); }
+    [data-color="pahha"] { --page-color: var(--pahha); --page-ink: var(--pahha-ink); }
+    [data-color="lime"] { --page-color: var(--lime); --page-ink: var(--lime-ink); }
+    [data-color="sky"] { --page-color: var(--sky); --page-ink: var(--sky-ink); }
+    [data-color="lilac"] { --page-color: var(--lilac); --page-ink: var(--lilac-ink); }
+    [data-color="paper"] { --page-color: var(--paper); --page-ink: var(--paper-ink); }
+    [data-color="orange"] { --page-color: var(--orange); --page-ink: var(--orange-ink); }
+    [data-color="tomato"] { --page-color: var(--tomato); --page-ink: var(--tomato-ink); }
+    [data-color="forsythia"] { --page-color: var(--forsythia); --page-ink: var(--forsythia-ink); }
+    [data-color="mint"] { --page-color: var(--mint); --page-ink: var(--mint-ink); }
+    [data-color="blue"] { --page-color: var(--blue); --page-ink: var(--blue-ink); }
+    [data-color="lavender"] { --page-color: var(--lavender); --page-ink: var(--lavender-ink); }
+    [data-color="forest"] { --page-color: var(--forest); --page-ink: var(--forest-ink); }
+    [data-color="night"] { --page-color: var(--night); --page-ink: var(--night-ink); }
+    .page-head { padding: env(safe-area-inset-top, 0px) 19px 0; display: flex; align-items: center; justify-content: space-between; height: 51px; }
+    .kid-switch { display: flex; align-items: center; gap: 1px; }
+    .kid-switch button { padding: 8px 3px; font-size: 20px; }
+    .kid-switch button[aria-pressed="true"]::after { content: ''; position: absolute; height: 6px; left: 2px; right: 0; bottom: 1px; background: currentColor; clip-path: polygon(0 55%,20% 25%,42% 39%,65% 18%,100% 35%,99% 64%,68% 54%,43% 75%,17% 63%,1% 89%); }
+    .sync { display: grid; place-items: center; width: 44px; height: 44px; }
+    .sync svg { width: 12px; height: 13px; fill: currentColor; }
+    .day-body { padding: 0 25px; }
+    .art { height: 304px; position: relative; }
+    .hero-doodle { position: absolute; width: 160px; height: 190px; left: 2px; top: 54px; transform: rotate(-10deg); }
+    .hero-doodle svg { width: 100%; height: 100%; stroke-width: 1.6; }
+    .art-word { position: absolute; left: 32px; top: 246px; font-size: 20px; transform: rotate(-8deg); }
+    .polaroid { width: 142px; padding: 9px 9px 22px; background: var(--light-ink); color: var(--dark-ink); position: absolute; right: 1px; top: 75px; transform: rotate(8deg); }
+    .polaroid::before, .polaroid::after { content: ''; position: absolute; width: 57px; height: 21px; background: var(--forsythia); opacity: .52; top: -8px; left: -13px; transform: rotate(-31deg); clip-path: polygon(3% 0,97% 4%,100% 89%,0 100%); }
+    .polaroid::after { left: auto; right: -17px; top: 116px; transform: rotate(-26deg); }
+    .photo-scene { height: 136px; background: var(--mint); position: relative; overflow: hidden; }
+    .photo-scene::before { content: ''; position: absolute; background: var(--tomato); width: 57px; height: 72px; left: 33px; top: 45px; clip-path: polygon(14% 0,81% 3%,100% 80%,58% 100%,0 81%); transform: rotate(-4deg); }
+    .photo-scene svg { position: absolute; inset: 0; width: 100%; height: 100%; stroke: var(--dark-ink); stroke-width: 1.5; }
+    .photo-caption { text-align: center; font-size: 15px; padding-top: 6px; }
+    .note { margin: 0 0 15px; font-size: var(--note); line-height: 1.25; }
+    .note[data-author="mom"] { letter-spacing: .2px; transform: rotate(-.4deg); }
+    .note-meta { display: flex; align-items: center; gap: 12px; margin-top: 4px; font-size: 16px; }
+    .tag { display: inline-flex; align-items: center; gap: 3px; }
+    .tag .icon { width: 22px; height: 22px; stroke-width: 1.7; }
+    .author { display: inline-grid; place-items: center; width: 30px; height: 30px; position: relative; font-size: 17px; }
+    .author svg { position: absolute; inset: 0; width: 100%; height: 100%; stroke-width: 1.4; }
+    .margin-note { display: flex; gap: 5px; align-items: flex-start; margin: -4px 0 17px 8px; font-size: 17px; line-height: 1.3; transform: rotate(-2deg); }
+    .margin-note > svg { width: 28px; height: 28px; flex: none; stroke-width: 1.5; }
+    .heart { padding: 0; min-height: 44px; display: inline-flex; gap: 4px; align-items: center; font-size: 16px; }
+    .heart .icon { width: 21px; height: 21px; }
+    .heart[aria-pressed="true"] svg { fill: currentColor; }
+    .signature { font-size: 18px; margin-top: 18px; }
+    .bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 106px; padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: space-between; gap: 2px; }
+    .date-step { font-size: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 2px; width: 47px; min-height: 61px; }
+    .date-step svg { width: 24px; height: 24px; stroke-width: 1.6; }
+    .date-step.empty .dot { opacity: .45; font-size: 24px; height: 24px; line-height: 16px; }
+    .add { width: 55px; height: 81px; margin-inline: 3px; font-size: 36px; }
+    .add:active { animation: wobble 220ms ease; }
+    .archive-link { width: 44px; font-size: 15px; line-height: 1.05; padding: 2px; }
+    .palette-toggle { position: absolute; right: 18px; top: 98px; font-size: 16px; display: flex; align-items: center; gap: 4px; }
+    .palette { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); padding: 8px 0; margin: 12px -16px 0; }
+    .swatch { min-width: 0; padding: 0; font-size: 12px; min-height: 58px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .swatch svg { width: 30px; height: 28px; color: var(--page-ink, var(--ink)); }
+    .swatch[aria-pressed="true"] svg { stroke-width: 3; }
+    .prenatal .art { height: 310px; }
+    .prenatal .hero-doodle { left: 75px; top: 67px; width: 175px; height: 165px; transform: rotate(5deg); }
+    .prenatal .art-word { left: 144px; top: 215px; font-size: 26px; }
+    .prenatal .signature { margin-top: 23px; }
+    .palette-caption { margin-top: 29px; font-size: 17px; }
+    .page-slide { animation: slide var(--duration) var(--ease); }
+    @keyframes slide { from { opacity: .4; transform: translateX(24px) rotate(1.5deg); } to { opacity: 1; transform: translateX(0) rotate(0); } }
+    @keyframes wobble { 40% { transform: rotate(-5deg) scale(.94); } 80% { transform: rotate(3deg); } }
+    .screen-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; }
+    .screen-head h2 { font-size: 28px; font-weight: 400; }
+    .screen-head button { font-size: 17px; }
+    .draw-head { padding: 8px 21px; display: flex; justify-content: space-between; align-items: center; }
+    .canvas-wrap { position: absolute; inset: 104px 0 151px; }
+    canvas { width: 100%; height: 100%; touch-action: none; display: block; cursor: crosshair; }
+    .canvas-hint { pointer-events: none; position: absolute; bottom: 17px; width: 100%; text-align: center; font-size: 17px; }
+    .draw-tools { position: absolute; bottom: 20px; left: 16px; right: 16px; }
+    .tools-row { display: flex; align-items: center; justify-content: space-between; gap: 2px; }
+    .tools-row button { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; font-size: 15px; padding: 5px; }
+    .tools-row button[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 4px; }
+    .ink-options { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 9px; }
+    .ink-options button { padding: 8px; }
+    .ink-options svg { width: 25px; height: 25px; }
+    .ink-options [aria-pressed="true"]::after { content: '⌃'; position: absolute; left: 17px; bottom: -5px; }
+    .draw-photo { top: 210px; right: 26px; pointer-events: none; }
+    .archive-content { padding: 0 22px; }
+    .search { display: flex; align-items: center; height: 49px; position: relative; margin: 7px 0 12px; }
+    .search input { border: 0; background: none; width: 100%; padding: 8px 10px; font-size: 20px; min-width: 0; outline-offset: -3px; }
+    input::placeholder { color: inherit; opacity: .8; }
+    .filters { display: flex; gap: 10px; }
+    .filters button { font-size: 17px; padding: 8px 12px; }
+    .filters .icon { width: 20px; height: 20px; }
+    .month-label { margin: 23px 0 13px; font-weight: 400; font-size: 22px; }
+    .thumb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px 14px; }
+    .thumb { height: 208px; padding: 12px 13px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; transform: rotate(-1.6deg); position: relative; }
+    .thumb:nth-child(even) { transform: rotate(1.3deg); }
+    .thumb:hover { transform: rotate(0deg); }
+    .thumb .mini-art { width: 65px; height: 76px; align-self: center; margin: 7px 0; stroke-width: 1.6; }
+    .thumb .thumb-kid { font-size: 15px; }
+    .thumb .first-line { font-size: 18px; line-height: 1.15; }
+    .thumb .thumb-date { font-size: 15px; margin-top: auto; padding-top: 5px; }
+    .small-footer { position: absolute; bottom: 21px; left: 0; right: 0; text-align: center; font-size: 17px; }
+    .calendar-content { padding: 4px 20px; }
+    .month-nav { display: flex; justify-content: space-between; align-items: center; margin: 6px 0 13px; }
+    .month-nav h3 { font-size: 25px; font-weight: 400; }
+    .month-nav button { font-size: 27px; }
+    .weekdays, .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+    .weekdays { font-size: 16px; margin-bottom: 5px; }
+    .day { height: 49px; width: 100%; min-width: 0; padding: 0; display: grid; place-items: center; font-size: 18px; }
+    .day .blob { position: absolute; width: 37px; height: 37px; z-index: -1; stroke-width: 1.4; }
+    .day.has-page { color: var(--day-ink); }
+    .day.today::after { content: ''; position: absolute; inset: 0; background: currentColor; clip-path: polygon(14% 8%,49% 1%,81% 9%,97% 35%,97% 72%,76% 95%,35% 98%,5% 76%,1% 40%,14% 8%,17% 12%,6% 40%,10% 75%,36% 93%,75% 90%,92% 70%,92% 36%,78% 14%,49% 6%,17% 12%); }
+    .calendar-legend { display: flex; gap: 14px; margin: 18px 3px; font-size: 16px; }
+    .legend-dot { display: inline-block; width: 12px; height: 12px; background: var(--sky); clip-path: polygon(7% 10%,69% 0,100% 30%,89% 88%,26% 100%,0 56%); }
+    .preview { height: 211px; margin: 23px 4px 0; padding: 17px; transform: rotate(-1deg); display: grid; grid-template-columns: 75px 1fr; gap: 12px; align-content: center; }
+    .preview > svg:not(.outline) { width: 73px; height: 100px; }
+    .preview p { font-size: 21px; }
+    .preview small { font-size: 16px; display: block; margin-top: 9px; }
+    .settings { padding: 0 24px; height: 645px; overflow-y: auto; scrollbar-width: thin; }
+    .setting-section { margin-top: 16px; }
+    .setting-section h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 45px; font-size: 18px; }
+    .setting-row input { width: 145px; border: 0; background: none; font-size: 17px; padding: 7px 0; min-height: 44px; }
+    .setting-row button { font-size: 17px; text-align: right; }
+    .color-mark { display: inline-block; width: 18px; height: 18px; background: var(--sky); vertical-align: middle; clip-path: polygon(10% 3%,79% 0,100% 39%,83% 97%,24% 100%,0 64%); }
+    .apply { padding: 7px 14px; font-size: 17px; margin: 4px 0 8px; }
+    .font-setting { margin-bottom: 8px; font-size: 17px; }
+    .font-setting button { font-size: 16px; padding: 0; display: block; text-decoration: underline; text-underline-offset: 4px; }
+    .settings .themes { margin-left: -9px; gap: 0; }
+    .rules { margin-top: 42px; padding-top: 22px; font-size: 18px; }
+    .rules h2 { font-size: 27px; font-weight: 400; margin-bottom: 14px; }
+    .rules p { max-width: 860px; margin: 10px 0; }
+    .token-list { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 15px; }
+    .token-list span { display: inline-flex; gap: 6px; align-items: center; }
+    .token-list i { width: 22px; height: 22px; clip-path: polygon(5% 9%,80% 0,100% 28%,90% 88%,21% 100%,0 65%); }
+    .toast { position: absolute; z-index: 9; bottom: 126px; left: 22px; right: 22px; padding: 13px; text-align: center; background: var(--surface); color: var(--ink); font-size: 18px; }
+    .write-sheet { position: absolute; z-index: 5; bottom: 0; left: 0; right: 0; padding: 22px; background: var(--page-color); color: var(--page-ink); animation: slide var(--duration) var(--ease); }
+    .write-sheet textarea { width: 100%; height: 110px; resize: vertical; background: none; border: 0; padding: 12px 0; font-size: 22px; }
+    .write-actions { display: flex; justify-content: space-between; }
+    [hidden] { display: none !important; }
+    @media (max-width: 1220px) { .phones { grid-template-columns: repeat(2, 375px); justify-content: center; gap: 34px; } }
+    @media (max-width: 810px) { body { padding: 25px 12px 40px; } .top { max-width: 375px; } .phones { grid-template-columns: minmax(0, 375px); } .phone { width: 100%; } .rules { max-width: 375px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="doodle-sock" viewBox="0 0 120 150"><path d="M43 19 Q62 15 83 20 L81 78 Q85 88 73 100 L39 124 Q25 132 16 119 Q8 109 21 98 L45 78 Z M43 28 Q62 24 82 29 M45 34 Q63 31 81 35 M30 94 Q46 95 47 115 M63 77 Q70 70 81 76"/><path d="M54 51 C49 42 40 52 55 64 C73 52 63 43 54 51 Z M92 41 L102 35 M94 54 L106 56 M93 29 L96 19"/></symbol>
+      <symbol id="doodle-heart" viewBox="0 0 32 32"><path d="M16 10 C8-1 0 10 6 18 Q10 24 16 29 Q26 21 28 13 C31 2 20 1 16 10 Z"/></symbol>
+      <symbol id="doodle-star" viewBox="0 0 32 32"><path d="M16 3 L20 12 L30 13 L23 20 L25 30 L16 25 L6 29 L8 19 L1 12 L12 11 Z"/></symbol>
+      <symbol id="doodle-moon" viewBox="0 0 32 32"><path d="M24 25 C3 32-5 6 17 3 C8 14 15 25 27 22 Z M24 5 L25 10 M22 7 L28 7"/></symbol>
+      <symbol id="doodle-sprout" viewBox="0 0 32 32"><path d="M16 29 Q18 18 15 13 C4 14 3 5 3 5 Q17 3 16 15 C18 4 28 6 29 4 Q28 17 17 16 M8 30 Q17 27 25 30"/></symbol>
+      <symbol id="doodle-sun" viewBox="0 0 32 32"><path d="M16 7 C30 6 29 28 15 26 C1 26 2 6 16 7 Z M12 13 L12 16 M20 12 L20 16 M11 20 Q16 24 21 19 M16 1 L16 4 M29 5 L26 8 M29 17 L32 17 M5 4 L7 7 M0 17 L3 17 M5 30 L8 27"/></symbol>
+      <symbol id="doodle-pen" viewBox="0 0 32 32"><path d="M6 21 L22 3 Q25 1 29 6 L13 25 L3 29 Z M6 21 L13 25 M20 6 L26 11 M3 29 L7 27"/></symbol>
+      <symbol id="doodle-eraser" viewBox="0 0 32 32"><path d="M3 21 L18 4 Q21 2 24 5 L30 11 L15 29 L9 29 Z M12 12 L24 19 M15 29 L30 29"/></symbol>
+      <symbol id="doodle-undo" viewBox="0 0 32 32"><path d="M11 6 L3 14 L13 17 M4 14 C29 2 38 29 15 28"/></symbol>
+      <symbol id="doodle-camera" viewBox="0 0 32 32"><path d="M3 10 L10 10 L12 5 L21 5 L24 10 L30 11 L29 28 L3 27 Z M23 18 C22 10 10 12 11 20 C13 28 25 24 23 18 Z"/></symbol>
+      <symbol id="doodle-search" viewBox="0 0 32 32"><path d="M23 13 C25 1 3 0 3 13 C2 27 23 26 23 13 Z M21 22 L30 30"/></symbol>
+      <symbol id="doodle-baby" viewBox="0 0 32 32"><path d="M16 7 C1 4 0 28 16 29 C33 30 34 5 16 7 Z M15 7 Q11-1 19 2 Q23 4 17 7 M10 16 L10 17 M22 16 L22 17 M12 23 Q16 26 20 22"/></symbol>
+    </defs>
+  </svg>
+  <header class="top">
+    <div><h1>한 장 일기 <svg class="icon"><use href="#doodle-sprout"/></svg></h1><p class="intro">조비안과 또이, 함께 자라는 날들. &nbsp; 시안 02 / 2026.10</p></div>
+    <div class="themes sketch" data-outline role="group" aria-label="목업 테마"><button data-theme-value="light" aria-pressed="false">라이트</button><button data-theme-value="dark" aria-pressed="false">다크</button><button data-theme-value="system" aria-pressed="true">시스템</button></div>
+  </header>
+  <main class="phones">
+    <figure><figcaption>① 오늘 · 조비안의 한 장</figcaption><section class="phone page diary" id="diary-one" data-color="cherry" aria-label="조비안의 일기"></section></figure>
+    <figure><figcaption>② 또이 · 오늘의 색 고르기</figcaption><section class="phone page diary" id="diary-two" data-color="pahha" aria-label="또이의 일기"></section></figure>
+    <figure><figcaption>③ 그리기 · 손가락으로 쓱쓱</figcaption><section class="phone page" id="drawing" data-color="cherry" aria-label="그림 그리기">
+      <div class="status">9:41<span class="island"></span><span>100 ▱</span></div>
+      <div class="draw-head"><span>조비안 · 10.26 &nbsp; / &nbsp; 그리는 중</span><button id="draw-done" class="sketch" data-outline>완료</button></div>
+      <div class="canvas-wrap"><canvas id="canvas" aria-label="자유롭게 그리는 캔버스"></canvas><span class="canvas-hint">여기에 손가락으로 그려 보세요</span></div>
+      <div id="draw-photo" hidden></div>
+      <div class="draw-tools"><div class="tools-row">
+        <button data-tool="thin" aria-pressed="true"><svg class="icon"><use href="#doodle-pen"/></svg>가는 펜</button>
+        <button data-tool="thick" aria-pressed="false"><svg class="icon" style="stroke-width:4"><use href="#doodle-pen"/></svg>굵은 펜</button>
+        <button data-tool="erase" aria-pressed="false"><svg class="icon"><use href="#doodle-eraser"/></svg>지우개</button>
+        <button id="undo"><svg class="icon"><use href="#doodle-undo"/></svg>되돌리기</button>
+        <button id="add-photo"><svg class="icon"><use href="#doodle-camera"/></svg>사진 넣기</button>
+      </div><div class="ink-options" role="group" aria-label="그림 잉크 색">
+        <button data-ink="auto" aria-label="기본 잉크" aria-pressed="true"></button><button data-ink="coral" aria-label="코랄 크레용" aria-pressed="false"></button><button data-ink="yellow" aria-label="개나리 크레용" aria-pressed="false"></button><button data-ink="forest" aria-label="숲 크레용" aria-pressed="false"></button>
+      </div></div>
+    </section></figure>
+    <figure><figcaption>④ 목록 · 작은 페이지를 모아서</figcaption><section class="phone" id="archive" aria-label="일기 목록과 검색">
+      <div class="status">9:41<span class="island"></span><span>100 ▱</span></div>
+      <header class="screen-head"><h2>우리의 페이지</h2><button id="go-calendar">달력 ↗</button></header>
+      <div class="archive-content"><label class="search" data-underline><svg class="icon"><use href="#doodle-search"/></svg><input id="search" placeholder="어떤 날을 찾을까요?" aria-label="일기 검색"></label>
+      <div class="filters"><button class="sketch" data-outline id="filter-kid"><svg class="icon"><use href="#doodle-baby"/></svg> 아이</button><button class="sketch" data-outline id="filter-tag"><svg class="icon"><use href="#doodle-star"/></svg> 태그</button><button class="sketch" data-outline id="filter-author">ⓐ 작성자</button></div>
+      <h3 class="month-label">2026년 10월 <span style="font-size:16px">/ 차곡차곡, 가을</span></h3><div class="thumb-grid" id="thumb-grid"></div><p id="no-results" hidden>아직 그런 날은 없어요.</p></div>
+      <p class="small-footer">작은 날들이 모여, 우리의 이야기.</p>
+    </section></figure>
+    <figure><figcaption>⑤ 달력 · 색으로 기억하는 날</figcaption><section class="phone" id="calendar" aria-label="2026년 10월 달력">
+      <div class="status">9:41<span class="island"></span><span>100 ▱</span></div><header class="screen-head"><h2>날들을 펼치면</h2><button id="go-list">목록 ↗</button></header>
+      <div class="calendar-content"><div class="month-nav"><button id="prev-month" aria-label="이전 달">‹</button><h3 id="calendar-title">2026년 10월</h3><button id="next-month" aria-label="다음 달">›</button></div><div class="weekdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="month-grid" id="month-grid"></div>
+      <div class="calendar-legend"><span><i class="legend-dot"></i> 조비안</span><span><i class="legend-dot" style="background:var(--forsythia)"></i> 또이</span><span>두 색이면, 함께 쓴 날</span></div><div class="preview page" data-color="cherry" id="calendar-preview" aria-live="polite"></div></div>
+      <p class="small-footer">날짜를 톡, 그날의 한 장을 꺼내요.</p>
+    </section></figure>
+    <figure><figcaption>⑥ 설정 · 우리 가족의 방식으로</figcaption><section class="phone" id="settings" aria-label="설정">
+      <div class="status">9:41<span class="island"></span><span>100 ▱</span></div><header class="screen-head"><h2>우리 집 일기장</h2><svg class="icon"><use href="#doodle-sprout"/></svg></header>
+      <div class="settings">
+        <div class="setting-section"><h3>아이</h3><label class="setting-row">조비안 생일<input type="date" value="2023-08-18" aria-label="조비안 생일"></label><label class="setting-row">또이 출산 예정일<input type="date" value="2026-12-08" aria-label="또이 출산 예정일"></label></div>
+        <div class="setting-section"><h3>페이지 색</h3><div class="setting-row"><span>기본 색</span><button id="default-color"><i class="color-mark"></i> 하늘 ↻</button></div><button class="apply sketch" data-outline id="apply-all">모든 페이지에 적용 ↗</button><div class="setting-row"><span>조비안 기본 색</span><button data-kid-color="0"><i class="color-mark"></i> 하늘 ↻</button></div><div class="setting-row"><span>또이 기본 색</span><button data-kid-color="1"><i class="color-mark" style="background:var(--yellow)"></i> 개나리 ↻</button></div></div>
+        <div class="setting-section"><h3>글씨체</h3><div class="font-setting">아빠 글씨 &nbsp; · &nbsp; 기본 손글씨<button data-font-placeholder>내 글씨체 올리기 ↗</button></div><div class="font-setting" data-author="mom">엄마 글씨 &nbsp; · &nbsp; 기본 손글씨<button data-font-placeholder>내 글씨체 올리기 ↗</button></div></div>
+        <div class="setting-section"><h3>백업</h3><div class="setting-row"><span>이 날들을 오래오래</span><button id="backup">일기 내려받기 ↓</button></div></div>
+        <div class="setting-section"><h3>화면</h3><div class="themes" role="group" aria-label="화면 테마"><button data-theme-value="light" aria-pressed="false">라이트</button><button data-theme-value="dark" aria-pressed="false">다크</button><button data-theme-value="system" aria-pressed="true">시스템</button></div></div>
+      </div><p class="small-footer">한 장씩, 같이 자라는 중 <svg class="icon"><use href="#doodle-heart"/></svg></p>
+    </section></figure>
+  </main>
+  <footer class="rules"><h2>이 일기장의 약속</h2><div class="token-list" id="token-list"></div>
+    <p>아이 한 명, 하루 한 장. 배경은 고른 크레용 한 색으로 가득 채워요. 페이지마다 색을 바꾸거나, 설정에서 가족 전체·아이별 기본 색을 정해요.</p>
+    <p>글씨는 Gaegu 400 / 700, 메모 22px · 보조 글씨도 15px 이상. 아빠와 엄마의 글은 따로 감싸, 나중에 각자의 손글씨를 자연스럽게 입혀요. 선은 2.2px, 둥근 펜촉과 고정된 씨앗으로 조금씩 흔들리게 그려요.</p>
+    <p>밝은 종이에는 먹색 #1E2326, 숲·밤에는 우윳빛 #F5F0E1. 다크 화면은 부드러운 밤 #2B2F3A / 표면 #353A47, 페이지는 깊은 크레용 색으로 바뀌어요. 개나리·코랄·민트의 다크 색은 글씨 대비 4.5:1 이상을 위해 한 톤 더 깊게 조정했어요. 모든 작은 페이지에도 잉크 윤곽을 남겨요.</p>
+    <p>날짜는 옆으로 220ms, 1.5° 기울며 넘어가요. 움직임 줄이기를 켜면 바로 바뀌어요. 터치 영역 44px 이상, 위아래 안전 영역을 존중해요. 색 고르기·아이 전환·날짜·검색·달력·그리기를 직접 눌러 보세요.</p>
+    <p>이 파일은 저장하지 않는 디자인 시안이에요. 사진은 CSS로 만든 예시, 글씨체 업로드는 자리 표시예요. 실제 동기화와 백업 연결은 앱 구현에서 이어가요.</p>
+  </footer>
+  <script>
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const escapeHTML = text => text.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+    const icon = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true"><use href="#doodle-${name}"/></svg>`;
+    const blob = 'M4 13 Q2 3 15 3 Q29 0 33 11 Q40 24 29 33 Q15 39 5 29 Q0 23 4 13 Z';
+    const colors = [ ['cherry', '벚꽃', '#F4B9B8'], ['apricot', '살구', '#FFCBA4'], ['lemon', '레몬', '#FFEB8A'], ['pahha', '박하', '#CDEFE2'], ['lime', '연두', '#CFE6A0'], ['sky', '하늘', '#A9D8F5'], ['lilac', '라일락', '#D8CBF3'], ['paper', '종이', '#F4EBDD'], ['orange', '귤', '#F59157'], ['tomato', '토마토', '#EE6A5A'], ['forsythia', '개나리', '#FFD23F'], ['mint', '민트', '#8FDCC2'], ['blue', '파랑', '#7CC7F5'], ['lavender', '라벤더', '#B8A4F2'], ['forest', '숲', '#0F4D3A'], ['night', '밤', '#2E3550'] ];
+    const pages = [
+      { kid: 0, day: 24, color: 'mint', doodle: 'sprout', text: '작은 도토리를 주워 왔다', tag: '성장', author: '엄마' },
+      { kid: 0, day: 25, color: 'orange', doodle: 'sun', text: '아빠랑 공원에서 한 바퀴', tag: '처음', author: '아빠' },
+      { kid: 0, day: 26, color: 'cherry', doodle: 'sock', text: '처음으로 혼자 양말 신음! 왼발 오른발 바뀐 건 비밀', tag: '처음', author: '아빠' },
+      { kid: 1, day: 26, color: 'pahha', doodle: 'heart', text: '산전검진 — 또이 2.1kg, 잘 크고 있대요', tag: '산전검진', author: '엄마' }
+    ];
+    const states = new Map();
+    let seed = 21;
+    function random() {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 4294967296;
+    }
+    // Stable imperfect geometry: every redraw starts from the same seed.
+    function jitterLine(x1, y1, x2, y2) {
+      const dx = x2 - x1, dy = y2 - y1;
+      return `M${x1},${y1} Q${x1 + dx * .3 + random() * 2 - 1},${y1 + dy * .3 + random() * 2 - 1} ${x1 + dx * .5},${y1 + dy * .5} T${x2},${y2}`;
+    }
+    function jitterRect(w, h) {
+      return [jitterLine(4, 5, w - 5, 3), jitterLine(w - 5, 3, w - 3, h - 5), jitterLine(w - 3, h - 5, 3, h - 3), jitterLine(3, h - 3, 4, 5)].join(' ');
+    }
+    const outlineObserver = new ResizeObserver(entries => entries.forEach(({ target }) => outline(target)));
+    function outline(el) {
+      const w = el.clientWidth, h = el.clientHeight;
+      if (!w || !h) return;
+      seed = 21 + Math.round(w + h);
+      let svg = [...el.children].find(child => child.classList.contains('outline'));
+      if (!svg) {
+        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.classList.add('outline');
+        svg.setAttribute('aria-hidden', 'true');
+        el.append(svg);
+      }
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const d = el.hasAttribute('data-underline') ? jitterLine(2, h - 5, w - 2, h - 3) : jitterRect(w, h);
+      svg.innerHTML = `<path d="${d}"/>`;
+    }
+    function decorate(root = document) {
+      $$('[data-outline], [data-underline]', root).forEach(el => { outline(el); outlineObserver.observe(el); });
+    }
+    const photo = () => `<div class="polaroid"><div class="photo-scene"><svg viewBox="0 0 120 136" aria-hidden="true"><path d="M0 113 Q59 109 120 115 M35 105 L30 129 L49 129 L55 105 M68 103 L72 127 L93 129 L87 119 L83 103"/><path d="M31 121 L48 121 M73 121 L89 122 M43 50 Q46 20 68 24 Q91 30 79 53 M45 47 Q63 60 79 47 M51 35 L52 36 M68 35 L69 36 M55 44 Q61 48 66 43"/></svg></div><div class="photo-caption">짝짝, 혼자 했어요!</div></div>`;
+    const authorMark = name => `<span class="author" aria-label="작성자 ${name}"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 C35 0 36 32 16 30 C-4 33-3 0 17 2"/></svg>${name === '아빠' ? '아' : '엄'}</span>`;
+    function bottomBar(state) {
+      return `<nav class="bottom-bar" aria-label="날짜 넘기기">${[-2, -1, 0, 1, 2].map(offset => {
+        if (!offset) return `<button class="add" aria-label="메모 쓰기 또는 그리기"><svg class="outline" viewBox="0 0 55 81" aria-hidden="true"><path d="M17 5 Q34 0 43 8 Q52 30 47 62 Q45 80 25 78 Q4 81 6 48 Q3 19 17 5 Z"/></svg>+</button>`;
+        const day = state.day + offset;
+        const found = pages.find(p => p.day === day && p.kid === state.kid);
+        return `<button class="date-step ${found ? '' : 'empty'}" data-day="${day}" aria-label="10월 ${day}일${found ? ' 일기' : ' 빈 페이지'}">${found ? icon(found.doodle) : '<span class="dot">·</span>'}<span>10.${day}</span></button>`;
+      }).join('')}<button class="archive-link" aria-label="달력과 목록 열기">달력<br>목록 ↗</button></nav>`;
+    }
+    function renderDiary(el) {
+      const state = states.get(el);
+      const p = pages.find(p => p.kid === state.kid && p.day === state.day);
+      const prenatal = state.kid === 1;
+      const today = state.day === 26;
+      const name = prenatal ? '또이' : '조비안';
+      const sample = !prenatal && today;
+      el.dataset.color = p?.color || state.color;
+      el.classList.toggle('prenatal', prenatal);
+      el.innerHTML = `<div class="status">9:41<span class="island"></span><span>100 ▱</span></div>
+        <header class="page-head"><div class="kid-switch"><button data-kid="0" aria-pressed="${!prenatal}">조비안</button><span>·</span><button data-kid="1" aria-pressed="${prenatal}">또이</button></div><span class="sync" role="img" aria-label="동기화 완료"><svg viewBox="0 0 16 16"><path d="M7 2 C15 0 17 13 9 14 C1 17-2 3 7 2 Z"/></svg></span></header>
+        <div class="day-body page-slide"><div class="art">${p ? `<div class="hero-doodle">${icon(p.doodle)}</div>${sample ? photo() : ''}<span class="art-word">${prenatal ? '콩콩' : sample ? '한 뼘 더 컸네!' : '이런 날도 있었지'}</span>` : '<span class="art-word">아직 빈 종이, 오늘을 남겨요.</span>'}</div>
+        ${p ? `<article class="note" data-author="${p.author === '아빠' ? 'dad' : 'mom'}"><p>${escapeHTML(p.text)}</p><div class="note-meta"><span class="tag">${icon(prenatal ? 'heart' : 'star')}${p.tag}</span>${authorMark(p.author)}</div></article>` : ''}
+        ${sample ? `<div class="margin-note"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 2 Q2 20 26 17 M20 11 L27 17 L20 22"/></svg><div><p data-author="mom">엄마: 오늘 밤엔 일찍 재우자 ㅎㅎ</p><button class="heart" aria-pressed="false" aria-label="아빠의 하트">${icon('heart')}아빠</button></div></div><article class="note" data-author="mom"><p>낮잠 안 자고 4시까지 버팀</p><div class="note-meta"><span class="tag">${icon('moon')}수면</span>${authorMark('엄마')}</div></article>` : ''}
+        <p class="signature">${name}. 10.${state.day} ${['일','월','화','수','목','금','토'][new Date(2026, 9, state.day).getDay()]} · ${prenatal ? '출산 전' : '3년 2개월'}</p>
+        <div class="palette-wrap" ${state.palette ? '' : 'hidden'}><p class="palette-caption">이 날은, 무슨 색이었나요?</p><div class="palette" role="group" aria-label="페이지 색">${colors.map(([key, label]) => `<button class="swatch" data-color-choice="${key}" aria-label="${label}" aria-pressed="${el.dataset.color === key}"><svg viewBox="0 0 38 38"><path d="${blob}" fill="var(--${key})"/>${el.dataset.color === key ? '<path d="M11 19 L16 24 L26 12" style="stroke:var(--'+key+'-ink,var(--light-ink))"/>' : ''}</svg><span>${label}</span></button>`).join('')}</div></div></div>
+        <button class="palette-toggle" aria-expanded="${state.palette}">${icon('sun')} ${state.palette ? '색 접기' : '페이지 색'}</button>${bottomBar(state)}`;
+      decorate(el);
+    }
+    const one = $('#diary-one'), two = $('#diary-two');
+    states.set(one, { kid: 0, day: 26, color: 'cherry', palette: false });
+    states.set(two, { kid: 1, day: 26, color: 'pahha', palette: true });
+    [one, two].forEach(renderDiary);
+    function showToast(el, message) {
+      $('.toast', el)?.remove();
+      const toast = document.createElement('div');
+      toast.className = 'toast sketch';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('data-outline', '');
+      toast.textContent = message;
+      el.append(toast);
+      decorate(toast.parentElement);
+      setTimeout(() => { outlineObserver.unobserve(toast); toast.remove(); }, 2600);
+    }
+    function openPage(p) {
+      Object.assign(states.get(one), { kid: p.kid, day: p.day, color: p.color, palette: false });
+      renderDiary(one);
+      one.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function openWriter(el) {
+      const sheet = document.createElement('div');
+      sheet.className = 'write-sheet';
+      sheet.setAttribute('role', 'dialog');
+      sheet.setAttribute('aria-label', '한 줄 남기기');
+      sheet.innerHTML = `<div class="write-actions"><span>오늘의 한 줄</span><button data-close>닫기</button></div><textarea placeholder="작은 일도 좋아요." aria-label="메모 내용"></textarea><div class="write-actions"><button data-draw>${icon('pen')} 그리기</button><button data-save class="sketch" data-outline>남기기 ✓</button></div>`;
+      el.append(sheet);
+      decorate(sheet);
+      $('textarea', sheet).focus();
+      $('[data-close]', sheet).onclick = () => { sheet.remove(); $('.add', el).focus(); };
+      $('[data-draw]', sheet).onclick = () => {
+        $('#drawing').dataset.color = el.dataset.color;
+        $('#drawing').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        sheet.remove();
+        redraw();
+      };
+      function save() {
+        const content = $('textarea', sheet).value.trim();
+        if (!content) return;
+        const state = states.get(el);
+        const p = pages.find(p => p.kid === state.kid && p.day === state.day);
+        if (p) p.text += ' / ' + content;
+        else pages.push({ kid: state.kid, day: state.day, color: el.dataset.color, doodle: 'star', text: content, tag: '처음', author: '아빠' });
+        renderDiary(el);
+        renderArchive();
+        renderCalendar();
+        showToast(el, '이 날의 한 줄을 남겼어요');
+      }
+      $('[data-save]', sheet).onclick = save;
+      $('textarea', sheet).onkeydown = e => {
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); save(); }
+      };
+    }
+    [one, two].forEach(el => {
+      el.addEventListener('click', e => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        const state = states.get(el);
+        if (b.hasAttribute('data-kid')) { state.kid = Number(b.dataset.kid); renderDiary(el); }
+        else if (b.hasAttribute('data-day')) { state.day = Number(b.dataset.day); renderDiary(el); }
+        else if (b.classList.contains('palette-toggle')) { state.palette = !state.palette; renderDiary(el); }
+        else if (b.hasAttribute('data-color-choice')) {
+          const p = pages.find(p => p.kid === state.kid && p.day === state.day);
+          state.color = b.dataset.colorChoice;
+          if (p) p.color = state.color;
+          renderDiary(el);
+          renderArchive();
+          renderCalendar();
+        } else if (b.classList.contains('heart')) b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true');
+        else if (b.classList.contains('archive-link')) $('#archive').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        else if (b.classList.contains('add')) openWriter(el);
+      });
+    });
+    let kidFilter = -1, tagFilter = false, authorFilter = false;
+    function renderArchive() {
+      const query = $('#search').value.trim();
+      const filtered = [...pages].reverse().filter(p => (kidFilter < 0 || p.kid === kidFilter) && (!tagFilter || p.tag === '처음') && (!authorFilter || p.author === '아빠') && `${p.text} ${p.tag} ${p.author} ${p.kid ? '또이' : '조비안'}`.includes(query));
+      $('#thumb-grid').innerHTML = filtered.map(p => `<button class="thumb page" data-color="${p.color}" data-page="${pages.indexOf(p)}" data-outline><span class="thumb-kid">${p.kid ? '또이' : '조비안'}</span>${icon(p.doodle, 'mini-art')}<span class="first-line">${escapeHTML(p.text.slice(0, 19))}${p.text.length > 19 ? '…' : ''}</span><span class="thumb-date">10.${p.day} · ${p.author}</span></button>`).join('');
+      $('#no-results').hidden = filtered.length > 0;
+      decorate($('#thumb-grid'));
+    }
+    $('#search').oninput = renderArchive;
+    $('#filter-kid').onclick = e => { kidFilter = kidFilter === 1 ? -1 : kidFilter + 1; e.currentTarget.innerHTML = icon('baby') + ' ' + ['아이', '조비안', '또이'][kidFilter + 1]; decorate($('#archive')); renderArchive(); };
+    $('#filter-tag').onclick = e => { tagFilter = !tagFilter; e.currentTarget.innerHTML = icon('star') + (tagFilter ? ' 처음' : ' 태그'); decorate($('#archive')); renderArchive(); };
+    $('#filter-author').onclick = e => { authorFilter = !authorFilter; e.currentTarget.textContent = authorFilter ? 'ⓐ 아빠' : 'ⓐ 작성자'; decorate($('#archive')); renderArchive(); };
+    $('#thumb-grid').onclick = e => { const b = e.target.closest('[data-page]'); if (b) openPage(pages[Number(b.dataset.page)]); };
+    let calendarMonth = 9;
+    function previewDay(day) {
+      const matches = calendarMonth === 9 ? pages.filter(p => p.day === day) : [];
+      const p = matches[0];
+      const preview = $('#calendar-preview');
+      preview.dataset.color = p?.color || 'paper';
+      preview.innerHTML = p ? `${icon(p.doodle)}<div><p>${escapeHTML(p.text.slice(0, 29))}${p.text.length > 29 ? '…' : ''}</p><small>${p.kid ? '또이' : '조비안'}. 10.${day} · ${p.author}</small><button id="preview-open">한 장 펼치기 ↗</button>${matches.length > 1 ? '<button id="preview-other">또이도 보기 ↗</button>' : ''}</div>` : `${icon('sprout')}<div><p>아직 빈 페이지예요</p><small>${calendarMonth + 1}.${day} · 작은 하루를 기다려요</small></div>`;
+      preview.setAttribute('data-outline', '');
+      decorate(preview.parentElement);
+      if (p) $('#preview-open').onclick = () => openPage(p);
+      if (matches.length > 1) $('#preview-other').onclick = () => openPage(matches[1]);
+    }
+    function renderCalendar() {
+      $('#calendar-title').textContent = `2026년 ${calendarMonth + 1}월`;
+      const start = new Date(2026, calendarMonth, 1).getDay();
+      const count = new Date(2026, calendarMonth + 1, 0).getDate();
+      $('#month-grid').innerHTML = '<span></span>'.repeat(start) + Array.from({ length: count }, (_, i) => {
+        const day = i + 1;
+        const found = calendarMonth === 9 ? pages.filter(p => p.day === day) : [];
+        const color = found[0]?.color;
+        const ink = `var(--${color}-ink)`;
+        const gradient = found.length > 1 ? `<defs><linearGradient id="split-${day}"><stop offset="50%" stop-color="var(--${color})"/><stop offset="50%" stop-color="var(--${found[1].color})"/></linearGradient></defs>` : '';
+        return `<button class="day ${found.length ? 'has-page' : ''} ${day === 26 && calendarMonth === 9 ? 'today' : ''}" style="--day-ink:${ink}" data-calendar-day="${day}" aria-label="${calendarMonth + 1}월 ${day}일, ${found.length ? found.length + '개의 페이지' : '빈 페이지'}" ${day === 26 && calendarMonth === 9 ? 'aria-current="date"' : ''}>${found.length ? `<svg class="blob" viewBox="0 0 38 38" style="color:var(--outline)">${gradient}<path d="${blob}" fill="${gradient ? `url(#split-${day})` : `var(--${color})`}"/></svg>` : ''}${day}</button>`;
+      }).join('');
+      previewDay(calendarMonth === 9 ? 26 : 1);
+    }
+    $('#month-grid').onclick = e => { const b = e.target.closest('[data-calendar-day]'); if (b) previewDay(Number(b.dataset.calendarDay)); };
+    $('#prev-month').onclick = () => { calendarMonth = Math.max(0, calendarMonth - 1); renderCalendar(); };
+    $('#next-month').onclick = () => { calendarMonth = Math.min(11, calendarMonth + 1); renderCalendar(); };
+    $('#go-calendar').onclick = () => $('#calendar').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    $('#go-list').onclick = () => $('#archive').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    function setTheme(value) {
+      if (value === 'system') delete document.documentElement.dataset.theme;
+      else document.documentElement.dataset.theme = value;
+      $$('[data-theme-value]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeValue === value));
+      redraw();
+    }
+    $$('[data-theme-value]').forEach(b => b.onclick = () => setTheme(b.dataset.themeValue));
+    const canvas = $('#canvas'), ctx = canvas.getContext('2d');
+    let strokes = [], current = null, tool = 'thin', ink = 'auto';
+    let cw = 371, ch = 553;
+    function resizeCanvas() {
+      const bounds = canvas.getBoundingClientRect();
+      cw = bounds.width; ch = bounds.height;
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = Math.round(cw * scale); canvas.height = Math.round(ch * scale);
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      redraw();
+    }
+    function inkColor(key) {
+      return key === 'auto' ? getComputedStyle($('#drawing')).color : getComputedStyle(document.documentElement).getPropertyValue('--' + key).trim();
+    }
+    function paintStroke(stroke) {
+      const points = stroke.points.map(p => ({ x: p.x * cw, y: p.y * ch }));
+      if (!points.length) return;
+      ctx.globalCompositeOperation = stroke.erase ? 'destination-out' : 'source-over';
+      ctx.strokeStyle = inkColor(stroke.ink);
+      ctx.lineWidth = stroke.width;
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1], p = points[i];
+        ctx.quadraticCurveTo(prev.x, prev.y, (prev.x + p.x) / 2, (prev.y + p.y) / 2);
+      }
+      const last = points[points.length - 1];
+      ctx.lineTo(last.x + .01, last.y + .01); ctx.stroke();
+    }
+    function redraw() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, cw, ch);
+      strokes.forEach(paintStroke);
+      if (current) paintStroke(current);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    function point(e) {
+      const r = canvas.getBoundingClientRect();
+      return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height };
+    }
+    canvas.onpointerdown = e => {
+      if (e.button !== 0 || current) return;
+      e.preventDefault(); canvas.setPointerCapture(e.pointerId);
+      current = { points: [point(e)], width: tool === 'erase' ? 25 : tool === 'thick' ? 5 : 2.2, erase: tool === 'erase', ink };
+      $('.canvas-hint').hidden = true; redraw();
+    };
+    canvas.onpointermove = e => {
+      if (!current) return;
+      (e.getCoalescedEvents ? e.getCoalescedEvents() : [e]).forEach(sample => current.points.push(point(sample)));
+      redraw();
+    };
+    function finishStroke() { if (current) { strokes.push(current); current = null; redraw(); } }
+    canvas.onpointerup = finishStroke;
+    canvas.onpointercancel = finishStroke;
+    canvas.onlostpointercapture = finishStroke;
+    $$('[data-tool]').forEach(b => b.onclick = () => { tool = b.dataset.tool; $$('[data-tool]').forEach(t => t.setAttribute('aria-pressed', t === b)); });
+    $$('[data-ink]').forEach(b => {
+      b.innerHTML = `<svg viewBox="0 0 38 38" style="color:currentColor"><path d="${blob}" fill="${b.dataset.ink === 'auto' ? 'currentColor' : 'var(--' + b.dataset.ink + ')'}"/></svg>`;
+      b.onclick = () => { ink = b.dataset.ink; $$('[data-ink]').forEach(t => t.setAttribute('aria-pressed', t === b)); };
+    });
+    $('#undo').onclick = () => { strokes.pop(); redraw(); };
+    $('#add-photo').onclick = () => { $('#draw-photo').hidden = false; $('#draw-photo').innerHTML = photo(); $('.polaroid', $('#draw-photo')).classList.add('draw-photo'); showToast($('#drawing'), '사진 예시를 붙였어요'); };
+    $('#draw-done').onclick = () => { showToast($('#drawing'), '그림을 마쳤어요 · 시안에서만 보관해요'); };
+    // A few imperfect starter strokes; all strokes remain editable by the eraser.
+    strokes = [
+      { points: [{x:.29,y:.23},{x:.31,y:.19},{x:.47,y:.18},{x:.49,y:.23},{x:.48,y:.47},{x:.42,y:.53},{x:.28,y:.61},{x:.21,y:.59},{x:.2,y:.55},{x:.34,y:.44},{x:.34,y:.23},{x:.29,y:.23}], width: 2.2, ink: 'auto' },
+      { points: [{x:.34,y:.27},{x:.4,y:.26},{x:.49,y:.27}], width: 2.2, ink: 'auto' },
+      { points: [{x:.4,y:.35},{x:.37,y:.32},{x:.35,y:.35},{x:.4,y:.4},{x:.45,y:.34},{x:.43,y:.32},{x:.4,y:.35}], width: 2.2, ink: 'auto' },
+      { points: [{x:.6,y:.25},{x:.67,y:.21}], width: 2.2, ink: 'auto' },
+      { points: [{x:.62,y:.32},{x:.71,y:.33}], width: 2.2, ink: 'auto' }
+    ];
+    new ResizeObserver(resizeCanvas).observe(canvas);
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+    let defaultColor = 0;
+    $('#default-color').onclick = e => { defaultColor = (defaultColor + 1) % colors.length; const [key, name] = colors[defaultColor]; e.currentTarget.innerHTML = `<i class="color-mark" style="background:var(--${key})"></i> ${name} ↻`; };
+    $('#apply-all').onclick = () => {
+      pages.forEach(p => p.color = colors[defaultColor][0]);
+      states.forEach((state, el) => { state.color = colors[defaultColor][0]; renderDiary(el); });
+      renderArchive(); renderCalendar();
+      showToast($('#settings'), '모든 페이지에 ' + colors[defaultColor][1] + '색을 입혔어요');
+    };
+    const kidColors = [0, 1];
+    $$('[data-kid-color]').forEach(b => b.onclick = () => {
+      const kid = Number(b.dataset.kidColor);
+      kidColors[kid] = (kidColors[kid] + 1) % colors.length;
+      const [key, name] = colors[kidColors[kid]];
+      b.innerHTML = `<i class="color-mark" style="background:var(--${key})"></i> ${name} ↻`;
+      states.forEach(state => { if (state.kid === kid) state.color = key; });
+      showToast($('#settings'), `${kid ? '또이' : '조비안'}의 새 페이지 기본 색: ${name}`);
+    });
+    $$('[data-font-placeholder]').forEach(b => b.onclick = () => showToast($('#settings'), '내 글씨체 업로드는 앱에서 만나요'));
+    $('#backup').onclick = () => {
+      const url = URL.createObjectURL(new Blob([JSON.stringify({ mockup: true, pages }, null, 2)], { type: 'application/json' }));
+      const a = document.createElement('a'); a.href = url; a.download = '한-장-일기-시안.json'; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+    $('#token-list').innerHTML = colors.map(([key, name, hex]) => `<span><i style="background:var(--${key})"></i>${name} ${hex}</span>`).join('');
+    renderArchive(); renderCalendar(); decorate();
+  </script>
+</body>
+</html>
+
+
+

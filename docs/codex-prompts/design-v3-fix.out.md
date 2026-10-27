@@ -1,0 +1,1 @@
+Updated [mockup-v3.html](docs/design/mockup-v3.html): renamed the `querySelectorAll` helper to `$$` and changed its array-result call sites. `node --check` passed on the extracted inline script.

@@ -1,0 +1,12 @@
+Phase 9 — page data model. Read AGENTS.md (rewritten for v3). Data layer only; keep the current UI compiling with minimal adapter changes (the UI is replaced in phases 10–11, so do not polish it).
+
+1. types.ts: add Page, Stroke, Photo, Note; Child.pageColor; Comment/Reaction keyed by pageId; Member.fontAssetId?. Remove Entry from the public model.
+2. DataStore: `listPages(range?)`, `getPage(date, childId)`, `savePage(page)` (create or replace one page), `deletePage(id)`, comments by pageId, `toggleReaction(pageId)`, `updateChild`, tags (now "배지") CRUD, `setAllPageColors(color, childId?)` (bulk: updates every existing page's color, optionally only one child's, and that child's default), `uploadPhoto(blob) → {src}`, export/import.
+3. Implement in LocalStore and ArtifactStore:
+   - ArtifactStore month docs become `months/<YYYY-MM>` → `{ pages: {[pageId]: Page & {deletedAt?}}, comments: {...}, reactions: {...} }`, nested single-key `update()` writes as before. `setAllPageColors` writes one update per month doc, serialized.
+   - Photos: ArtifactStore uses `await claude.use("assets")` → `assets.upload(blob)` and stores the returned `url` in Photo.src (API: docs/artifact-api/assets.d.ts; fall back to a data URL if the capability resolves null). LocalStore stores a downscaled JPEG data URL.
+   - Client-side photo downscale helper `lib/image.ts`: longest side 1280px, JPEG 0.82, returns Blob.
+   - SupabaseStore: add a `pages` table (jsonb columns for drawing/photos/notes, child_id, date, color, unique (date, child_id)), comments/reactions now reference page_id; migration `supabase/migrations/002_pages.sql` that also converts existing entries into pages (group by date+child, each entry → a Note) and drops nothing. Photos: Supabase Storage bucket `photos` (private, RLS for members) — write the code; it cannot be tested here.
+4. Migration in LocalStore and ArtifactStore: if old `entries` exist, convert them on load into pages (one page per date+child, each entry → Note with its author and time; entry tags → page tagIds union; comments/reactions re-keyed to the page). Mark migrated (ArtifactStore: write the new structure once, then tombstone old entries).
+5. exportFormat: v2 backup JSON (pages); Markdown: "## 10월 26일 (월) · 조비안" then notes "- 내용 — 아빠", badges line, "(그림 있음, 사진 N장)". fromBackupJson accepts v1 and converts.
+6. Tests: stroke simplification keeps first/last points and reduces a 500-point line; entry→page migration; setAllPageColors; export v2 round-trip; v1 import.

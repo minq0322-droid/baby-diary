@@ -1,0 +1,16 @@
+node_modules
+.npm-cache
+dist
+dist-artifact
+.env
+.env.*
+!.env.example
+*.local
+
+# Never commit bootstrap secrets or plaintext family archives.
+supabase/seed/family_seed.sql
+*.private.sql
+backup.json
+
+# Third-party reference screenshots stay local.
+docs/design/ref/

@@ -1,0 +1,7 @@
+Fixes for the artifact build (phase 8). Read docs/artifact-build.md and vite.config.ts. Small, focused changes only.
+
+1. Page shape: the claude.ai Artifact tool wraps the file in its own <!doctype html><head><body> skeleton, so the published file must be a FRAGMENT. After `vite build --mode artifact`, write `dist-artifact/page.html` (a tiny post-build step, e.g. a Vite plugin `closeBundle` hook or `scripts/artifact-fragment.mjs` run by the npm script) whose content is, in this order and with no doctype/html/head/body tags:
+   `<title>육아 기록</title>` (must be within the first 8 KB) → `<meta name="theme-color" ...>` → all `<style>` blocks → `<div id="root"></div>` → all `<script>` blocks (keep `type="module"`).
+   Keep index.html too. Update docs/artifact-build.md to say publish page.html.
+2. Font: replace the Regular-only face with the variable font from the `pretendard` package (`dist/web/variable/woff2/PretendardVariable.woff2`), one `@font-face` with `font-weight: 45 920`, so 600/700 render as real bold. Report the new file size.
+3. Safe areas in artifact mode (the host already pads :root by the safe-area insets top and bottom): add class `is-artifact` on <html> at startup in artifact mode; under `.is-artifact`, `.app-shell` gets `padding-top: 0`. For all modes: `.date-head` sticky `top: env(safe-area-inset-top, 0px)` instead of 0, and add `body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }`.

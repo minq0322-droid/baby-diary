@@ -1,0 +1,26 @@
+-- PRIVATE manual bootstrap: replace all three placeholders before running in SQL Editor.
+-- Generate two tokens locally; save the plaintext securely, paste only hashes here.
+-- The dad invite grants owner access for the initial device. Never commit the filled file.
+begin;
+insert into public.families (id, name) values ('<FAMILY_ID>', '조이와 또이의 기록');
+insert into public.invites (family_id, member_id, role, token_hash) values
+  ('<FAMILY_ID>', 'dad', 'owner', '<DAD_TOKEN_HASH>'),
+  ('<FAMILY_ID>', 'mom', 'writer', '<MOM_TOKEN_HASH>');
+insert into public.children
+  (family_id, id, name, nickname, birth_date, status, color, page_color, sort_order) values
+  ('<FAMILY_ID>', 'kid1', '조비안', '조이', '2026-03-17', 'born', 'kid1', '#F4B9B8', 0),
+  ('<FAMILY_ID>', 'kid2', '또이', '또이', null, 'expecting', 'kid2', '#CDEFE2', 1);
+insert into public.members (family_id, member_id, display_name, color) values
+  ('<FAMILY_ID>', 'dad', '아빠', 'dad'),
+  ('<FAMILY_ID>', 'mom', '엄마', 'mom');
+insert into public.tags (family_id, id, label, emoji, tone, sort_order, preset) values
+  ('<FAMILY_ID>', 'vax', '예방접종', '💉', 'vax', 0, true),
+  ('<FAMILY_ID>', 'fever', '열·아픔', '🤒', 'fever', 1, true),
+  ('<FAMILY_ID>', 'hosp', '병원', '🏥', 'hosp', 2, true),
+  ('<FAMILY_ID>', 'first', '처음', '🌟', 'first', 3, true),
+  ('<FAMILY_ID>', 'growth', '키·몸무게', '📏', 'growth', 4, true),
+  ('<FAMILY_ID>', 'food', '수유·이유식', '🍼', 'food', 5, true),
+  ('<FAMILY_ID>', 'sleep', '수면', '😴', 'sleep', 6, true),
+  ('<FAMILY_ID>', 'med', '약', '💊', 'med', 7, true),
+  ('<FAMILY_ID>', 'prenatal', '산전검진', '🤰', 'prenatal', 8, true);
+commit;

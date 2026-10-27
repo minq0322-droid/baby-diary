@@ -1,0 +1,4 @@
+- 생성: [docs/design/mockup-v3.html](docs/design/mockup-v3.html) — 7개 화면과 요청한 인터랙션 구현. `src/` 변경 없음.
+- 검증: TypeScript, JavaScript 문법, 16색 팔레트·주요 상태 로직 통과.
+- 리뷰 확인: 저장 전환, 그림 입력, 다크 테마.
+- 못 한 것: 브라우저 연결이 없어 실제 화면·터치 검증.

@@ -1,0 +1,10 @@
+Phase 10 — app shell UI from mockup v3. Read AGENTS.md and docs/design/mockup-v3.html (screens ① Home, ⑥ Calendar, ⑦ Settings). The data layer (pages) exists from phase 9. Replace the v1 UI: delete src/features/today/* and the old feed/entry components once nothing imports them.
+
+- Port v3 shell tokens (light + soft navy-violet dark) and component styles into src/styles/. Pretendard stays.
+- Bottom nav: 홈 · 달력 · 설정 with active dot.
+- Home: date line + big greeting, writer chip, ‹ 오늘 › date switcher, the two LARGE kid cards (page color of that day's page or the child's default; doodle thumbnail rendered from the page's strokes on a small canvas; status "기록 완료 · 아빠" / "아직 안 썼어요"; 또이 "출산 전 · D-N"). Tapping a card calls `openPage(date, childId)` (phase 11 renders the page; for now show a placeholder full-screen view with a back button).
+- Below: search pill (filters pages by note text, case-insensitive), "최근 기록" + "전체 보기", segmented pills 전체/조비안/또이, horizontal row of page cards (color + doodle + date · kid + first line + badge icon). "전체 보기" opens a vertical list of the same cards grouped by month with infinite scroll (60 days per chunk).
+- After a save (phase 11 will call `onSaved(pageId)`), Home shows toast "저장했어요" and the saved page first.
+- Calendar: month grid, dots in each kid's page color for days with pages, today dark filled circle; tap a day → bottom card with the two kids' thumbnails for that day; tapping one opens that page.
+- Settings: 아이 (이름, 태명, 생일/출산 예정일, 기본 페이지 색 with the 16-color picker in AGENTS.md order), 페이지 색 ("모든 페이지에 적용" → `setAllPageColors`, per kid or all, with a confirm step built into the sheet — no window.confirm), 글씨체 (아빠/엄마 "내 글씨체 올리기" — accept .woff2/.ttf, store via `uploadPhoto`-style asset upload, save `fontAssetId`; render notes by that author with it later), 배지 관리 (reuse existing tag editor), 백업 (export/import as before), 화면 (라이트/다크/시스템), and in Artifact mode "나는 아빠/엄마" (keep).
+- Fix the mockup's Korean wrapping bug (`word-break: keep-all`).

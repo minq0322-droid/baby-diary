@@ -1,0 +1,27 @@
+Phase 17 — Supabase backend with invite-link access (no sign-up for anyone). Read AGENTS.md. The Supabase project is fresh (nothing applied yet), linked via the CLI (project ref ymtflfwojyqxgdezhtuz, region Seoul, FREE plan — everything must fit the free tier). Hosting will be GitHub Pages (public repo, base path `/baby-diary/`).
+
+Goal: the user (아빠) and his wife (엄마) open a link and write. Nobody creates an account, types an email or a password.
+
+1. Database — replace `supabase/migrations/*` with ONE clean migration `supabase/migrations/20261027000000_family.sql` matching the current data model (AGENTS.md):
+   - `families(id uuid pk, name, created_at)`; `family_members(user_id uuid pk references auth.users on delete cascade, family_id, member_id text check in ('dad','mom','reader'), role text check in ('owner','writer','reader'), joined_at)`.
+   - `invites(id, family_id, member_id, role, token_hash text unique, created_by, created_at, revoked_at)` — store only sha256(token); tokens are 32 random bytes base64url, generated client-side by an owner or by SQL.
+   - App tables, each with `family_id` and RLS "member of that family" for select, writers/owner for insert/update/delete: `children` (incl. birth_date, due_date, status, page_color, photo jsonb, photo_history jsonb), `tags`, `members` (display_name, color, font_asset_path per member_id), `pages` (id text pk = date__child__author, child_id, date, author_id, color, drawing jsonb, photos jsonb, text, tag_ids text[], created_at, updated_at), `comments`, `reactions`. Size guard: CHECK pg_column_size(drawing) < 200000.
+   - Security-definer RPCs (search_path = '', granted to authenticated only):
+     `join_family(p_token text)` → validates sha256 match + not revoked, upserts family_members for auth.uid() with the invite's member_id/role, returns family_id. Rate-limit by refusing more than 20 failed attempts per user per hour (table `join_attempts`).
+     `create_invite(p_member_id text, p_token_hash text)` → owner only. `revoke_invites(p_member_id text)` → owner only: revokes that member's invites AND deletes family_members rows of that member_id except the caller (kicks old devices).
+     `storage_usage()` → bytes used in this family's photo folder.
+   - Storage: private bucket `photos`, object path `<family_id>/...`; storage.objects RLS: members of that family may select/insert/delete within their prefix. Max file size 5 MB, allowed mime image/jpeg, image/png, image/webp, font/woff2, font/ttf.
+   - Seed via a separate file `supabase/seed/family_seed.sql.template` (NOT auto-run) with placeholders for the family id and two token hashes; children 조비안 (born, birth_date 2026-03-17, page_color #F4B9B8) and 또이 (expecting, page_color #CDEFE2), preset tags, members dad/mom.
+   - Realtime publication for pages, comments, reactions, children, tags, members.
+2. `supabase/config.toml`: `[auth] enable_anonymous_sign_ins = true`, site_url `https://minq0322-droid.github.io/baby-diary/`, additional_redirect_urls for localhost:5173; keep email confirmations irrelevant. Nothing that needs a paid plan.
+3. SupabaseStore rewrite for the new schema (keep the DataStore interface; per-author pages; profile photos/photos/fonts to Storage with signed URLs cached ~50 min and refreshed; optimistic writes + retry banner per AGENTS.md; offline outbox kept).
+4. Auth flow in the app (Supabase mode):
+   - On start: if no session → `supabase.auth.signInAnonymously()` silently.
+   - URL hash `#join=<token>` → call `join_family`, then remove the hash from the URL (history.replaceState) and continue; on failure show a calm full-screen message "이 초대 링크는 더 이상 쓸 수 없어요. 가족에게 새 링크를 받아 주세요".
+   - If the session is not a family member and no token: show "가족 초대 링크로 들어와 주세요" (no sign-up form anywhere).
+   - The member_id from the invite sets the current writer (no "누가 쓰고 있나요?" picker in Supabase mode).
+   - 설정 › 가족 (owner only): "엄마 초대 링크 만들기", "아빠 기기 추가 링크 만들기" (generate token client-side, send hash via create_invite, show the full link `https://minq0322-droid.github.io/baby-diary/#join=…` with a 복사 button and a note "이 링크는 열쇠예요. 가족에게만 보내 주세요"), "링크 다시 만들기(예전 기기 막기)" → revoke_invites. Also show storage usage "사진 저장 공간 0.12 GB / 1 GB" with a gentle warning above 80 %.
+5. Backups without a service key: `scripts/backup/backup.mjs` Supabase mode signs in anonymously, joins with a READER invite token from env `BACKUP_JOIN_TOKEN` (role reader can only select), writes the dated archive (existing toDatedArchive), and calls an RPC `prune_reader_members()` (reader members older than 2 days are deleted) to avoid piling up anonymous users. Update .github/workflows/backup.yml: secrets SUPABASE_URL, SUPABASE_ANON_KEY, BACKUP_JOIN_TOKEN. The daily run also keeps the free project from pausing.
+6. GitHub Pages deploy: `.github/workflows/deploy.yml` builds normal (PWA) mode on push to main with `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` from repository variables, Vite `base: '/baby-diary/'` for this build (keep the artifact build unaffected), uploads with actions/upload-pages-artifact + deploy-pages. PWA manifest start_url/scope `/baby-diary/`.
+7. Tests: token hashing, hash-join flow state machine (no session → anon → join → member), revoke semantics (unit-level with a fake client), base path in manifest. Keep all existing tests passing.
+Do not run any command that touches the remote project. Report files changed and exactly which commands the reviewer must run to apply the migration and config.
