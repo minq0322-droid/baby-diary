@@ -175,22 +175,6 @@ export function SettingsScreen({ store, snapshot }: Props) {
             </button>
           ))}
         </div>
-        <span className="setting-label">별 움직임</span>
-        <div
-          className="settings-list setting-theme"
-          role="group"
-          aria-label="별 움직임"
-        >
-          {(['twinkle', 'drift'] as const).map((value) => (
-            <button
-              key={value}
-              aria-pressed={home.stars === value}
-              onClick={() => changeHome({ ...home, stars: value })}
-            >
-              {value === 'twinkle' ? '반짝임' : '사선 흐름'}
-            </button>
-          ))}
-        </div>
       </section>
       {editingChild && (
         <ChildEditSheet

@@ -53,7 +53,7 @@ export function dayCounter(child: Pick<Child, 'birthDate' | 'dueDate' | 'status'
     const days = differenceInCalendarDays(fromKey(dateKey), fromKey(child.birthDate));
     return days < 0 ? '' : `D+${days}`;
   }
-  if (isBorn(child)) return '태어난 날을 입력해 주세요';
+  if (isBorn(child)) return '생일 미정';
   if (child.dueDate) {
     const days = differenceInCalendarDays(fromKey(child.dueDate), fromKey(dateKey));
     return days < 0 ? '출산 예정일 지남' : days === 0 ? 'D-day' : `D-${days}`;

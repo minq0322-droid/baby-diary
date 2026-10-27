@@ -453,3 +453,32 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .list-badge { margin-left: auto; }
 .list-badge .icon { width: 15px; height: 15px; }
 .archive-list-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; font-size: 14px; line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; white-space: pre-wrap; }
+
+html, body, #root { max-width: 100%; overflow-x: hidden; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+@media (min-width: 768px) {
+  .app-shell:not(.home-shell) { max-width: none; padding-bottom: 96px; }
+  .screen-scroll { width: 100%; max-width: 1040px; margin-inline: auto; padding-inline: 32px; }
+  .archive-screen .archive-list { max-width: 720px; margin-inline: auto; }
+  .archive-screen .archive-month { margin-inline: 0; }
+  .archive-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .archive-screen:has(.archive-list) { max-width: 784px; }
+  .calendar-screen { max-width: 784px; }
+  .settings-screen { max-width: 704px; }
+  .settings-screen .settings-group { margin-bottom: 28px; }
+  .settings-screen > .toast { left: 50%; right: auto; width: min(488px, calc(100% - 32px)); transform: translate(-50%, 20px); }
+  .settings-screen > .toast.show { transform: translate(-50%, 0); }
+  .bottom-sheet-layer { align-items: center; justify-content: center; }
+  .bottom-sheet-layer .sheet { position: relative; width: min(480px, calc(100% - 32px)); max-height: min(88dvh, 760px); border-radius: 24px; padding-bottom: 24px; transform: translateY(16px) scale(.98); transition: transform .2s var(--ease); }
+  .bottom-sheet-layer.sheet-open .sheet { transform: none; }
+  .bottom-sheet-layer .sheet-handle { display: none; }
+  .bottom-sheet-layer .scrim { position: fixed; }
+  .bottom-sheet-layer .sheet-head { padding-top: 2px; }
+  .tabbar { left: 50%; right: auto; width: min(520px, 100%); transform: translateX(-50%); border-inline: 1px solid var(--line); border-radius: 18px 18px 0 0; }
+}
+
+@media (min-width: 1100px) {
+  .archive-screen:not(:has(.archive-list)) { max-width: 1104px; }
+  .archive-screen:has(.archive-list) { max-width: 784px; }
+}

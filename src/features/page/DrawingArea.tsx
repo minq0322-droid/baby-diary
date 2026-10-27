@@ -44,6 +44,8 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
   const active = useRef<{ id: number; stroke: Stroke }>();
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const gesture = useRef<{ distance: number; x: number; y: number; view: View }>();
+  const pan = useRef<{ id: number; x: number; y: number; view: View }>();
+  const spaceHeld = useRef(false);
   const [gesturing, setGesturing] = useState(false);
   const mounted = useRef(true);
   const latestPage = useRef(page);
@@ -62,6 +64,28 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
     document.addEventListener('pointerdown', outside);
     return () => document.removeEventListener('pointerdown', outside);
   }, [popover]);
+  useEffect(() => {
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === ' ') spaceHeld.current = true;
+      if (event.key === 'Escape') setPopover(undefined);
+      if (event.isComposing || !drawing || !editing) return;
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        const next = undoDrawing({ drawing: latestPage.current.drawing, undo });
+        setUndo(next.undo);
+        onChange({ ...latestPage.current, drawing: next.drawing });
+      }
+    };
+    const keyup = (event: KeyboardEvent) => {
+      if (event.key === ' ') spaceHeld.current = false;
+    };
+    window.addEventListener('keydown', keydown);
+    window.addEventListener('keyup', keyup);
+    return () => {
+      window.removeEventListener('keydown', keydown);
+      window.removeEventListener('keyup', keyup);
+    };
+  }, [drawing, editing, onChange, undo]);
   useEffect(() => {
     const canvas = base.current!;
     const overlay = live.current!;
@@ -128,8 +152,32 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
   return (
     <div className={`art${drawing && editing ? ' drawing' : ''}${!stroking && !page.drawing.length && !page.photos.length ? ' empty' : ''}`}>
       <div ref={box} className="art-box"
+        onWheel={(event) => {
+          if (!editing || !drawing || !event.ctrlKey) return;
+          event.preventDefault();
+          const rect = box.current!.getBoundingClientRect();
+          const oldZoom = viewRef.current.zoom;
+          const zoom = Math.max(1, Math.min(4, oldZoom * Math.pow(1.0015, -event.deltaY)));
+          const scale = zoom / oldZoom;
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          const next = clampView({
+            zoom,
+            x: x - (x - viewRef.current.x) * scale,
+            y: y - (y - viewRef.current.y) * scale,
+          }, rect.width, rect.height);
+          viewRef.current = next;
+          setView(next);
+        }}
         onPointerDownCapture={(event) => {
           if (!editing || !drawing) return;
+          if (event.button === 1 || spaceHeld.current) {
+            pan.current = { id: event.pointerId, x: event.clientX, y: event.clientY, view: viewRef.current };
+            box.current!.setPointerCapture(event.pointerId);
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
           pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
           if (pointers.current.size >= 2) {
             finish(true);
@@ -146,6 +194,16 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
           paintLive();
         }}
         onPointerMoveCapture={(event) => {
+          if (pan.current?.id === event.pointerId) {
+            const next = clampView({
+              ...pan.current.view,
+              x: pan.current.view.x + event.clientX - pan.current.x,
+              y: pan.current.view.y + event.clientY - pan.current.y,
+            }, box.current!.clientWidth, box.current!.clientHeight);
+            viewRef.current = next;
+            setView(next);
+            return;
+          }
           if (!pointers.current.has(event.pointerId)) return;
           pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
           if (pointers.current.size >= 2 && gesture.current) {
@@ -169,9 +227,18 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
           for (const sample of samples?.length ? samples : [event.nativeEvent]) active.current.stroke.points.push(...point(sample));
           paintLive();
         }}
-        onPointerUpCapture={event => endPointer(event, false)}
-        onPointerCancelCapture={event => endPointer(event, true)}
-        onLostPointerCapture={event => endPointer(event, true)}>
+        onPointerUpCapture={event => {
+          if (pan.current?.id === event.pointerId) pan.current = undefined;
+          else endPointer(event, false);
+        }}
+        onPointerCancelCapture={event => {
+          if (pan.current?.id === event.pointerId) pan.current = undefined;
+          else endPointer(event, true);
+        }}
+        onLostPointerCapture={event => {
+          if (pan.current?.id === event.pointerId) pan.current = undefined;
+          else endPointer(event, true);
+        }}>
         <div className="art-surface" style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.zoom})` }}>
           <canvas ref={base} aria-hidden="true" />
           <canvas ref={live} className="live-stroke" tabIndex={editing ? 0 : -1} role="button" aria-label="그림 영역, 눌러서 그리기"

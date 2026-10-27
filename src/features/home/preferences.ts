@@ -2,9 +2,8 @@
 
 export type HomePreferences = {
   night: 'moon' | 'lantern';
-  stars: 'twinkle' | 'drift';
 };
-const defaults: HomePreferences = { night: 'moon', stars: 'twinkle' };
+const defaults: HomePreferences = { night: 'moon' };
 let memory: HomePreferences | undefined;
 function read(): HomePreferences {
   if (memory) return memory;
@@ -12,7 +11,6 @@ function read(): HomePreferences {
     const saved = JSON.parse(localStorage.getItem('yuga-home') ?? '{}');
     return {
       night: saved.night === 'lantern' ? 'lantern' : 'moon',
-      stars: saved.stars === 'drift' ? 'drift' : 'twinkle',
     };
   } catch {
     return defaults;

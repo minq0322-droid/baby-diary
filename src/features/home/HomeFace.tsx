@@ -24,7 +24,8 @@ export function HomeFace({
   const held = useRef(false);
   const start = useRef({ x: 0, y: 0 });
   const [bubble, setBubble] = useState(false);
-  const summary = `${dayCounter(child, date)} · 최근 30일 중 ${days.filter(Boolean).length}일 기록`;
+  const counter = dayCounter(child, date);
+  const summary = `${counter} · 최근 30일 중 ${days.filter(Boolean).length}일 기록`;
   useEffect(() => () => window.clearTimeout(timer.current), []);
   const clear = () => window.clearTimeout(timer.current);
   return (
@@ -32,8 +33,8 @@ export function HomeFace({
       className={`home-face${days.every(Boolean) ? ' complete' : ''}`}
       aria-label={[
         child.name,
-        dayCounter(child, date),
-        summary,
+        counter,
+        `최근 30일 중 ${days.filter(Boolean).length}일 기록`,
         '오늘 페이지 열기. 메뉴는 길게 누르세요.',
       ]
         .filter(Boolean)

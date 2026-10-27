@@ -6,7 +6,7 @@ describe('date helpers', () => {
     expect(dayCounter({ birthDate: '2026-03-17' }, '2026-10-27')).toBe('D+224');
     expect(dayCounter({ birthDate: '2025-12-31' }, '2026-01-01')).toBe('D+1');
     expect(dayCounter({ birthDate: '2026-01-01' }, '2026-01-01')).toBe('D+0');
-    expect(dayCounter({ status: 'born' }, '2026-01-01')).toBe('태어난 날을 입력해 주세요');
+    expect(dayCounter({ status: 'born' }, '2026-01-01')).toBe('생일 미정');
   });
   it('formats due date counters and an unknown due date', () => {
     expect(dayCounter({ dueDate: '2026-10-29' }, '2026-10-27')).toBe('D-2');

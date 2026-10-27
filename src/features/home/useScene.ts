@@ -4,7 +4,6 @@
 export function useScene(
   scene: RefObject<HTMLElement>,
   dark: boolean,
-  drift: boolean,
 ) {
   useEffect(() => {
     const root = scene.current;
@@ -20,11 +19,13 @@ export function useScene(
     const distant = Array.from(
       root.querySelectorAll<HTMLElement>('.distant-lantern'),
     );
-    const stars = Array.from({ length: 120 }, (_, i) => ({
-      x: ((i * 47.13 + 9) % 100) / 100,
-      y: ((i * 23.7 + 4) % 100) / 100,
-      r: i % 7 ? 0.7 : 1.3,
-      phase: i * 2.1,
+    const random = mulberry32(0x51a7f00d);
+    const stars: Star[] = [];
+    const fireflies = Array.from({ length: 25 }, () => ({
+      x: 0.03 + random() * 0.94,
+      y: 0.2 + random() * 0.75,
+      phase: random() * Math.PI * 2,
+      speed: 0.45 + random() * 0.45,
     }));
     let width = 0;
     let height = 0;
@@ -41,6 +42,20 @@ export function useScene(
       canvas.width = width * ratio;
       canvas.height = height * ratio;
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const count = Math.max(60, Math.min(260, Math.round((width * height) / 7500)));
+      stars.length = 0;
+      for (let i = 0; i < count; i += 1) {
+        const large = random() > 0.94;
+        stars.push({
+          x: random(),
+          y: random(),
+          r: large ? 1.2 + random() * 0.6 : 0.4 + random() * 0.5,
+          alpha: 0.35 + random() * 0.55,
+          phase: random() * Math.PI * 2,
+          speed: 0.35 + random() * 0.75,
+          color: random() > 0.92 ? (random() > 0.5 ? '#dce9ff' : '#fff0d0') : '#f4f3dc',
+        });
+      }
       start();
     };
     const draw = (now: number) => {
@@ -50,20 +65,11 @@ export function useScene(
       if (!reduced.matches) elapsed += dt;
       const t = reduced.matches ? 0 : elapsed;
       ctx.clearRect(0, 0, width, height);
-      stars.forEach((star, i) => {
-        const x = ((star.x + (drift ? t * 0.003 : 0)) % 1) * width;
-        const y = ((star.y + (drift ? t * 0.002 : 0)) % 1) * height;
-        ctx.globalAlpha =
-          night *
-          (reduced.matches
-            ? 0.55
-            : 0.2 +
-              0.65 *
-                (0.5 +
-                  0.5 * Math.sin(t * (0.5 + (i % 4) * 0.12) + star.phase)));
-        ctx.fillStyle = '#f4f3dc';
+      stars.forEach((star) => {
+        ctx.globalAlpha = night * (reduced.matches ? star.alpha : star.alpha * (0.72 + 0.28 * (0.5 + 0.5 * Math.sin(t * star.speed + star.phase))));
+        ctx.fillStyle = star.color;
         ctx.beginPath();
-        ctx.arc(x, y, star.r, 0, Math.PI * 2);
+        ctx.arc(star.x * width, star.y * height, star.r, 0, Math.PI * 2);
         ctx.fill();
       });
       if (!reduced.matches && dark && t >= nextBurst) {
@@ -97,23 +103,22 @@ export function useScene(
           ctx.lineTo(x + 75, y - 75);
           ctx.stroke();
         });
-      for (let i = 0; !dark && i < 25; i++) {
-        const x =
-          ((((i * 0.137 + 0.03 + Math.sin(t * 0.13 + i) * 0.09) % 1) + 1) % 1) *
-          width;
-        const y = (0.2 + ((i * 0.173 + t * 0.003) % 0.78)) * height;
+      fireflies.forEach((firefly) => {
+        if (dark) return;
+        const x = firefly.x * width;
+        const y = firefly.y * height;
         ctx.globalAlpha =
           (1 - night) *
           (reduced.matches
             ? 0.55
-            : 0.12 + 0.88 * Math.pow(0.5 + 0.5 * Math.sin(t * 0.7 + i), 2));
+            : 0.12 + 0.88 * Math.pow(0.5 + 0.5 * Math.sin(t * firefly.speed + firefly.phase), 2));
         const glow = ctx.createRadialGradient(x, y, 0, x, y, 9);
         glow.addColorStop(0, '#f6ffc5');
         glow.addColorStop(0.18, '#e3f58eb3');
         glow.addColorStop(1, '#cddd7100');
         ctx.fillStyle = glow;
         ctx.fillRect(x - 9, y - 9, 18, 18);
-      }
+      });
       ctx.globalAlpha = 1;
       faces.forEach((face, i) => {
         face.style.transform = reduced.matches
@@ -163,5 +168,25 @@ export function useScene(
       document.removeEventListener('visibilitychange', restart);
       reduced.removeEventListener('change', restart);
     };
-  }, [scene, dark, drift]);
+  }, [scene, dark]);
+}
+
+type Star = {
+  x: number;
+  y: number;
+  r: number;
+  alpha: number;
+  phase: number;
+  speed: number;
+  color: string;
+};
+
+function mulberry32(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let value = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value;
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
 }

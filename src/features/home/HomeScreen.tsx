@@ -35,7 +35,7 @@ export function HomeScreen({
   const [date, setDate] = useState(todayKey);
   const [menu, setMenu] = useState<string>();
   const [photo, setPhoto] = useState<string>();
-  useScene(scene, dark, preferences.stars === 'drift');
+  useScene(scene, dark);
   useEffect(() => {
     const update = () => setDate(todayKey());
     const timer = window.setInterval(update, 30000);
