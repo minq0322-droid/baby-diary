@@ -671,3 +671,83 @@ body:has(.home-shell)::before {
   .sunset-art { width: 225px; height: 148.5px; margin-left: -112.5px; }
   .dandelion-art { width: 170px; height: 170px; margin: -85px 0 0 -85px; }
 }
+/* Artwork control sits below the date, behind all moving faces. */
+.scene-switch-object {
+  position: absolute;
+  z-index: 2;
+  top: calc(78px + env(safe-area-inset-top));
+  right: max(calc(20px + env(safe-area-inset-right)), calc(50% - 300px));
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.scene-switch-object svg { display: block; width: 100%; height: 100%; }
+.scene-switch-object:focus-visible { outline: none; }
+.scene-switch-object[data-keyboard='true']:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid currentColor;
+  border-radius: 45%;
+  box-shadow: 0 0 5px currentColor;
+  opacity: .55;
+  pointer-events: none;
+}
+.scene-switch-object[data-scene='moon']::after { inset: 14px; }
+.scene-switch-object[data-scene='lantern']::after { inset: 15px 19px; }
+.face-slots { pointer-events: none; }
+.home-face { pointer-events: auto; }
+.scene-glow { animation: scene-object-glow 4s ease-in-out infinite; }
+.ladybug-wing { transform-origin: 32px 17px; animation: scene-wing 9s ease-in-out infinite; }
+.scene-seed-sway { transform-origin: 32px 20px; animation: scene-seed-sway 7s ease-in-out infinite; }
+@keyframes scene-seed-sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.scene-discovery { animation: scene-shimmer 1.4s ease-in-out 1; }
+@keyframes scene-object-glow {
+  0%, 100% { filter: drop-shadow(0 0 2px #ffdc9360); opacity: .8; }
+  50% { filter: drop-shadow(0 0 5px #ffdc9390); opacity: 1; }
+}
+@keyframes scene-wing { 0%, 82%, 100% { transform: rotate(0); } 89% { transform: rotate(18deg); } }
+@keyframes scene-shimmer { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4) drop-shadow(0 0 7px #ffeab7aa); } }
+.scene-picker {
+  position: absolute;
+  z-index: 6;
+  top: calc(74px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 18px;
+  padding: 12px 16px;
+  border-radius: 24px;
+  background: #fff9ecce;
+  color: #594b5a;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 8px 28px #48384b14;
+  word-break: keep-all;
+}
+.scene-night .scene-picker { background: #202b40de; color: #eee4d3; }
+.scene-picker-group > span { display: block; text-align: center; font-size: 11px; opacity: .7; margin-bottom: 7px; }
+.scene-picker-group > div { display: flex; gap: 10px; }
+.scene-picker button { display: grid; justify-items: center; gap: 6px; min-width: 48px; min-height: 64px; padding: 0; color: inherit; }
+.scene-picker svg { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #fff9eaa6; }
+.scene-picker [aria-pressed='true'] svg { box-shadow: 0 0 0 3px #c19eaa88; }
+.scene-night .scene-picker [aria-pressed='true'] svg { box-shadow: 0 0 0 3px #e5d2ab88; }
+.scene-picker small { font-size: 11px; }
+.scene-picker button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 8px; }
+.scene-settings-hint { margin-top: 12px; color: var(--sub); font-size: 12px; line-height: 1.7; word-break: keep-all; }
+.scene-fade-copy { z-index: 10; pointer-events: none; animation: scene-fade 400ms ease both; }
+.scene-fade-copy * { pointer-events: none !important; animation: none !important; transition: none !important; }
+@keyframes scene-fade { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .scene-switch-object, .scene-switch-object * { animation: none !important; }
+  .scene-fade-copy { display: none; }
+}

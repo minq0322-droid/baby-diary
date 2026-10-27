@@ -9,17 +9,15 @@ import { ChildEditSheet } from './ChildEditSheet';
 import { PageColorSheet } from './PageColorSheet';
 import { FontUpload } from './FontUpload';
 import { BadgeManager } from './BadgeManager';
-import { useHomePreferences } from '../home/preferences';
+import { applyTheme, type Theme } from '../home/sceneChoice';
 import { ProfilePortrait } from '../home/ProfilePortrait';
 import { BackupSection } from './BackupSection';
 import { BookSection } from './BookSection';
 import { FamilySettings } from './FamilySettings';
 
 type Props = { store: DataStore; snapshot: StoreSnapshot };
-type Theme = 'system' | 'light' | 'dark';
 
 export function SettingsScreen({ store, snapshot }: Props) {
-  const [home, changeHome] = useHomePreferences();
   const [editingChild, setEditingChild] = useState<Child | null>(null);
   const [colorOpen, setColorOpen] = useState(false);
   const [badgesOpen, setBadgesOpen] = useState(false);
@@ -36,13 +34,7 @@ export function SettingsScreen({ store, snapshot }: Props) {
 
   const changeTheme = (next: Theme) => {
     setTheme(next);
-    if (next === 'system') delete document.documentElement.dataset.theme;
-    else document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem('theme', next);
-    } catch {
-      // The selected theme still applies when browser storage is unavailable.
-    }
+    applyTheme(next);
   };
 
   return (
@@ -159,38 +151,7 @@ export function SettingsScreen({ store, snapshot }: Props) {
             </button>
           ))}
         </div>
-        <span className="setting-label">낮 모습</span>
-        <div
-          className="settings-list setting-theme"
-          role="group"
-          aria-label="낮 모습"
-        >
-          {(['sunset', 'dandelion'] as const).map((value) => (
-            <button
-              key={value}
-              aria-pressed={home.day === value}
-              onClick={() => changeHome({ ...home, day: value })}
-            >
-              {value === 'sunset' ? '노을 언덕' : '민들레'}
-            </button>
-          ))}
-        </div>
-        <span className="setting-label">밤 모습</span>
-        <div
-          className="settings-list setting-theme"
-          role="group"
-          aria-label="밤 모습"
-        >
-          {(['moon', 'lantern'] as const).map((value) => (
-            <button
-              key={value}
-              aria-pressed={home.night === value}
-              onClick={() => changeHome({ ...home, night: value })}
-            >
-              {value === 'moon' ? '달' : '풍등'}
-            </button>
-          ))}
-        </div>
+        <p className="scene-settings-hint">홈의 작은 집·무당벌레·별·풍등을 누르면 장면을 바꿀 수 있어요</p>
       </section>
       {editingChild && (
         <ChildEditSheet

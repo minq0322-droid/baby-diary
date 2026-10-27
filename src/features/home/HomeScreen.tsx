@@ -9,6 +9,9 @@ import { Icon } from '../../components/Icon';
 import { sunsetArt, dandelionArt } from './artwork';
 import { HomeFace } from './HomeFace';
 import { ProfilePhotoSheet } from './ProfilePhotoSheet';
+import { SceneSwitcher } from './SceneSwitcher';
+import { applyTheme, chooseScene } from './sceneChoice';
+import { crossfadeScene } from './crossfadeScene';
 import { useHomePreferences } from './preferences';
 import { writtenDays } from './history';
 import { useScene } from './useScene';
@@ -31,7 +34,9 @@ export function HomeScreen({
 }) {
   const scene = useRef<HTMLElement>(null);
   const dark = useDarkMode();
-  const [preferences] = useHomePreferences();
+  const [preferences, changePreferences] = useHomePreferences();
+  const fadeCleanup = useRef<() => void>(() => {});
+  useEffect(() => () => fadeCleanup.current(), []);
   const [date, setDate] = useState(todayKey);
   const [menu, setMenu] = useState<string>();
   const [photo, setPhoto] = useState<string>();
@@ -70,6 +75,16 @@ export function HomeScreen({
           <i key={i} className={`distant-lantern distant-${i}`} />
         ))}
       </div>
+      <SceneSwitcher
+        current={dark ? preferences.night : preferences.day}
+        onChoose={(choice) => {
+          fadeCleanup.current();
+          if (scene.current) fadeCleanup.current = crossfadeScene(scene.current);
+          const next = chooseScene(choice, preferences);
+          changePreferences(next.preferences);
+          applyTheme(next.theme);
+        }}
+      />
       <div className="face-slots">
         {[...snapshot.children]
           .sort((a, b) => a.sortOrder - b.sortOrder)
