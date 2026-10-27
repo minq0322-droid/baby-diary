@@ -1,4 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, type CSSProperties } from 'react';
+import { DayMarks } from './DayMarks';
+import { useFaceGesture } from './useFaceGesture';
 import type { DataStore } from '../../data/DataStore';
 import type { Child } from '../../data/types';
 import { dayCounter } from '../../lib/date';
@@ -6,6 +8,7 @@ import { lanternArt } from './artwork';
 import { ProfilePortrait } from './ProfilePortrait';
 
 export function HomeFace({
+  dayStyle,
   child,
   store,
   days,
@@ -13,6 +16,7 @@ export function HomeFace({
   onOpen,
   onMenu,
 }: {
+  dayStyle: 'sunset' | 'dandelion';
   child: Child;
   store: DataStore;
   days: boolean[];
@@ -20,16 +24,14 @@ export function HomeFace({
   onOpen: () => void;
   onMenu: () => void;
 }) {
-  const timer = useRef(0);
-  const held = useRef(false);
-  const start = useRef({ x: 0, y: 0 });
   const [bubble, setBubble] = useState(false);
   const counter = dayCounter(child, date);
   const summary = `${counter} · 최근 30일 중 ${days.filter(Boolean).length}일 기록`;
-  useEffect(() => () => window.clearTimeout(timer.current), []);
-  const clear = () => window.clearTimeout(timer.current);
+  const { shouldOpen, ...gesture } = useFaceGesture(onMenu, setBubble);
   return (
     <button
+      {...gesture}
+      style={{ '--kid-color': child.pageColor } as CSSProperties}
       className={`home-face${days.every(Boolean) ? ' complete' : ''}`}
       aria-label={[
         child.name,
@@ -39,40 +41,11 @@ export function HomeFace({
       ]
         .filter(Boolean)
         .join(', ')}
-      onPointerDown={(event) => {
-        held.current = false;
-        start.current = { x: event.clientX, y: event.clientY };
-        timer.current = window.setTimeout(() => {
-          held.current = true;
-          setBubble(true);
-          onMenu();
-        }, 550);
-      }}
-      onPointerMove={(event) => {
-        if (
-          Math.hypot(
-            event.clientX - start.current.x,
-            event.clientY - start.current.y,
-          ) > 10
-        ) {
-          clear();
-          held.current = true;
-        }
-      }}
-      onPointerUp={clear}
-      onPointerCancel={clear}
-      onPointerLeave={() => {
-        clear();
-        setBubble(false);
-      }}
       onFocus={() => setBubble(true)}
       onBlur={() => setBubble(false)}
+      onPointerLeave={() => setBubble(false)}
       onPointerEnter={(event) => {
         if (event.pointerType === 'mouse') setBubble(true);
-      }}
-      onContextMenu={(event) => {
-        event.preventDefault();
-        onMenu();
       }}
       onKeyDown={(event) => {
         if (
@@ -84,34 +57,30 @@ export function HomeFace({
         }
       }}
       onClick={(event) => {
-        if (!held.current || event.detail === 0) onOpen();
-        held.current = false;
+        if (shouldOpen() || event.detail === 0) onOpen();
       }}
     >
-      <svg className="sun-art" viewBox="0 0 160 160" aria-hidden="true">
-        <defs>
-          <linearGradient id={`sun-${child.id}`} x1="0" y1="1" x2="0" y2="0">
-            <stop stopColor="#ecaa47" />
-            <stop offset=".55" stopColor="#ffd779" />
-            <stop offset="1" stopColor="#fff2b4" />
-          </linearGradient>
-        </defs>
-        <circle cx="80" cy="80" r="65" fill="#ffd987" opacity=".12" />
-        {days.map((lit, day) => (
-          <g
-            key={day}
-            className={lit ? 'animated-ray' : undefined}
-            data-day={day}
-            transform={`rotate(${day * 12} 80 80)`}
-          >
-            <path
-              className={lit ? 'animated-mark' : 'unlit-ray'}
-              fill={lit ? `url(#sun-${child.id})` : 'none'}
-              d="M80 23 C72 17 77 9 80 -1.5 C84 9 88 17 80 23Z"
-            />
-          </g>
-        ))}
-      </svg>
+      {dayStyle === 'dandelion' && (
+        <svg
+          className="day-stem"
+          viewBox="0 0 90 240"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M45 0C40 80 62 145 42 240"
+            fill="none"
+            stroke="#729779"
+            strokeWidth="2.1"
+          />
+          <path
+            d="M49 148Q14 140 10 110Q38 120 49 148M49 201Q80 175 84 155Q57 165 49 201"
+            fill="#8eaf85"
+            opacity=".65"
+          />
+        </svg>
+      )}
+      <DayMarks days={days} style={dayStyle} />
       <svg className="moon-art" viewBox="0 0 160 160" aria-hidden="true">
         <circle cx="80" cy="80" r="72" fill="#bddcff" opacity=".07" />
         {days.map((lit, day) => (

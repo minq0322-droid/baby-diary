@@ -1,9 +1,13 @@
 ﻿import { useEffect, type RefObject } from 'react';
+import { faceMotion } from './faceMotion';
+import { dayScene } from './dayScene';
 
 // One clock drives the canvas and all SVG/face motion. Layout is read only on resize.
 export function useScene(
   scene: RefObject<HTMLElement>,
   dark: boolean,
+  dayStyle: 'sunset' | 'dandelion',
+  nightStyle: 'moon' | 'lantern',
 ) {
   useEffect(() => {
     const root = scene.current;
@@ -15,18 +19,14 @@ export function useScene(
     const marks = Array.from(
       root.querySelectorAll<SVGElement>('.animated-mark'),
     );
-    const rays = Array.from(root.querySelectorAll<SVGElement>('.animated-ray'));
+
     const distant = Array.from(
       root.querySelectorAll<HTMLElement>('.distant-lantern'),
     );
     const random = mulberry32(0x51a7f00d);
     const stars: Star[] = [];
-    const fireflies = Array.from({ length: 25 }, () => ({
-      x: 0.03 + random() * 0.94,
-      y: 0.2 + random() * 0.75,
-      phase: random() * Math.PI * 2,
-      speed: 0.45 + random() * 0.45,
-    }));
+    const daylight = dayScene();
+    const motion = faceMotion(root, faces, dark, dayStyle, () => start());
     let width = 0;
     let height = 0;
     let frame = 0;
@@ -56,6 +56,8 @@ export function useScene(
           color: random() > 0.92 ? (random() > 0.5 ? '#dce9ff' : '#fff0d0') : '#f4f3dc',
         });
       }
+      daylight.resize(width, height);
+      motion.resize();
       start();
     };
     const draw = (now: number) => {
@@ -103,34 +105,9 @@ export function useScene(
           ctx.lineTo(x + 75, y - 75);
           ctx.stroke();
         });
-      fireflies.forEach((firefly) => {
-        if (dark) return;
-        const x = firefly.x * width;
-        const y = firefly.y * height;
-        ctx.globalAlpha =
-          (1 - night) *
-          (reduced.matches
-            ? 0.55
-            : 0.12 + 0.88 * Math.pow(0.5 + 0.5 * Math.sin(t * firefly.speed + firefly.phase), 2));
-        const glow = ctx.createRadialGradient(x, y, 0, x, y, 9);
-        glow.addColorStop(0, '#f6ffc5');
-        glow.addColorStop(0.18, '#e3f58eb3');
-        glow.addColorStop(1, '#cddd7100');
-        ctx.fillStyle = glow;
-        ctx.fillRect(x - 9, y - 9, 18, 18);
-      });
+      if (!dark) daylight.draw(ctx, width, height, t, dayStyle, reduced.matches);
       ctx.globalAlpha = 1;
-      faces.forEach((face, i) => {
-        face.style.transform = reduced.matches
-          ? 'none'
-          : `translate(${Math.sin(t * 0.2 + i * 2) * 20}px, ${Math.cos(t * 0.18 + i * 2) * 8}px) rotate(${Math.sin(t * 0.31 + i * 2) * 1.6}deg)`;
-      });
-      rays.forEach((ray, i) => {
-        ray.setAttribute(
-          'transform',
-          `rotate(${Number(ray.dataset.day) * 12 + (reduced.matches ? 0 : Math.sin(t * (0.65 + (i % 5) * 0.13) + i) * 1.3)} 80 80)`,
-        );
-      });
+      motion.draw(dt, t);
       marks.forEach((mark, i) => {
         mark.style.opacity = reduced.matches
           ? '1'
@@ -165,10 +142,11 @@ export function useScene(
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
+      motion.dispose();
       document.removeEventListener('visibilitychange', restart);
       reduced.removeEventListener('change', restart);
     };
-  }, [scene, dark]);
+  }, [scene, dark, dayStyle, nightStyle]);
 }
 
 type Star = {

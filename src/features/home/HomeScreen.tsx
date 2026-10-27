@@ -6,7 +6,7 @@ import { dayCounter, todayKey } from '../../lib/date';
 import { useDarkMode } from '../../lib/usePageColorStyle';
 import { Sheet } from '../../components/Sheet';
 import { Icon } from '../../components/Icon';
-import { gardenArt } from './artwork';
+import { sunsetArt, dandelionArt } from './artwork';
 import { HomeFace } from './HomeFace';
 import { ProfilePhotoSheet } from './ProfilePhotoSheet';
 import { useHomePreferences } from './preferences';
@@ -35,7 +35,7 @@ export function HomeScreen({
   const [date, setDate] = useState(todayKey);
   const [menu, setMenu] = useState<string>();
   const [photo, setPhoto] = useState<string>();
-  useScene(scene, dark);
+  useScene(scene, dark, preferences.day, preferences.night);
   useEffect(() => {
     const update = () => setDate(todayKey());
     const timer = window.setInterval(update, 30000);
@@ -50,16 +50,16 @@ export function HomeScreen({
   return (
     <main
       ref={scene}
-      className={`home-scene ${dark ? 'scene-night' : ''} night-${preferences.night}`}
+      className={`home-scene ${dark ? 'scene-night' : ''} night-${preferences.night} day-${preferences.day}`}
       aria-label="아이 선택 홈"
     >
       <div className="night-background" />
       <svg
-        className="home-garden"
+        className="home-landscape"
         viewBox="0 0 375 812"
-        preserveAspectRatio="xMidYMax slice"
+        preserveAspectRatio="none"
         aria-hidden="true"
-        dangerouslySetInnerHTML={{ __html: gardenArt }}
+        dangerouslySetInnerHTML={{ __html: preferences.day === 'sunset' ? sunsetArt : dandelionArt }}
       />
       <canvas className="home-sky" aria-hidden="true" />
       <p className="scene-date">
@@ -76,6 +76,7 @@ export function HomeScreen({
           .map((child) => (
             <div className="face-slot" key={child.id}>
               <HomeFace
+                dayStyle={preferences.day}
                 child={child}
                 store={store}
                 days={writtenDays(snapshot, child.id, date)}

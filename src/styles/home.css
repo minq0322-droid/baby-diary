@@ -9,12 +9,10 @@
   min-height: 100dvh;
   overflow: hidden;
   color: #203e39;
-  background:
-    radial-gradient(ellipse at 45% 18%, #bed1bb88, transparent 62%),
-    linear-gradient(165deg, #91b7b1, #769e94 62%, #527c70);
+
 }
 .night-background,
-.home-garden,
+.home-landscape,
 .home-sky,
 .distant-lanterns {
   position: absolute;
@@ -30,8 +28,8 @@
   opacity: 0;
   transition: opacity 600ms ease;
 }
-.home-garden {
-  opacity: 0.94;
+.home-landscape {
+  opacity: 1;
   transition: opacity 600ms ease;
 }
 .home-sky {
@@ -43,7 +41,7 @@
 .scene-night .night-background {
   opacity: 1;
 }
-.scene-night .home-garden {
+.scene-night .home-landscape {
   opacity: 0;
 }
 .scene-date {
@@ -196,7 +194,7 @@
 .scene-night.night-moon .moon-texture {
   opacity: 0.055;
 }
-.sun-art,
+.day-art,
 .moon-art,
 .lantern-art {
   position: absolute;
@@ -211,18 +209,14 @@
 .lantern-art {
   opacity: 0;
 }
-.scene-night .sun-art {
+.scene-night .day-art {
   opacity: 0;
 }
 .scene-night.night-moon .moon-art,
 .scene-night.night-lantern .lantern-art {
   opacity: 1;
 }
-.unlit-ray {
-  stroke: #d4be8e;
-  stroke-opacity: 0.28;
-  stroke-width: 0.8;
-}
+
 .lit-star {
   fill: #e5f5ff;
   filter: drop-shadow(0 0 1.6px #bedfff);
@@ -534,4 +528,146 @@ body:has(.home-shell)::before {
     height: 112px;
     padding: 17.9px;
   }
+}
+
+/* Approved day studies: scene geometry uses the full viewport, faces keep circles. */
+.home-scene {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  height: 100dvh;
+  min-height: 0;
+}
+.home-scene:not(.scene-night).day-sunset {
+  color: #674b65;
+  background: radial-gradient(ellipse at 17% 34%, #fff0bd88, transparent 49%),
+    linear-gradient(180deg, #c8bcd8, #f1c3cd 38%, #ffdbb3 65%, #d5a3b0);
+}
+.home-scene:not(.scene-night).day-dandelion {
+  color: #4a6659;
+  background: radial-gradient(ellipse at 22% 24%, #fffbd699, transparent 52%),
+    linear-gradient(180deg, #c9dfd1, #e5ead0 51%, #a9c898);
+}
+.face-slots {
+  min-height: 0;
+  gap: 0;
+  padding: 0;
+}
+.home-scene:not(.scene-night) .face-slots {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+.home-scene:not(.scene-night) .face-slot {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 40.53%;
+  top: 33.74%;
+}
+.home-scene:not(.scene-night) .face-slot:nth-child(2) {
+  left: 58.13%;
+  top: 61.76%;
+}
+.home-scene:not(.scene-night) .home-face {
+  position: absolute;
+  left: -64px;
+  top: -64px;
+  width: 128px;
+  height: 128px;
+  padding: 0;
+  pointer-events: auto;
+}
+.home-scene:not(.scene-night) .face-slot:nth-child(2) .home-face {
+  width: 113px;
+  height: 113px;
+  left: -56.5px;
+  top: -56.5px;
+}
+.sunset-art {
+  inset: 0 auto auto 50%;
+  width: 300px;
+  height: 198px;
+  margin-left: -150px;
+}
+.home-scene:not(.scene-night).day-dandelion .face-slot {
+  left: 31.73%;
+  top: 34.61%;
+}
+.home-scene:not(.scene-night).day-dandelion .face-slot:nth-child(2) {
+  left: 68.27%;
+  top: 64.66%;
+}
+.home-scene:not(.scene-night).day-dandelion .home-face {
+  width: 124px;
+  height: 124px;
+  left: -62px;
+  top: -62px;
+}
+.home-scene:not(.scene-night).day-dandelion .face-slot:nth-child(2) .home-face {
+  width: 110px;
+  height: 110px;
+  left: -55px;
+  top: -55px;
+}
+.dandelion-art {
+  inset: 50% auto auto 50%;
+  width: 220px;
+  height: 220px;
+  margin: -110px 0 0 -110px;
+}
+.home-scene:not(.scene-night) .home-portrait {
+  border: 3px solid var(--kid-color);
+}
+.home-face {
+  --kid-color: #f4b9b8;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.home-face.picked {
+  touch-action: none;
+  filter: drop-shadow(0 12px 14px #42364f44);
+  cursor: grabbing;
+  z-index: 5;
+}
+.home-scene:not(.scene-night) .home-navigation {
+  position: absolute;
+  left: 50%;
+  bottom: max(22px, calc(env(safe-area-inset-bottom) + 14px));
+  transform: translateX(-50%);
+  margin: 0;
+  gap: 25px;
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  color: #42364f;
+}
+.home-scene:not(.scene-night).day-dandelion .home-navigation { color: #2c493e; }
+.day-stem {
+  position: absolute;
+  top: calc(100% - 3px);
+  left: calc(50% - 45px);
+  width: 90px;
+  height: var(--stem-height, 120px);
+  pointer-events: none;
+}
+.scene-night .day-stem,
+.travelling .day-stem { visibility: hidden; }
+@media (min-width: 768px) {
+  .face-slots { gap: 72px; flex-wrap: nowrap; }
+  .home-scene:not(.scene-night) .face-slot { left: 32%; top: 34%; }
+  .home-scene:not(.scene-night).day-dandelion .face-slot { left: 32%; top: 42%; }
+  .home-scene:not(.scene-night) .face-slot:nth-child(2) { left: 68%; top: 34%; }
+  .home-scene:not(.scene-night).day-dandelion .face-slot:nth-child(2) { left: 68%; top: 42%; }
+}
+@media (max-width: 350px), (max-height: 650px) {
+  .home-scene:not(.scene-night) .home-face,
+  .home-scene:not(.scene-night) .face-slot:nth-child(2) .home-face,
+  .home-scene:not(.scene-night).day-dandelion .home-face,
+  .home-scene:not(.scene-night).day-dandelion .face-slot:nth-child(2) .home-face {
+    width: 96px; height: 96px; left: -48px; top: -48px;
+  }
+  .sunset-art { width: 225px; height: 148.5px; margin-left: -112.5px; }
+  .dandelion-art { width: 170px; height: 170px; margin: -85px 0 0 -85px; }
 }

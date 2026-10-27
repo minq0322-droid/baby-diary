@@ -1,17 +1,25 @@
 ﻿import { useEffect, useState } from 'react';
 
 export type HomePreferences = {
+  day: 'sunset' | 'dandelion';
   night: 'moon' | 'lantern';
 };
-const defaults: HomePreferences = { night: 'moon' };
+const defaults: HomePreferences = { day: 'sunset', night: 'moon' };
 let memory: HomePreferences | undefined;
+
+export function normalizeHomePreferences(saved: unknown): HomePreferences {
+  const value = saved && typeof saved === 'object' ? saved : {};
+  return {
+    day: 'day' in value && value.day === 'dandelion' ? 'dandelion' : 'sunset',
+    night: 'night' in value && value.night === 'lantern' ? 'lantern' : 'moon',
+  };
+}
+
 function read(): HomePreferences {
   if (memory) return memory;
   try {
     const saved = JSON.parse(localStorage.getItem('yuga-home') ?? '{}');
-    return {
-      night: saved.night === 'lantern' ? 'lantern' : 'moon',
-    };
+    return normalizeHomePreferences(saved);
   } catch {
     return defaults;
   }

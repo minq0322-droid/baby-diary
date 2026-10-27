@@ -159,6 +159,22 @@ export function SettingsScreen({ store, snapshot }: Props) {
             </button>
           ))}
         </div>
+        <span className="setting-label">낮 모습</span>
+        <div
+          className="settings-list setting-theme"
+          role="group"
+          aria-label="낮 모습"
+        >
+          {(['sunset', 'dandelion'] as const).map((value) => (
+            <button
+              key={value}
+              aria-pressed={home.day === value}
+              onClick={() => changeHome({ ...home, day: value })}
+            >
+              {value === 'sunset' ? '노을 언덕' : '민들레'}
+            </button>
+          ))}
+        </div>
         <span className="setting-label">밤 모습</span>
         <div
           className="settings-list setting-theme"
