@@ -16,7 +16,7 @@ export function SceneObject({ scene }: { scene: SceneChoice; }) {
         <path d="M7 51C8 46 18 44 24 42C34 37 42 42 49 45C55 47 58 50 56 53C51 60 13 61 7 55C6 54 6 52 7 51Z" fill={`url(#${hillGradient})`} />
         <path d="M26 34H43V49H26Z" fill="#b77e78" />
         <path d="M22 35L34 24L47 35Z" fill="#806278" />
-        <path className="scene-glow" d="M32 38H38V44H32Z" fill="#ffe3a0" />
+        <path className="scene-glow" d="M32 38H38V44H32Z" fill="#fff2b8" />
       </>}
       {scene === 'dandelion' && <g className="scene-seed-sway">
         <path d="M32 24Q30 34 34 46" fill="none" stroke="#b4a382" strokeWidth="1" />
@@ -28,14 +28,14 @@ export function SceneObject({ scene }: { scene: SceneChoice; }) {
         <g transform="translate(0 17) rotate(-15 32 25)">
           <ellipse cx="32" cy="25" rx="7" ry="9" fill="#463c38" />
           <circle cx="32" cy="16" r="3" fill="#463c38" />
-          <path className="ladybug-wing" d="M32 17C20 17 23 36 32 33Z" fill="#c86457" />
-          <path d="M33 17C43 17 42 34 33 33Z" fill="#df7b66" />
+          <path className="ladybug-wing" d="M32 17C20 17 23 36 32 33Z" fill="#cf3f35" />
+          <path d="M33 17C43 17 42 34 33 33Z" fill="#ef5843" />
           <g fill="#52403c"><circle cx="28" cy="23" r="1.4" /><circle cx="28" cy="29" r="1.2" /><circle cx="36" cy="25" r="1.5" /></g>
         </g>
       </g>}
-      {scene === 'moon' && <path className="scene-glow" d="M32 19Q34 30 45 32Q34 34 32 45Q30 34 19 32Q30 30 32 19Z" fill="#ffe6ad" />}
+      {scene === 'moon' && <path className="scene-glow" d="M32 19Q34 30 45 32Q34 34 32 45Q30 34 19 32Q30 30 32 19Z" fill="#fff0bf" />}
       {scene === 'lantern' && <g className="scene-glow">
-        <path d="M25 22Q32 19 39 22L38 40Q32 44 26 40Z" fill="#eab477" />
+        <path d="M25 22Q32 19 39 22L38 40Q32 44 26 40Z" fill="#ffd18c" />
         <path d="M28 23L29 40M35 23L35 40" stroke="#b88462" fill="none" />
         <path d="M29 41H35" stroke="#ffe4a2" strokeWidth="2" />
       </g>}

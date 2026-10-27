@@ -35,13 +35,28 @@ export function separate(body: Body, bounds: Bounds, other: Body): Body {
   const angle = Math.atan2(body.y - other.y, body.x - other.x);
   let closest: Body | undefined;
   let cost = Infinity;
-  // Find the nearest separated position that also fits the scene edges.
-  for (let i = 0; i < 96; i += 1) {
-    const a = angle + i / 96 * Math.PI * 2;
+  // Exact circle/edge intersections avoid missing narrow feasible arcs.
+  const angles = [angle];
+  const gap = distance + 0.001;
+  for (const x of [bounds.left + body.radius, bounds.right - body.radius]) {
+    const ratio = (x - other.x) / gap;
+    if (Math.abs(ratio) <= 1) {
+      const a = Math.acos(ratio);
+      angles.push(a, -a);
+    }
+  }
+  for (const y of [bounds.top + body.radius, bounds.bottom - body.radius]) {
+    const ratio = (y - other.y) / gap;
+    if (Math.abs(ratio) <= 1) {
+      const a = Math.asin(ratio);
+      angles.push(a, Math.PI - a);
+    }
+  }
+  for (const a of angles) {
     const candidate = constrain({
       ...body,
-      x: other.x + Math.cos(a) * (distance + 0.01),
-      y: other.y + Math.sin(a) * (distance + 0.01)
+      x: other.x + Math.cos(a) * gap,
+      y: other.y + Math.sin(a) * gap
     }, bounds);
     if (Math.hypot(candidate.x - other.x, candidate.y - other.y) < distance) continue;
     const delta = Math.hypot(candidate.x - body.x, candidate.y - body.y);
@@ -80,14 +95,11 @@ export function step(state: FlingState, dt: number, bounds: Bounds, other?: Body
   const h = Math.min(dt, 0.1) / count;
   for (let i = 0; i < count; i += 1) {
     next.elapsed += h;
-    if (next.mode === 'fling' && (next.elapsed >= 2.5 || Math.hypot(next.vx, next.vy) < 16)) next.mode = 'return';
-    if (next.mode === 'return') {
-      next.vx += ((next.homeX - next.x) * 90 - next.vx * 19) * h;
-      next.vy += ((next.homeY - next.y) * 90 - next.vy * 19) * h;
-    } else {
-      next.vx *= Math.exp(-1.6 * h);
-      next.vy *= Math.exp(-1.6 * h);
+    if (next.mode === 'return' || Math.hypot(next.vx, next.vy) < 4) {
+      return { ...next, vx: 0, vy: 0, mode: 'idle' };
     }
+    next.vx *= Math.exp(-1.6 * h);
+    next.vy *= Math.exp(-1.6 * h);
     next.x += next.vx * h;
     next.y += next.vy * h;
     if (other && next.mode === 'fling') {
@@ -115,16 +127,6 @@ export function step(state: FlingState, dt: number, bounds: Bounds, other?: Body
       ...next,
       ...separate(next, bounds, other)
     };
-    if (next.mode === 'return' && Math.hypot(next.x - next.homeX, next.y - next.homeY) < 0.4 && Math.hypot(next.vx, next.vy) < 3) {
-      next = {
-        ...next,
-        x: next.homeX,
-        y: next.homeY,
-        vx: 0,
-        vy: 0,
-        mode: 'idle'
-      };
-    }
   }
   return next;
 }

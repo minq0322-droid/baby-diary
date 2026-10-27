@@ -37,14 +37,14 @@ describe('home fling', () => {
   it('slows under friction', () => {
     expect(step(initial, 0.1, bounds).vx).toBeLessThan(initial.vx);
   });
-  it('returns home and rests', () => {
+  it('settles where friction stops it without returning home', () => {
     let next = {
       ...initial,
       x: 600
     };
     for (let i = 0; i < 900; i += 1) next = step(next, 1 / 120, bounds);
     expect(next.mode).toBe('idle');
-    expect(next.x).toBe(initial.homeX);
+    expect(next.x).toBeGreaterThan(600);
     expect(next.vx).toBe(0);
   });
   it('separates colliding circles and reflects approaching velocity', () => {

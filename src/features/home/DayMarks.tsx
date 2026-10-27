@@ -88,11 +88,11 @@ export function DayMarks({ days, style }: {
           <circle cx="110" cy="110" r="108" fill={`url(#${fluff})`} />
         </>
       )}
-      {days.map((lit, day) => style === 'sunset' ? (
+      <g className="day-marks">{days.map((lit, day) => style === 'sunset' ? (
         <Flower key={day} lit={lit} day={day} />
       ) : (
         <Seed key={day} lit={lit} day={day} />
-      ))}
+      ))}</g>
     </svg>
   );
 }

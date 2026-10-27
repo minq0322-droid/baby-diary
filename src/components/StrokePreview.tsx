@@ -24,7 +24,8 @@ export function StrokePreview({
     });
     const draw = () => {
       if (cancelled) return;
-      const rect = canvas.getBoundingClientRect();
+      // Layout size, so an animating (scaled) parent cannot shrink the backing store.
+      const rect = { width: canvas.clientWidth, height: canvas.clientHeight };
       const ratio = window.devicePixelRatio || 1;
       canvas.width = Math.round(rect.width * ratio);
       canvas.height = Math.round(rect.height * ratio);

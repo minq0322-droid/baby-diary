@@ -90,7 +90,9 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
     const canvas = base.current!;
     const overlay = live.current!;
     const redraw = () => {
-      const rect = box.current!.getBoundingClientRect();
+      // Layout size, not getBoundingClientRect: the page opens with a scale-up animation,
+      // and measuring mid-animation left the canvas at a fraction of its real resolution.
+      const rect = { width: box.current!.clientWidth, height: box.current!.clientHeight };
       const clamped = clampView(viewRef.current, rect.width, rect.height);
       if (clamped.x !== viewRef.current.x || clamped.y !== viewRef.current.y) {
         viewRef.current = clamped;

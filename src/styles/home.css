@@ -652,8 +652,7 @@ body:has(.home-shell)::before {
   height: var(--stem-height, 120px);
   pointer-events: none;
 }
-.scene-night .day-stem,
-.travelling .day-stem { visibility: hidden; }
+.scene-night .day-stem { visibility: hidden; }
 @media (min-width: 768px) {
   .face-slots { gap: 72px; flex-wrap: nowrap; }
   .home-scene:not(.scene-night) .face-slot { left: 32%; top: 34%; }
@@ -677,8 +676,8 @@ body:has(.home-shell)::before {
   z-index: 2;
   top: calc(78px + env(safe-area-inset-top));
   right: max(calc(20px + env(safe-area-inset-right)), calc(50% - 300px));
-  width: 64px;
-  height: 64px;
+  width: 96px;
+  height: 96px;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -751,3 +750,5 @@ body:has(.home-shell)::before {
   .scene-switch-object, .scene-switch-object * { animation: none !important; }
   .scene-fade-copy { display: none; }
 }
+
+.day-stem { transform-origin: 45px 0; }
