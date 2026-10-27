@@ -1,7 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { object, subject, topic } from './josa';
+import { callName, object, subject, topic } from './josa';
 
 describe('Korean name particles', () => {
+  it('uses familiar names, dropping a surname only for three Hangul syllables', () => {
+    expect(callName('조비안')).toBe('비안이');
+    expect(callName('또이')).toBe('또이');
+    expect(callName('김민')).toBe('김민이');
+    expect(callName('이서아')).toBe('서아');
+    expect(callName('Joy')).toBe('Joy');
+    expect(callName('')).toBe('');
+    expect(topic(callName('조비안'))).toBe('비안이는');
+    expect(topic(callName('또이'))).toBe('또이는');
+  });
   it('chooses particles from the final Hangul syllable', () => {
     expect(topic('또이')).toBe('또이는');
     expect(topic('조비안')).toBe('조비안은');

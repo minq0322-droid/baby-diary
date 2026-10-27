@@ -1,5 +1,41 @@
 import { describe, expect, it, vi } from 'vitest';
-import { simplifyStroke } from './stroke';
+import { isStrokeWidth, preparePage, simplifyStroke } from './stroke';
+import { page } from '../data/testDb';
+import { migrateSnapshot } from '../data/migrate';
+import { seedChildren, seedMembers } from '../data/seed';
+import type { Stroke } from '../data/types';
+
+it('accepts old pen/eraser widths and all new eraser widths through save and migration', () => {
+  const drawing: Stroke[] = [2, 5, 8, 14, 28].map(width => ({
+    color: width === 2 || width === 5 ? 'ink' : 'erase',
+    width: width as Stroke['width'], points: [0, 0, 1, 1],
+  }));
+  const saved = preparePage({ ...page(), drawing });
+  expect(saved.drawing).toEqual(drawing);
+  const migrated = migrateSnapshot({ children: seedChildren, members: seedMembers, pages: [saved], tags: [], comments: [], reactions: [] });
+  expect(migrated.pages[0].drawing).toEqual(drawing);
+  expect([2, 5, 8, 14, 28].every(isStrokeWidth)).toBe(true);
+  expect(isStrokeWidth(10)).toBe(false);
+  expect(isStrokeWidth('14')).toBe(false);
+  expect(() => preparePage({ ...page(), drawing: [{ ...drawing[0], width: 10 as Stroke['width'] }] })).toThrow('굵기');
+});
+
+it('keeps fine zoomed detail through repeated saves', () => {
+  const stroke: Stroke = { color: 'ink', width: 2, points: [0, 0, .001, 0, .001, .001, .002, .001] };
+  expect(simplifyStroke(stroke, 1200, 960).points).toEqual(stroke.points);
+  const saved = preparePage({ ...page(), drawing: [stroke] });
+  expect(preparePage(saved).drawing[0].points).toEqual(stroke.points);
+});
+
+it.each([8, 14, 28] as const)('paints eraser width %i in surface units', width => {
+  const context = {
+    save: vi.fn(), restore: vi.fn(), beginPath: vi.fn(), moveTo: vi.fn(),
+    lineTo: vi.fn(), stroke: vi.fn(),
+  };
+  paintStroke(context as unknown as CanvasRenderingContext2D,
+    { color: 'erase', width, points: [0, 0, 1, 1] }, 600, 480, '#1E2326', 2);
+  expect(context).toMatchObject({ lineWidth: width * 2, globalCompositeOperation: 'destination-out' });
+});
 import { paintStroke } from '../features/page/strokes';
 
 describe('stroke simplification', () => {

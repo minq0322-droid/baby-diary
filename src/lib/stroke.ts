@@ -1,5 +1,9 @@
 import type { Page, Stroke } from '../data/types';
 
+export function isStrokeWidth(width: unknown): width is Stroke['width'] {
+  return [2, 5, 8, 14, 28].includes(width as number);
+}
+
 /** Only discard near-duplicate samples in logical (CSS, not device) pixels. */
 export function simplifyStroke(
   stroke: Stroke,
@@ -32,7 +36,13 @@ export function preparePage(page: Page): Page {
   const result = {
     ...page,
     id,
-    drawing: page.drawing.map((stroke) => simplifyStroke(stroke)),
+    drawing: page.drawing.map((stroke) => {
+      if (!isStrokeWidth(stroke.width)) {
+        throw new Error('그림 도구의 굵기를 확인해 주세요.');
+      }
+      // Keep detail captured at up to 4× zoom, including across repeated saves.
+      return simplifyStroke(stroke, 4096, 3276.8);
+    }),
   };
   if (new Blob([JSON.stringify(result)]).size > 200 * 1024) {
     throw new Error('그림이 너무 커서 저장할 수 없어요. 일부를 지워 주세요');

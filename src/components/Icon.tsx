@@ -15,6 +15,8 @@ export function Icon({
   name,
 }: {
   name:
+    | 'palette'
+    | 'cards'
     | 'list'
     | 'home'
     | 'calendar'
@@ -31,6 +33,8 @@ export function Icon({
   const heart =
     'M12 20.5C8.8 18 2.3 13.7 3 8.5 3.5 3.4 9 3.1 12.2 7.2 15.3 2.8 21 4.1 21.1 8.9 21.5 13.5 15.8 18.4 12 20.5Z';
   const paths = {
+    cards: <path d="M3 4h7v7H3ZM14 4h7v7h-7ZM3 15h7v6H3ZM14 15h7v6h-7Z" />,
+    palette: <path d="M12 3C6 2.6 2.7 7 3.1 12.3 3.5 18 8 21.6 12.3 21c3-.4-.8-4.2 1.8-5.1 2.3-.8 6.5 1 7-3.4C21.7 7.5 17 3.1 12 3ZM7 10h.1M10 6.8h.1M15 7.5h.1M17.7 11h.1" />,
     list: <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />,
     speech: (
       <path d="M5 4.8Q12 3.1 19 5.2C23 8 21.3 15.8 18 17Q13 18.2 8.5 16.9L4 20l.6-5C1.5 12.1 2 7 5 4.8Z" />

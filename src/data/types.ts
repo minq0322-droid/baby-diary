@@ -45,7 +45,7 @@ export type Tag = {
 
 export type Stroke = {
   color: string;
-  width: 2 | 5 | 14;
+  width: 2 | 5 | 8 | 14 | 28;
   /** Normalized x/y pairs, rounded to three decimals. */
   points: number[];
 };

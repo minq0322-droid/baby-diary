@@ -1,5 +1,5 @@
 import type { Note } from '../../data/types';
-import { topic } from '../../lib/josa';
+import { callName, topic } from '../../lib/josa';
 
 type Props = {
   name: string;
@@ -28,7 +28,7 @@ export function WritingArea({ name, notes, editing, writer, onText }: Props) {
               key={writer}
               className={`note-editor ${writer}-writing`}
               aria-label={`${writer === 'dad' ? '아빠' : '엄마'}의 일기`}
-              placeholder={`오늘 ${topic(name)}…`}
+              placeholder={`오늘 ${topic(callName(name))}…`}
               value={current?.text ?? ''}
               onChange={(event) => onText(event.target.value)}
             />

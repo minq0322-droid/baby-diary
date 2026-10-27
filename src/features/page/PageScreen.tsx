@@ -16,6 +16,7 @@ import { preparePage } from '../../lib/stroke';
 import { BadgeSheet } from './BadgeSheet';
 import { CommentsSheet } from './CommentsSheet';
 import { DiarySheet } from './DiarySheet';
+import { ParentFace } from './ParentFace';
 import { DrawingArea } from './DrawingArea';
 import { writeNote } from './notes';
 import { WritingArea } from './WritingArea';
@@ -289,10 +290,11 @@ export function PageScreen({
           {(['mom', 'dad'] as const).map((author) => (
             <button
               key={author}
+              aria-label={author === 'mom' ? '엄마 페이지' : '아빠 페이지'}
               aria-pressed={page.authorId === author}
               onClick={() => navigate(() => onAuthor(author))}
             >
-              {author === 'mom' ? '엄마의 페이지' : '아빠의 페이지'}
+              <ParentFace author={author} />
             </button>
           ))}
         </div>
@@ -301,7 +303,6 @@ export function PageScreen({
           store={store}
           editing={editing && ownPage && !busy && !leaving && !loading}
           onChange={(next) => setPage({ ...next, color: page.color })}
-          onPalette={() => setSheet('palette')}
           onError={setError}
           onBusy={setBusy}
           onDrawing={setDrawing}
@@ -361,6 +362,11 @@ export function PageScreen({
           >
             <span>{editing ? '저장' : '수정'}</span>
           </button>
+          {editing && ownPage ? (
+            <button className="page-palette" aria-label="페이지 색 고르기" onClick={() => setSheet('palette')}>
+              <Icon name="palette" />
+            </button>
+          ) : <span className="page-palette" aria-hidden="true" />}
         </footer>
       </div>
       {sheet === 'badges' && (

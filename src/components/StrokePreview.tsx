@@ -31,27 +31,34 @@ export function StrokePreview({
       const context = canvas.getContext('2d');
       if (!context) return;
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      // Letterbox if a caller constrains the preview to a different shape.
+      const width = Math.min(rect.width, rect.height * 5 / 4);
+      const height = width * 4 / 5;
+      context.translate((rect.width - width) / 2, (rect.height - height) / 2);
+      context.beginPath();
+      context.rect(0, 0, width, height);
+      context.clip();
       (page?.drawing ?? []).forEach((stroke) => {
         paintStroke(
           context,
           stroke,
-          rect.width,
-          rect.height,
+          width,
+          height,
           getComputedStyle(canvas).color,
-          rect.width / 340,
+          width / 300,
         );
       });
       images.forEach(({ photo, image }) => {
         if (!image.complete || !image.naturalWidth) return;
-        const width = photo.w * rect.width;
-        const height = (width * image.naturalHeight) / image.naturalWidth;
+        const photoWidth = photo.w * width;
+        const photoHeight = (photoWidth * image.naturalHeight) / image.naturalWidth;
         context.save();
         context.translate(
-          photo.x * rect.width + width / 2,
-          photo.y * rect.height + height / 2,
+          photo.x * width + photoWidth / 2,
+          photo.y * height + photoHeight / 2,
         );
         context.rotate((photo.rotation * Math.PI) / 180);
-        context.drawImage(image, -width / 2, -height / 2, width, height);
+        context.drawImage(image, -photoWidth / 2, -photoHeight / 2, photoWidth, photoHeight);
         context.restore();
       });
     };

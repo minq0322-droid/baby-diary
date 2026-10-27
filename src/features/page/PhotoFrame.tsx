@@ -2,10 +2,11 @@ import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import type { DataStore } from '../../data/DataStore';
 import type { Photo } from '../../data/types';
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
-export function PhotoFrame({ photo, store, editing, onChange }: {
+export function PhotoFrame({ photo, store, editing, cancelGesture = false, onChange }: {
   photo: Photo;
   store: DataStore;
   editing: boolean;
+  cancelGesture?: boolean;
   onChange: (photo: Photo) => void;
 }) {
   const [src, setSrc] = useState('');
@@ -18,6 +19,17 @@ export function PhotoFrame({ photo, store, editing, onChange }: {
     photo: Photo;
     resize: boolean;
   }>();
+  useEffect(() => {
+    if (!cancelGesture || !gesture.current) return;
+    gesture.current = undefined;
+    const element = ref.current;
+    if (element) {
+      element.style.left = `${photo.x * 100}%`;
+      element.style.top = `${photo.y * 100}%`;
+      element.style.width = `${photo.w * 100}%`;
+      element.style.transform = `rotate(${photo.rotation}deg)`;
+    }
+  }, [cancelGesture, photo]);
   useEffect(() => {
     let cancelled = false;
     void (store.resolvePhotoSrc ? store.resolvePhotoSrc(photo.src) : Promise.resolve(photo.src))
@@ -38,7 +50,7 @@ export function PhotoFrame({ photo, store, editing, onChange }: {
     onChange(draft.current);
   };
   const start = (event: PointerEvent<HTMLDivElement>) => {
-    if (!editing || gesture.current)
+    if (!editing || cancelGesture || gesture.current)
       return;
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
