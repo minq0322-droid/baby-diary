@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>노을 지는 언덕 · 낮 홈 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root { color-scheme: light; --bg: #f5f4f0; --surface: #fffefa; --text: #514b56; --sub: #8b818b; --line: #e6dfe3; --mint: #f7ddd1; --shadow: #977b9620; }
+* { box-sizing: border-box; }
+html { overflow-x: clip; }
+body { margin: 0; padding: 42px 16px 70px; background: var(--bg); color: var(--text); font: 15px/1.55 Pretendard, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; min-width: 44px; min-height: 44px; padding: 10px; touch-action: manipulation; word-break: keep-all; }
+button:focus-visible { outline: 3px solid #b88758; outline-offset: 4px; }
+p { margin: 0; word-break: keep-all; }
+
+main{
+  display:flex;
+  align-items:center;
+  flex-direction:column;
+  gap:38px}
+
+figure{
+  margin:0;
+  width:375px;
+  max-width:100%}
+
+figcaption{
+  font-size:12px;
+  color:var(--sub);
+  margin:0 0 10px 8px;
+  letter-spacing:.025em}
+
+.phone{
+  position:relative;
+  width:375px;
+  height:812px;
+  max-width:100%;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:39px;
+  background:var(--mint);
+  isolation:isolate;
+  box-shadow:0 22px 70px var(--shadow)}
+
+.home{
+  position:absolute;
+  inset:0;
+  overflow:hidden}
+
+.date{
+  position:absolute;
+  top:68px;
+  left:0;
+  right:0;
+  text-align:center;
+  font-size:13px;
+  letter-spacing:.06em;
+  z-index:2}
+
+.status{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:43px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 25px 0;
+  font-size:11px;
+  z-index:8;
+  pointer-events:none}
+
+.status b{
+  font-size:12px}
+
+.island{
+  position:absolute;
+  left:50%;
+  top:12px;
+  width:82px;
+  height:19px;
+  background:currentColor;
+  border-radius:24px;
+  transform:translateX(-50%);
+  opacity:.85}
+
+.homebar{
+  position:absolute;
+  bottom:max(9px,env(safe-area-inset-bottom));
+  left:calc(50% - 54px);
+  height:4px;
+  width:108px;
+  background:currentColor;
+  opacity:.28;
+  border-radius:5px;
+  z-index:12;
+  pointer-events:none}
+
+.photo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  display:block}
+
+.portrait{
+  border-radius:50%;
+  overflow:hidden;
+  display:block}
+
+.options{
+  display:flex;
+  justify-content:center;
+  gap:4px;
+  margin-bottom:14px}
+
+.options button{
+  font-size:12px;
+  border-radius:24px;
+  border:1px solid var(--line)}
+
+.options [aria-pressed=true]{
+  background:var(--text);
+  color:var(--bg)}
+
+.record-bubble { position: absolute; left: 50%; bottom: calc(100% + 10px); width: max-content; max-width: 240px; transform: translateX(-50%); border: 1px solid #fff0c84d; border-radius: 18px; padding: 9px 13px; color: #fff4d8; background: #253b3bf2; box-shadow: 0 5px 18px #10232230; font-size: 12px; opacity: 0; pointer-events: none; }
+
+.record-bubble.visible { opacity: 1; }
+
+.record-bubble::after { content: ''; position: absolute; bottom: -5px; left: calc(50% - 4px); width: 8px; height: 8px; background: #253b3b; transform: rotate(45deg); }
+header { max-width: 690px; margin: 0 auto 22px; }
+.eyebrow { color: var(--sub); font-size: 11px; letter-spacing: .12em; }
+.options { justify-content: flex-start; gap: 6px; margin: 14px 0 0; flex-wrap: wrap; }
+.options button { padding: 7px 16px; background: #fffefa80; }
+.options [aria-pressed=true] { background: var(--text); }
+main { gap: 0; }
+.phone { container-type: inline-size; }
+.home { background: var(--scene); }
+.scene { position: absolute; left: 50%; top: 50%; width: 375px; height: 812px; transform: translate(-50%, -50%) scale(var(--scene-scale, 1)); transform-origin: center; }
+.landscape { position: absolute; inset: 0; width: 375px; height: 812px; pointer-events: none; }
+.date { color: var(--scene-ink); top: 68px; padding-top: env(safe-area-inset-top); }
+.status, .homebar { color: var(--scene-ink); }
+.kid { position: absolute; width: var(--w); height: var(--h); left: var(--x); top: var(--y); animation: float 12s ease-in-out infinite alternate; }
+.kid.second { animation-delay: -7s; animation-duration: 15s; }
+.kid-art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.face { position: absolute; left: var(--fx); top: var(--fy); width: var(--size); height: var(--size); padding: 0; border-radius: 50%; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+/* C-1 circular photo slot and its original sphere lighting. */
+.face .portrait { position: relative; width: 100%; height: 100%; isolation: isolate; border: 1px solid #fff1ba9c; box-shadow: 0 0 9px #fff2b677, 0 0 30px var(--halo), 0 0 65px var(--halo), 7px 12px 22px #22362f30; }
+.face .portrait::after { content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(circle at 26% 22%, #fffbe45c, transparent 48%), radial-gradient(circle at 28% 26%, transparent 38%, #79501e26 72%, #2d281a91 100%); box-shadow: inset 2px 2px 5px #fff9dbb3, inset -6px -8px 13px #49362355; }
+.face .portrait { border: 3px solid var(--kid-color); background: var(--kid-color); }
+.record-bubble { z-index: 10; color: #fff4e5; }
+.nav { position: absolute; z-index: 4; bottom: max(36px, calc(env(safe-area-inset-bottom) + 22px)); left: 0; right: 0; display: flex; justify-content: center; gap: 29px; color: var(--scene-ink); }
+.nav button { width: 48px; padding: 5px 0; display: flex; align-items: center; flex-direction: column; gap: 4px; font-size: 10px; opacity: .9; }
+.nav svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+.nav button:hover { opacity: 1; }
+.hill { transform-origin: center bottom; animation: hill-drift 22s ease-in-out infinite alternate; }
+.hill.near { animation-delay: -9s; animation-duration: 27s; }
+.cloud { animation: cloud-drift 30s ease-in-out infinite alternate; }
+.cloud.far { animation-delay: -14s; animation-duration: 39s; }
+.bird { animation: glide 25s ease-in-out infinite alternate; }
+.grass { transform-origin: center bottom; animation: grass-sway 7s ease-in-out infinite alternate; }
+.grass.back { animation-delay: -3s; animation-duration: 9s; }
+.drifting-seed { animation: seed-drift 24s ease-in-out infinite; }
+.drifting-seed.other { animation-delay: -11s; }
+.sunset { --scene: radial-gradient(ellipse at 17% 34%, #fff0bd88, transparent 49%), linear-gradient(180deg, #c8bcd8, #f1c3cd 38%, #ffdbb3 65%, #d5a3b0); --scene-ink: #674b65; }
+.sunset .kid { animation-name: breathe; }
+.sunset .nav { color: #42364f; }
+.balloon { --scene: radial-gradient(ellipse at 25% 20%, #fcfcfbaa, transparent 55%), linear-gradient(180deg, #b7d7e8, #e1edf0 62%, #f4eadb); --scene-ink: #486679; }
+.balloon .face .portrait { box-shadow: 0 3px 15px #9e7e7920, inset 0 0 8px #fff9; }
+.dandelion { --scene: radial-gradient(ellipse at 22% 24%, #fffbd699, transparent 52%), linear-gradient(180deg, #c9dfd1, #e5ead0 51%, #a9c898); --scene-ink: #4a6659; }
+.dandelion .kid { animation-name: head-sway; transform-origin: 50% 100%; }
+.dandelion .nav { color: #2c493e; }
+.still *, .still *::before, .still *::after { animation-play-state: paused !important; }
+@keyframes float { from { transform: translateY(0) rotate(-1deg); } to { transform: translateY(-8px) rotate(1deg); } }
+@keyframes breathe { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+@keyframes hill-drift { from { transform: translateX(-2px); } to { transform: translateX(2px); } }
+@keyframes cloud-drift { from { transform: translateX(-9px); } to { transform: translateX(12px); } }
+@keyframes glide { from { transform: translate(-10px, 2px); } to { transform: translate(20px, -5px); } }
+@keyframes grass-sway { from { transform: skewX(-1deg); } to { transform: skewX(1.5deg); } }
+@keyframes head-sway { from { transform: rotate(-.7deg); } to { transform: rotate(.7deg); } }
+@keyframes seed-drift { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 15%, 75% { opacity: .7; } 100% { transform: translate(42px, -65px) rotate(22deg); opacity: 0; } }
+@media (max-width: 410px) { body { padding: 24px 8px 50px; } header { padding-inline: 12px; } .phone { border-radius: 30px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } .drifting-seed { opacity: .55; } }
+
+.tab-hidden *, .tab-hidden *::before, .tab-hidden *::after { animation-play-state: paused !important; }
+</style>
+</head>
+<body class="sunset">
+<header><div class="eyebrow">낮 홈 시안 01 · 노을 지는 언덕</div><div class="options" role="group" aria-label="시안 움직임"><button data-motion="move" aria-pressed="true">잔잔한 움직임</button><button data-motion="still" aria-pressed="false">멈춰 보기</button></div></header>
+<main><figure><figcaption>01 &nbsp; 노을 지는 언덕</figcaption><div class="phone"><div class="status" aria-hidden="true"><b>9:41</b><i class="island"></i><span>▂▄▆ &nbsp; ▰</span></div><div class="homebar" aria-hidden="true"></div><section class="home" aria-label="아이 선택 홈"><div class="scene"><svg class="landscape" viewBox="0 0 375 812" aria-hidden="true"><defs>
+  <linearGradient id="hill-peach" x2=".2" y2="1"><stop stop-color="#f5c4ac"/><stop offset="1" stop-color="#e7a5a8"/></linearGradient>
+  <linearGradient id="hill-rose" x2=".3" y2="1"><stop stop-color="#dea5ae"/><stop offset="1" stop-color="#c58caa"/></linearGradient>
+  <linearGradient id="hill-mauve" x2=".1" y2="1"><stop stop-color="#c599b6"/><stop offset="1" stop-color="#a887ad"/></linearGradient>
+  <linearGradient id="hill-purple" x2="0" y2="1"><stop stop-color="#aa8ba9"/><stop offset="1" stop-color="#8d819f"/></linearGradient>
+  <radialGradient id="warm-glow"><stop stop-color="#fff8d7" stop-opacity=".75"/><stop offset=".4" stop-color="#ffe5ae" stop-opacity=".25"/><stop offset="1" stop-color="#ffe5ae" stop-opacity="0"/></radialGradient>
+  <filter id="haze" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+  <linearGradient id="meadow" x2=".2" y2="1"><stop stop-color="#b9d09c"/><stop offset="1" stop-color="#7fa98c"/></linearGradient>
+  <linearGradient id="meadow-front" x2=".3" y2="1"><stop stop-color="#99bc8e"/><stop offset="1" stop-color="#729b84"/></linearGradient>
+</defs><ellipse cx="138" cy="285" rx="175" ry="165" fill="url(#warm-glow)"/>
+    <g opacity=".24" filter="url(#haze)" fill="url(#warm-glow)"><ellipse cx="138" cy="303" rx="32" ry="275" transform="rotate(-48 138 303)"/><ellipse cx="138" cy="303" rx="42" ry="310" transform="rotate(30 138 303)"/></g>
+    <g class="bird" stroke="#977c93" fill="none" stroke-width="1.15" stroke-linecap="round" opacity=".5"><path d="M257 173q6-5 12 0q5-5 11-1M292 190q4-4 8-1q4-4 8-1"/></g>
+    <g class="hill"><path d="M-15 395Q75 349 151 371T390 367V825H-15Z" fill="url(#hill-peach)"/><path d="M-15 462Q75 435 156 474T390 455V825H-15Z" fill="url(#hill-rose)"/></g>
+    <g class="hill near"><path d="M-15 672Q74 634 166 601Q252 568 390 617V825H-15Z" fill="url(#hill-mauve)"/><path d="M-15 738Q108 680 222 720T390 699V825H-15Z" fill="url(#hill-purple)"/></g>
+    <path d="M-10 396Q78 350 151 372T385 368" stroke="#ffe5d3" stroke-width="1.3" opacity=".33" fill="none"/>
+    <path d="M-10 674Q74 634 166 601Q253 569 385 616" stroke="#f5d6d3" stroke-width="1.2" opacity=".3" fill="none"/>
+    <g opacity=".12" filter="url(#haze)" fill="#fff5e1"><ellipse cx="70" cy="446" rx="130" ry="14"/><ellipse cx="280" cy="669" rx="155" ry="19"/></g></svg><div class="kid" style="--x:2px;--y:210px;--w:300px;--h:198px;--fx:86px;--fy:0px;--size:128px;--kid-color:#F4B9B8;--halo:#f4b9b855"><svg class="kid-art" viewBox="0 0 300 198" aria-hidden="true"><ellipse cx="150" cy="64" rx="112" ry="106" fill="url(#warm-glow)"/><g class="day-mark written" data-day="0" transform="translate(7.00 166.00)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="1" transform="translate(16.80 163.51)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="2" transform="translate(26.60 161.06)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="3" transform="translate(36.40 158.66)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="4" transform="translate(46.20 156.34)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="5" transform="translate(56.00 154.14)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="6" transform="translate(65.80 152.08)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="7" transform="translate(75.60 150.18)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="8" transform="translate(85.40 148.47)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="9" transform="translate(95.20 146.96)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="10" transform="translate(105.00 145.68)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="11" transform="translate(114.80 144.63)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="12" transform="translate(124.60 143.84)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="13" transform="translate(134.40 143.30)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="14" transform="translate(144.20 143.03)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="15" transform="translate(154.00 143.03)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="16" transform="translate(163.80 143.30)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="17" transform="translate(173.60 143.84)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="18" transform="translate(183.40 144.63)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="19" transform="translate(193.20 145.68)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="20" transform="translate(203.00 146.96)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="21" transform="translate(212.80 148.47)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="22" transform="translate(222.60 150.18)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="23" transform="translate(232.40 152.08)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="24" transform="translate(242.20 154.14)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="25" transform="translate(252.00 156.34)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="26" transform="translate(261.80 158.66)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="27" transform="translate(271.60 161.06)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark written" data-day="28" transform="translate(281.40 163.51)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="29" transform="translate(291.20 166.00)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g></svg><button class="face" aria-label="조비안, 최근 30일 중 18일 기록"><span class="portrait"><img class="photo" alt=""></span><span class="record-bubble" aria-hidden="true"></span></button></div>
+<div class="kid second" style="--x:68px;--y:445px;--w:300px;--h:198px;--fx:93.5px;--fy:0px;--size:113px;--kid-color:#CDEFE2;--halo:#cdefe255"><svg class="kid-art" viewBox="0 0 300 198" aria-hidden="true"><ellipse cx="150" cy="64" rx="112" ry="106" fill="url(#warm-glow)"/><g class="day-mark written" data-day="0" transform="translate(7.00 166.00)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="1" transform="translate(16.80 163.51)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="2" transform="translate(26.60 161.06)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="3" transform="translate(36.40 158.66)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="4" transform="translate(46.20 156.34)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="5" transform="translate(56.00 154.14)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="6" transform="translate(65.80 152.08)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="7" transform="translate(75.60 150.18)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="8" transform="translate(85.40 148.47)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="9" transform="translate(95.20 146.96)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="10" transform="translate(105.00 145.68)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="11" transform="translate(114.80 144.63)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="12" transform="translate(124.60 143.84)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="13" transform="translate(134.40 143.30)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="14" transform="translate(144.20 143.03)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="15" transform="translate(154.00 143.03)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="16" transform="translate(163.80 143.30)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="17" transform="translate(173.60 143.84)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="18" transform="translate(183.40 144.63)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fff5e8" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="19" transform="translate(193.20 145.68)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="20" transform="translate(203.00 146.96)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="21" transform="translate(212.80 148.47)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="22" transform="translate(222.60 150.18)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#ffe9c1" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="23" transform="translate(232.40 152.08)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="24" transform="translate(242.20 154.14)"><path d="M0 0q-1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="25" transform="translate(252.00 156.34)"><path d="M0 0q1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark written" data-day="26" transform="translate(261.80 158.66)"><path d="M0 0q-1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><g><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(0)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(72)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(144)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(216)"/><ellipse cy="-2.15" rx="1.5" ry="2.15" fill="#fce0e3" transform="rotate(288)"/><circle r="1.15" fill="#d3a573"/></g></g><g class="day-mark unwritten" data-day="27" transform="translate(271.60 161.06)"><path d="M0 0q1.1 4 0 6" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="28" transform="translate(281.40 163.51)"><path d="M0 0q-1.1 4 0 7" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g><g class="day-mark unwritten" data-day="29" transform="translate(291.20 166.00)"><path d="M0 0q1.1 4 0 8" fill="none" stroke="#8c8d78" stroke-width=".75"/><path d="M0 1C-3-1-1.8-3.3 0-5C1.8-3.3 3-1 0 1Z" fill="#d0b5ad" stroke="#9e8c8d" stroke-width=".5"/></g></svg><button class="face" aria-label="또이, 최근 30일 중 7일 기록"><span class="portrait"><img class="photo" alt=""></span><span class="record-bubble" aria-hidden="true"></span></button></div></div><p class="date">10월 27일</p><nav class="nav" aria-label="홈 메뉴"><button aria-label="목록"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12a2 2 0 0 1 2 2v14H7a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2Z"/><path d="M8 4v12M8 9h8M11 13h5M4 17h16"/></svg><span>목록</span></button><button aria-label="달력"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M8 14h2M14 14h2M8 17h2"/></svg><span>달력</span></button><button aria-label="설정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 3-.7 2.2-2 .9-2.1-.5-2 3.4 1.5 1.7v2.6L3.2 15l2 3.4 2.1-.5 2 .9L10 21h4l.7-2.2 2-.9 2.1.5 2-3.4-1.5-1.7v-2.6L20.8 9l-2-3.4-2.1.5-2-.9L14 3Z"/><circle cx="12" cy="12" r="3"/></svg><span>설정</span></button></nav></section></div></figure></main>
+<script>
+function illustration(kid, variant = 0) {
+  const bg = kid ? ['#d8e8c9', '#f3ddc6', '#d7e7eb'][variant % 3] : ['#f2d4bd', '#e4dded', '#d9e7d7'][variant % 3];
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><rect width="200" height="200" fill="' + bg + '"/><ellipse cx="100" cy="205" rx="65" ry="53" fill="' + (kid ? '#f6f0dd' : '#8ca8a0') + '"/>' + (kid ? '<path d="M67 62C97 26 143 55 139 95C157 139 125 164 91 157C54 151 43 106 67 62Z" fill="#f9e2c7"/><path d="M99 52q-6-22 9-23q15 3 0 12" fill="none" stroke="#8a7056" stroke-width="4" stroke-linecap="round"/>' : '<ellipse cx="100" cy="103" rx="59" ry="65" fill="#f6dcc1"/><path d="M42 89C30 36 69 25 105 30C146 24 164 61 155 93L140 75L130 57L112 69L100 54L79 71L66 62L53 86Z" fill="#4d4941"/>') + '<path d="M73 102q5-6 10 0M117 102q5-6 10 0" fill="none" stroke="#655344" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="67" cy="118" rx="10" ry="6" fill="#ecb0a1" opacity=".55"/><ellipse cx="134" cy="118" rx="10" ry="6" fill="#ecb0a1" opacity=".55"/><path d="M91 125q9 10 18 0" fill="none" stroke="#ad7565" stroke-width="3" stroke-linecap="round"/>' + (kid ? '<path d="M89 165l11 12 12-12" fill="none" stroke="#ccb98e" stroke-width="3"/>' : '<path d="M85 165l15 16 15-16" fill="none" stroke="#eef1dc" stroke-width="4"/>') + '</svg>';
+}
+const names = ['조비안', '또이'];
+const counts = [18, 7];
+const colors = ['#F4B9B8', '#CDEFE2'];
+document.querySelectorAll('.face').forEach((face, kid) => {
+  // Exact C-1 drawing; only the illustration's paper background takes the page color.
+  const art = illustration(kid).replace(/(<rect width="200" height="200" fill=")[^"]+/, '$1' + colors[kid]);
+  face.querySelector('img').src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(art);
+  const summary = '최근 30일 중 ' + counts[kid] + '일 기록';
+  face.setAttribute('aria-label', names[kid] + ', ' + summary);
+  const bubble = face.querySelector('.record-bubble');
+  bubble.textContent = summary;
+  let holdTimer;
+  let bubbleTimer;
+  let pointerStart;
+  const showBubble = () => {
+    clearTimeout(bubbleTimer);
+    bubble.classList.add('visible');
+    bubbleTimer = setTimeout(() => bubble.classList.remove('visible'), 2000);
+  };
+  face.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') showBubble(); });
+  face.addEventListener('focus', showBubble);
+  face.addEventListener('pointerdown', event => {
+    pointerStart = { x: event.clientX, y: event.clientY };
+    holdTimer = setTimeout(showBubble, 550);
+  });
+  face.addEventListener('pointermove', event => {
+    if (pointerStart && Math.hypot(event.clientX - pointerStart.x, event.clientY - pointerStart.y) > 10) clearTimeout(holdTimer);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(type => face.addEventListener(type, () => {
+    clearTimeout(holdTimer);
+    pointerStart = null;
+  }));
+  face.addEventListener('contextmenu', event => event.preventDefault());
+});
+// Scale the whole illustration together, preserving circles and all thirty marks at 320px.
+new ResizeObserver(([entry]) => {
+  document.querySelector('.scene').style.setProperty('--scene-scale', Math.min(1, entry.contentRect.width / 375));
+}).observe(document.querySelector('.home'));
+document.querySelectorAll('[data-motion]').forEach(button => button.addEventListener('click', () => {
+  document.querySelector('.phone').classList.toggle('still', button.dataset.motion === 'still');
+  document.querySelectorAll('[data-motion]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+}));
+document.addEventListener('visibilitychange', () => {
+  document.querySelector('.scene').style.animationPlayState = document.hidden ? 'paused' : '';
+  document.querySelector('.phone').classList.toggle('tab-hidden', document.hidden);
+});
+</script>
+</body>
+</html>
