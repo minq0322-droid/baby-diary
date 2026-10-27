@@ -66,6 +66,7 @@ export function useScene(
       previous = now;
       if (!reduced.matches) elapsed += dt;
       const t = reduced.matches ? 0 : elapsed;
+      root.style.setProperty('--scene-object-time', `${-t}s`);
       ctx.clearRect(0, 0, width, height);
       stars.forEach((star) => {
         ctx.globalAlpha = night * (reduced.matches ? star.alpha : star.alpha * (0.72 + 0.28 * (0.5 + 0.5 * Math.sin(t * star.speed + star.phase))));

@@ -20,8 +20,9 @@ export function ArchiveScreen({
   const [filter, setFilter] = useState('');
   const viewKey = 'archive-view:' + store.getCurrentMemberId();
   const [list, setList] = useState(() => {
-    try { return localStorage.getItem(viewKey) === 'list'; }
-    catch { return false; }
+    // List view is the default; cards only when this viewer chose them.
+    try { return localStorage.getItem(viewKey) !== 'cards'; }
+    catch { return true; }
   });
   const filtered = snapshot.pages.filter(
     (page) =>

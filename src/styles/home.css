@@ -670,7 +670,7 @@ body:has(.home-shell)::before {
   .sunset-art { width: 225px; height: 148.5px; margin-left: -112.5px; }
   .dandelion-art { width: 170px; height: 170px; margin: -85px 0 0 -85px; }
 }
-/* Artwork control sits below the date, behind all moving faces. */
+/* Each artwork control belongs to its scene, behind the moving faces. */
 .scene-switch-object {
   position: absolute;
   z-index: 2;
@@ -687,6 +687,21 @@ body:has(.home-shell)::before {
   -webkit-tap-highlight-color: transparent;
 }
 .scene-switch-object svg { display: block; width: 100%; height: 100%; }
+.scene-switch-object[data-scene='sunset'] { width: 64px; height: 64px; right: auto; }
+.scene-switch-object[data-scene='moon'] { width: 64px; height: 64px; top: 19%; }
+.scene-switch-object[data-scene='lantern'] { width: 64px; height: 64px; top: 25%; opacity: .65; }
+.scene-sun-halo { transform-origin: 32px 32px; animation: scene-sun-breathe 6s ease-in-out infinite; }
+.scene-sun-disc { animation: scene-sun-sink 14s ease-in-out infinite; }
+.scene-sun-rim { animation: scene-heat 3.5s ease-in-out infinite; opacity: .3; }
+.scene-star { transform-origin: 32px 32px; animation: scene-star-twinkle 4.5s ease-in-out infinite; opacity: .65; }
+.scene-star-flare { transform-origin: 32px 32px; animation: scene-star-flare 12s ease-in-out infinite; opacity: .25; }
+.scene-lantern-float { animation: scene-lantern-float 8s ease-in-out infinite; }
+@keyframes scene-sun-breathe { 0%, 100% { opacity: .65; transform: scale(.92); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes scene-sun-sink { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(2px); } }
+@keyframes scene-heat { 0%, 100% { opacity: .2; transform: translateY(0); } 50% { opacity: .4; transform: translateY(-.5px); } }
+@keyframes scene-star-twinkle { 0%, 100% { opacity: .6; transform: scale(.96); } 50% { opacity: .76; transform: scale(1.04); } }
+@keyframes scene-star-flare { 0%, 84%, 100% { opacity: .2; transform: scale(1); } 91% { opacity: .5; transform: scale(1.15); } }
+@keyframes scene-lantern-float { 0%, 100% { transform: translate(-2px, 2px) rotate(-2deg); } 50% { transform: translate(2px, -3px) rotate(2deg); } }
 .scene-switch-object:focus-visible { outline: none; }
 .scene-switch-object[data-keyboard='true']:focus-visible::after {
   content: '';
@@ -705,6 +720,11 @@ body:has(.home-shell)::before {
 .scene-glow { animation: scene-object-glow 4s ease-in-out infinite; }
 .ladybug-wing { transform-origin: 32px 17px; animation: scene-wing 9s ease-in-out infinite; }
 .scene-seed-sway { transform-origin: 32px 20px; animation: scene-seed-sway 7s ease-in-out infinite; }
+/* Sample the existing shared scene clock, so hidden tabs freeze every object. */
+.scene-switch-object svg * {
+  animation-play-state: paused;
+  animation-delay: var(--scene-object-time, 0s);
+}
 @keyframes scene-seed-sway {
   0%, 100% { transform: rotate(-5deg); }
   50% { transform: rotate(5deg); }

@@ -2,6 +2,7 @@ import type { Bounds, FlingState } from './fling';
 import { constrain, dragTo, separate, step } from './fling';
 import { ridgeY, wanderStep, wanderTarget, type Point } from './wander';
 import type { DragDetail } from './useFaceGesture';
+import { sunsetSwitcherPosition } from './switcherPosition';
 
 // Shares the canvas clock. All geometry reads happen on resize, never in a frame.
 export function faceMotion(
@@ -42,7 +43,19 @@ export function faceMotion(
     const scene = root.getBoundingClientRect();
     const nav = root.querySelector('.home-navigation')!.getBoundingClientRect();
     const date = root.querySelector('.scene-date')!.getBoundingClientRect();
-    const object = root.querySelector('.scene-switch-object')?.getBoundingClientRect();
+    const switcher = root.querySelector<HTMLElement>('.scene-switch-object');
+    if (switcher) {
+      if (!dark && dayStyle === 'sunset') {
+        const position = sunsetSwitcherPosition(scene.width, scene.height);
+        switcher.style.left = `${position.left}px`;
+        switcher.style.top = `${position.top}px`;
+        switcher.querySelector('.scene-sun-clip')?.setAttribute('transform', position.clipTransform);
+      } else {
+        switcher.style.removeProperty('left');
+        switcher.style.removeProperty('top');
+      }
+    }
+    const object = switcher?.getBoundingClientRect();
     avoid = object && {
       x: object.left - scene.left + object.width / 2,
       y: object.top - scene.top + object.height / 2,

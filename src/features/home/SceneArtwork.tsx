@@ -2,21 +2,26 @@ import { useId } from 'react';
 import type { SceneChoice } from './sceneChoice';
 
 export function SceneObject({ scene }: { scene: SceneChoice; }) {
-  const hillGradient = useId();
+  const sunGlow = useId();
   return (
     <svg viewBox="0 0 64 64" aria-hidden="true">
       {scene === 'sunset' && <>
         <defs>
-          <linearGradient id={hillGradient} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#a98caa" stopOpacity=".65" />
-            <stop offset=".45" stopColor="#a98caa" stopOpacity=".45" />
-            <stop offset="1" stopColor="#a98caa" stopOpacity="0" />
-          </linearGradient>
+          <radialGradient id={sunGlow}>
+            <stop stopColor="#ed977d" stopOpacity=".5" />
+            <stop offset="1" stopColor="#ed977d" stopOpacity="0" />
+          </radialGradient>
+          <clipPath id={`${sunGlow}-ridge`}>
+            <path className="scene-sun-clip" d="M-15 0H390V367Q227 393 151 371Q75 349-15 395Z" />
+          </clipPath>
         </defs>
-        <path d="M7 51C8 46 18 44 24 42C34 37 42 42 49 45C55 47 58 50 56 53C51 60 13 61 7 55C6 54 6 52 7 51Z" fill={`url(#${hillGradient})`} />
-        <path d="M26 34H43V49H26Z" fill="#b77e78" />
-        <path d="M22 35L34 24L47 35Z" fill="#806278" />
-        <path className="scene-glow" d="M32 38H38V44H32Z" fill="#fff2b8" />
+        <g clipPath={`url(#${sunGlow}-ridge)`}>
+          <circle className="scene-sun-halo" cx="32" cy="32" r="30" fill={`url(#${sunGlow})`} />
+          <g className="scene-sun-disc">
+            <circle cx="32" cy="32" r="15" fill="#df806e" />
+            <path className="scene-sun-rim" d="M17 32A15 15 0 0 1 47 32" fill="none" stroke="#ffd1a0" strokeWidth=".8" />
+          </g>
+        </g>
       </>}
       {scene === 'dandelion' && <g className="scene-seed-sway">
         <path d="M32 24Q30 34 34 46" fill="none" stroke="#b4a382" strokeWidth="1" />
@@ -33,12 +38,15 @@ export function SceneObject({ scene }: { scene: SceneChoice; }) {
           <g fill="#52403c"><circle cx="28" cy="23" r="1.4" /><circle cx="28" cy="29" r="1.2" /><circle cx="36" cy="25" r="1.5" /></g>
         </g>
       </g>}
-      {scene === 'moon' && <path className="scene-glow" d="M32 19Q34 30 45 32Q34 34 32 45Q30 34 19 32Q30 30 32 19Z" fill="#fff0bf" />}
-      {scene === 'lantern' && <g className="scene-glow">
+      {scene === 'moon' && <g className="scene-star" fill="#f5f2e9">
+        <circle cx="32" cy="32" r="1.9" />
+        <path className="scene-star-flare" d="M32 27Q32.5 31.5 37 32Q32.5 32.5 32 37Q31.5 32.5 27 32Q31.5 31.5 32 27Z" />
+      </g>}
+      {scene === 'lantern' && <g className="scene-lantern-float"><g className="scene-glow">
         <path d="M25 22Q32 19 39 22L38 40Q32 44 26 40Z" fill="#ffd18c" />
         <path d="M28 23L29 40M35 23L35 40" stroke="#b88462" fill="none" />
         <path d="M29 41H35" stroke="#ffe4a2" strokeWidth="2" />
-      </g>}
+      </g></g>}
     </svg>
   );
 }
