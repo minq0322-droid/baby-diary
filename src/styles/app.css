@@ -482,3 +482,49 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
   .archive-screen:not(:has(.archive-list)) { max-width: 1104px; }
   .archive-screen:has(.archive-list) { max-width: 784px; }
 }
+/* Calendar: recorded colors remain visible through today/selection rings. */
+.calendar-screen .month-grid,
+.calendar-screen .weekdays {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.calendar-screen .day {
+  height: 48px;
+  min-height: 44px;
+  padding: 3px;
+  border-radius: 12px;
+}
+.calendar-screen .day-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9px;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+.calendar-screen .day-fill-segment {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.calendar-screen .day.outside .day-tile { opacity: 0.45; }
+.calendar-screen .day.today { box-shadow: inset 0 0 0 1px var(--sub); }
+.calendar-screen .day.selected { box-shadow: inset 0 0 0 3px var(--text); }
+.calendar-screen .day.today.selected { outline: 1px dashed var(--sub); outline-offset: 1px; }
+.calendar-screen .day:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.calendar-screen .legend { margin: 12px 0 20px; flex-wrap: nowrap; }
+.calendar-screen .legend span { white-space: nowrap; }
+.calendar-screen .legend .dot { width: 10px; height: 10px; border-radius: 3px; }
+.calendar-screen .day-preview { padding: 0; border: 0; background: transparent; }
+.calendar-screen .day-preview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.calendar-screen .day-preview-heading h2 { margin: 0; word-break: keep-all; }
+.archive-view-toggle { min-width: 44px; min-height: 44px; padding: 8px; border-radius: 24px; color: var(--sub); }
+.archive-view-toggle[aria-pressed='true'] { background: var(--primary); color: var(--on-primary); }
+.calendar-screen .calendar-empty-row { color: var(--sub); word-break: keep-all; }
+.archive-list-meta { word-break: keep-all; }
+@media (min-width: 768px) {
+  .calendar-screen { max-width: 784px; }
+}

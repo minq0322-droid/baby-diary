@@ -3,7 +3,8 @@ import { useMemo, useState } from 'react';
 import type { StoreSnapshot, Page } from '../../data/types';
 import { PageCard } from './PageCard';
 import { SearchPill } from './SearchPill';
-import { fromKey } from '../../lib/date';
+import { ArchiveListRow } from './ArchiveListRow';
+import { ArchiveViewToggle, useArchiveView } from './archiveView';
 import { Icon } from '../../components/Icon';
 export function ArchiveScreen({
   snapshot,
@@ -18,12 +19,7 @@ export function ArchiveScreen({
 }) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('');
-  const viewKey = 'archive-view:' + store.getCurrentMemberId();
-  const [list, setList] = useState(() => {
-    // List view is the default; cards only when this viewer chose them.
-    try { return localStorage.getItem(viewKey) !== 'cards'; }
-    catch { return true; }
-  });
+  const [list, toggleView] = useArchiveView(store.getCurrentMemberId());
   const filtered = snapshot.pages.filter(
     (page) =>
       (!filter || page.childId === filter) &&
@@ -73,12 +69,7 @@ export function ArchiveScreen({
             {child.name}
           </button>
         ))}
-        <button className="archive-view-toggle" aria-label={list ? '카드로 보기' : '목록으로 보기'} aria-pressed={list} onClick={() => {
-          const next = !list;
-          setList(next);
-          try { localStorage.setItem(viewKey, next ? 'list' : 'cards'); }
-          catch { /* A blocked preference store does not prevent switching. */ }
-        }}><Icon name={list ? 'cards' : 'list'} /></button>
+        <ArchiveViewToggle list={list} onToggle={toggleView} />
       </div>
       <SearchPill query={query} onChange={value => { setQuery(value); setLimit(60); }} />
       {!filtered.length && <p className="empty-results">아직 기록이 없어요.</p>}
@@ -91,15 +82,12 @@ export function ArchiveScreen({
                 (item) => item.id === page.childId,
               );
               return child ? list ? (
-                <button key={page.id} className="archive-list-row" onClick={() => openPage(page.date, page.childId, page.authorId)}>
-                  <span className="archive-list-meta">
-                    <time dateTime={page.date}>{Number(page.date.slice(5, 7))}.{Number(page.date.slice(8))} {'일월화수목금토'[fromKey(page.date).getDay()]}</time>
-                    <strong>{child.name}</strong>
-                    <span>{page.authorId === 'mom' ? '엄마' : '아빠'}</span>
-                    {!!page.tagIds.length && <span className="list-badge" aria-label="배지 있음"><Icon name="star" /></span>}
-                  </span>
-                  <span className="archive-list-text">{page.text || '글 없이 남긴 기록'}</span>
-                </button>
+                <ArchiveListRow
+                  key={page.id}
+                  page={page}
+                  child={child}
+                  onClick={() => openPage(page.date, page.childId, page.authorId)}
+                />
               ) : (
                 <PageCard
                   store={store}

@@ -3,6 +3,8 @@ import { useState } from 'react';
 import type { StoreSnapshot } from '../../data/types';
 import { addDays, fromKey } from '../../lib/date';
 import { Icon } from '../../components/Icon';
+import { displayColor } from '../../lib/pageColors';
+import { useDarkMode } from '../../lib/usePageColorStyle';
 import { MonthGrid } from './MonthGrid';
 import { DayPreview } from './DayPreview';
 
@@ -22,11 +24,11 @@ export function CalendarScreen({
   setDate,
 }: Props) {
   const [month, setMonth] = useState(date.slice(0, 7));
+  const dark = useDarkMode();
   const first = fromKey(`${month}-01`);
 
   return (
-    <div className="screen-scroll calendar-screen">
-      <h1 className="screen-title">달력</h1>
+    <section className="screen-scroll calendar-screen" aria-label="달력">
       <div className="month-nav">
         <button
           type="button"
@@ -56,7 +58,10 @@ export function CalendarScreen({
       <div className="legend">
         {snapshot.children.map((child) => (
           <span key={child.id}>
-            <i className="dot" style={{ background: child.pageColor }} />
+            <i
+              className="dot"
+              style={{ background: displayColor(child.pageColor, dark) }}
+            />
             {child.name}
           </span>
         ))}
@@ -67,6 +72,6 @@ export function CalendarScreen({
         date={date}
         openPage={openPage}
       />
-    </div>
+    </section>
   );
 }
