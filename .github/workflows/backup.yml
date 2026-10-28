@@ -1,17 +1,34 @@
 name: Backup
 
 on:
+  # GitHub delays or drops scheduled runs under load, worst at the top of the hour.
+  # So: off-the-hour minute, plus four retries (04:17 · 06:47 · 08:17 · 10:47 · 12:17 KST).
+  # Once today's backup exists, the later runs end right away.
   schedule:
-    - cron: '0 19 * * *'
+    - cron: '17 19 * * *'
+    - cron: '47 21 * * *'
+    - cron: '17 23 * * *'
+    - cron: '47 1 * * *'
+    - cron: '17 3 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
+  actions: write
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
 
 jobs:
   backup:
     runs-on: ubuntu-latest
     steps:
+      # Public repos lose scheduled workflows after 60 days without activity; re-enabling resets that clock.
+      - name: Keep schedule alive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/backup.yml/enable" || true
       - name: Check out app source
         uses: actions/checkout@v4
         with:
@@ -33,13 +50,22 @@ jobs:
             git -C out checkout --orphan backups
             git -C out config remote.origin.url "https://github.com/${{ github.repository }}.git"
           fi
+      - name: Skip if today's backup already exists
+        id: done
+        run: |
+          if [ "${{ github.event_name }}" = schedule ] && [ -f "out/encrypted/$(TZ=Asia/Seoul date +%F).enc" ]; then
+            echo "Today's backup already exists"; echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-node@v4
+        if: steps.done.outputs.skip != 'true'
         with:
           node-version: 22
       - name: Install dependencies
+        if: steps.done.outputs.skip != 'true'
         working-directory: app
         run: npm ci
       - name: Create backup
+        if: steps.done.outputs.skip != 'true'
         working-directory: app
         env:
           OUT_DIR: ${{ runner.temp }}/diary-backup
@@ -48,11 +74,13 @@ jobs:
           BACKUP_JOIN_TOKEN: ${{ secrets.BACKUP_JOIN_TOKEN }}
         run: npm run backup
       - name: Encrypt private diary before publishing to public backup branch
+        if: steps.done.outputs.skip != 'true'
         working-directory: app
         env:
           BACKUP_JOIN_TOKEN: ${{ secrets.BACKUP_JOIN_TOKEN }}
         run: node scripts/backup/encrypt.mjs encrypt "$RUNNER_TEMP/diary-backup" "$GITHUB_WORKSPACE/out/encrypted/$(TZ=Asia/Seoul date +%F).enc"
       - name: Commit and push changes
+        if: steps.done.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
