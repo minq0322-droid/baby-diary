@@ -19,6 +19,34 @@ const fixture = fileURLToPath(
   new URL('./fixtures/two-parents.json', import.meta.url),
 );
 
+test('dated archives preserve multiple sheets for one parent in creation order', async () => {
+  const snapshot = JSON.parse(await readFile(fixture, 'utf8'));
+  const first = snapshot.pages.find((page) => page.authorId === 'dad');
+  const second = {
+    ...first,
+    id: first.id + '__zzzzzzzz',
+    text: '두 번째 장',
+    createdAt: '2026-10-26T20:00:00Z',
+  };
+  const third = {
+    ...second,
+    id: first.id + '__aaaaaaaa',
+    text: '세 번째 장',
+    createdAt: '2026-10-26T21:00:00Z',
+  };
+  snapshot.pages = [third, second, ...snapshot.pages];
+  const files = toDatedArchive(snapshot);
+  assert.equal(new Set(files.map((file) => file.path)).size, files.length);
+  assert.deepEqual(
+    files.filter((file) => file.path.endsWith('.json'))
+      .map((file) => JSON.parse(file.content).id),
+    [first.id, second.id, third.id, snapshot.pages.find((page) => page.authorId === 'mom').id],
+  );
+  const markdown = files.find((file) => file.path.endsWith('.md')).content;
+  assert.ok(markdown.indexOf('아빠 기록') < markdown.indexOf('두 번째 장'));
+  assert.ok(markdown.indexOf('두 번째 장') < markdown.indexOf('세 번째 장'));
+});
+
 test('dated backup dry-run and incremental writes preserve old files and both parents', async () => {
   const directory = await mkdtemp(path.join(tmpdir(), 'diary-backup-'));
   const run = (...args) =>

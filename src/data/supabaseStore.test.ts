@@ -103,6 +103,35 @@ beforeEach(() => {
 });
 afterEach(() => { stores.forEach((store) => store.dispose()); stores = []; vi.unstubAllGlobals(); });
 describe('family SupabaseStore', () => {
+  it('persists, reloads and updates same-day sheets independently by ID', async () => {
+    const server = fakeServer();
+    const store = create(server);
+    await ready(store);
+    const second = {
+      ...page,
+      id: page.id + '__abc12345',
+      text: '두 번째 장',
+      createdAt: '2026-10-26T01:00:00Z',
+    };
+    store.savePage(page);
+    store.savePage(second);
+    vi.stubGlobal('navigator', { onLine: true });
+    store.retry();
+    await vi.waitFor(() => expect(store.getStatus().pending).toBe(0));
+    store.dispose();
+    const loaded = create(server);
+    await ready(loaded);
+    expect(await loaded.loadPage(page.id)).toEqual(page);
+    expect(await loaded.loadPage(second.id)).toEqual(second);
+    expect(loaded.getPage(page.date, page.childId, page.authorId)?.id).toBe(
+      second.id,
+    );
+    loaded.savePage({ ...second, text: '두 번째 장 수정' });
+    await vi.waitFor(() => expect(loaded.getStatus().pending).toBe(0));
+    expect(server.rows.pages).toHaveLength(2);
+    expect(loaded.getPageById(page.id)).toEqual(page);
+    expect(loaded.getPageById(second.id)?.text).toBe('두 번째 장 수정');
+  });
   it('queues only the current member font and sends its storage path, including reset', async () => {
     const server = fakeServer();
     const store = create(server);

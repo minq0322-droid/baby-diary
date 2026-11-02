@@ -1,4 +1,5 @@
 import { normalizePageColor } from '../lib/pageColors';
+import { basePageId } from '../lib/pageId';
 import type { LegacyEntry } from './legacyAdapter';
 import type {
   Child,
@@ -164,11 +165,11 @@ export function migrateSnapshot(
         a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
     );
     const owner = notes[0]?.authorId ?? 'dad';
-    owners.set(source.id, source.date + '__' + source.childId + '__' + owner);
+    owners.set(source.id, basePageId(source.date, source.childId, owner));
     for (const authorId of [
       ...new Set([owner, ...notes.map((note) => note.authorId)]),
     ]) {
-      const id = source.date + '__' + source.childId + '__' + authorId;
+      const id = basePageId(source.date, source.childId, authorId);
       const { notes: _, ...rest } = source;
       const value: Page = {
         ...rest,

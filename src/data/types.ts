@@ -85,6 +85,7 @@ export type PageSummary = Pick<
   Page,
   'id' | 'date' | 'childId' | 'authorId' | 'color' | 'tagIds' | 'updatedAt'
 > & {
+  createdAt?: string;
   firstLine: string;
   hasDrawing: boolean;
   photoCount: number;

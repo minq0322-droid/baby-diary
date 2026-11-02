@@ -1,6 +1,7 @@
 
 /* ===== Design tokens ===== */
 :root {
+  color-scheme: light;
   --bg: #F6F5F2;
   --card: #FFFFFF;
   --surface: #FFFFFF;
@@ -35,6 +36,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --bg: #262638; --card: #31314A; --surface: #31314A; --field: #3B3B57; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --primary: #F1F0F7; --on-primary: #262638;
     --kid1: #F49A80; --kid1-soft: #3A2620; --kid2: #6CC6B4; --kid2-soft: #1E322D;
     --dad: #8AA6E3; --mom: #E39BB3;
@@ -47,6 +49,7 @@
   }
 }
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #262638; --card: #31314A; --surface: #31314A; --field: #3B3B57; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --primary: #F1F0F7; --on-primary: #262638;
   --kid1: #F49A80; --kid1-soft: #3A2620; --kid2: #6CC6B4; --kid2-soft: #1E322D;
   --dad: #8AA6E3; --mom: #E39BB3;

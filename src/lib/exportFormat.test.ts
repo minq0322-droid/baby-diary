@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { fromBackupJson, toBackupJson, toMarkdown } from './exportFormat';
+import {
+  fromBackupJson,
+  toBackupJson,
+  toMarkdown,
+  toDatedArchive,
+} from './exportFormat';
 import { migrateSnapshot, type LegacySnapshot } from '../data/migrate';
 import { seedChildren, seedMembers, seedTags } from '../data/seed';
 
@@ -38,6 +43,49 @@ all.pages[0].photos = [
 ];
 
 describe('page exports', () => {
+  it('round-trips all same-day sheets with their own media, comments and reactions', () => {
+    const second = {
+      ...all.pages[0],
+      id: all.pages[0].id + '__abc12345',
+      text: '두 번째 장',
+      createdAt: '2026-10-26T01:00:00Z',
+    };
+    const data = {
+      ...all,
+      pages: [second, all.pages[0]],
+      comments: [
+        ...all.comments,
+        { ...all.comments[0], id: 'second-comment', pageId: second.id },
+      ],
+      reactions: [...all.reactions, { ...all.reactions[0], pageId: second.id }],
+    };
+    expect(fromBackupJson(toBackupJson(data))).toEqual(data);
+    expect(migrateSnapshot(data)).toEqual(data);
+    const files = toDatedArchive(data);
+    const json = files.filter((file) => file.path.endsWith('.json'));
+    expect(new Set(files.map((file) => file.path)).size).toBe(files.length);
+    expect(json.map((file) => JSON.parse(file.content))).toEqual([
+      all.pages[0], second,
+    ]);
+    const markdown = files.find((file) => file.path.endsWith('.md'))!.content;
+    expect(markdown.indexOf('첫 걸음')).toBeLessThan(markdown.indexOf('두 번째 장'));
+  });
+  it.each([
+    '2026-10-26__kid1__mom',
+    '2026-10-27__kid1__dad',
+    '2026-10-26__kid2__dad',
+    '2026-10-26__kid1__dad__1234567',
+    '2026-10-26__kid1__dad__123456789',
+    '2026-10-26__kid1__dad__ABC12345',
+    '2026-10-26__kid1__dad__abc12345__extra',
+  ])('rejects malformed or mismatched v3 sheet ID %s', (id) => {
+    expect(() =>
+      fromBackupJson({
+        ...toBackupJson(all),
+        pages: [{ ...all.pages[0], id }],
+      }),
+    ).toThrow();
+  });
   it('round-trips v3 including drawings, photos and activity', () => {
     const backup = toBackupJson(all);
     expect(backup.version).toBe(3);

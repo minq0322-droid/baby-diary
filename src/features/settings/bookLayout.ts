@@ -1,3 +1,5 @@
+import type { Page } from '../../data/types';
+
 export const mmToPx = (mm: number, dpi = 300) => Math.round((mm / 25.4) * dpi);
 export const BOOK = { width: mmToPx(148), height: mmToPx(210) };
 
@@ -5,11 +7,12 @@ export function bookFilename(
   date: string,
   child: string,
   author: string,
+  sheetNumber = 1,
 ): string {
   const safe = (value: string) =>
     value.replace(/[<>:"/\\|?*\x00-\x1f]/g, '-').replace(/[. ]+$/g, '') ||
     '이름없음';
-  return `${date}_${safe(child)}_${safe(author)}.png`;
+  return `${date}_${safe(child)}_${safe(author)}${sheetNumber > 1 ? `__장${sheetNumber}` : ''}.png`;
 }
 
 export function wrapText(
@@ -47,4 +50,14 @@ export function fitTextPages(
     pages.push(lines.slice(index, index + linesPerPage));
   }
   return { size, pages: pages.length ? pages : [[]] };
+}
+
+export function compareBookSheets(a: Page, b: Page): number {
+  return (
+    a.date.localeCompare(b.date) ||
+    a.childId.localeCompare(b.childId) ||
+    a.authorId.localeCompare(b.authorId) ||
+    a.createdAt.localeCompare(b.createdAt) ||
+    a.id.localeCompare(b.id)
+  );
 }

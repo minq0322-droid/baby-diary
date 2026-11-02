@@ -1,6 +1,7 @@
 import type { DataStore } from './DataStore';
 import type { Child, Page, StoreSnapshot } from './types';
 import { noteAuthor } from './migrate';
+import { basePageId, isValidPageId } from '../lib/pageId';
 
 export type LegacyEntry = {
   id: string;
@@ -34,6 +35,9 @@ export abstract class LegacyAdapter {
   abstract updateChild(child: Child): void;
   abstract uploadPhoto(blob: Blob): Promise<{ src: string }>;
   protected async removePhotoAsset(_src: string): Promise<void> {}
+  getPageById(id: string): Page | undefined {
+    return this.getSnapshot().pages.find((page) => page.id === id);
+  }
   async loadPage(id: string): Promise<Page> {
     const page = this.getSnapshot().pages.find((item) => item.id === id);
     if (!page) throw new Error('페이지를 찾을 수 없어요.');
@@ -111,7 +115,9 @@ export abstract class LegacyAdapter {
   updateEntry(entry: LegacyEntry): void {
     const data = this.getSnapshot();
     const authorId = noteAuthor(entry.authorId, data.members);
-    const id = entry.date + '__' + entry.childId + '__' + authorId;
+    const id = isValidPageId({ ...entry, authorId })
+      ? entry.id
+      : basePageId(entry.date, entry.childId, authorId);
     const page = data.pages.find((item) => item.id === id);
     this.savePage({
       ...page,

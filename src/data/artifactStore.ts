@@ -1,5 +1,6 @@
 import { normalizePageColor } from '../lib/pageColors';
 import { todayKey } from '../lib/date';
+import { sheetsFor } from '../lib/pageId';
 import { LegacyAdapter } from './legacyAdapter';
 import { migrateMonthSnapshot, defaultChildStatus, defaultPageColor } from './migrate';
 import { preparePage } from '../lib/stroke';
@@ -55,6 +56,7 @@ function summarize(page: Page): PageSummary {
     tagIds: page.tagIds,
     hasDrawing: page.drawing.length > 0,
     photoCount: page.photos.length,
+    createdAt: page.createdAt,
     updatedAt: page.updatedAt,
     deletedAt: null,
   };
@@ -100,7 +102,7 @@ export function buildArtifactSnapshot(
             tagIds: summary.tagIds,
             drawing: [],
             photos: [],
-            createdAt: summary.updatedAt,
+            createdAt: summary.createdAt ?? summary.updatedAt,
             updatedAt: summary.updatedAt,
           },
     ),
@@ -536,14 +538,19 @@ export class ArtifactStore extends LegacyAdapter implements DataStore {
     childId: string,
     authorId = this.getCurrentMemberId() || 'dad',
   ): Page | undefined {
-    const id = date + '__' + childId + '__' + authorId;
+    const page = sheetsFor(this.snapshot.pages, date, childId, authorId).slice(
+      -1,
+    )[0];
+    return page ? this.getPageById(page.id) : undefined;
+  }
+  getPageById(id: string): Page | undefined {
     if (
       this.cache.has(id) ||
       this.pending.some((write) => write.path === 'pages/' + id)
     ) {
       return this.snapshot.pages.find((page) => page.id === id);
     }
-    if (!this.months[date.slice(0, 7)]?.pages[id])
+    if (!this.months[id.slice(0, 7)]?.pages[id])
       return this.snapshot.pages.find((page) => page.id === id);
     return undefined;
   }
@@ -756,7 +763,7 @@ export class ArtifactStore extends LegacyAdapter implements DataStore {
   exportAll(): StoreSnapshot {
     if (
       this.snapshot.pages.some(
-        (page) => !this.getPage(page.date, page.childId, page.authorId),
+        (page) => !this.getPageById(page.id),
       )
     )
       throw new Error('페이지를 불러온 뒤 백업해 주세요.');

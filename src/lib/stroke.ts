@@ -1,4 +1,5 @@
 import type { Page, Stroke } from '../data/types';
+import { isValidPageId } from './pageId';
 
 export function isStrokeWidth(width: unknown): width is Stroke['width'] {
   return [2, 5, 8, 14, 28].includes(width as number);
@@ -29,13 +30,11 @@ export function simplifyStroke(
 }
 
 export function preparePage(page: Page): Page {
-  const id = page.date + '__' + page.childId + '__' + page.authorId;
-  if (!['dad', 'mom'].includes(page.authorId) || page.id !== id) {
+  if (!isValidPageId(page)) {
     throw new Error('페이지의 날짜, 아이와 작성자는 바꿀 수 없어요.');
   }
   const result = {
     ...page,
-    id,
     drawing: page.drawing.map((stroke) => {
       if (!isStrokeWidth(stroke.width)) {
         throw new Error('그림 도구의 굵기를 확인해 주세요.');

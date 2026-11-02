@@ -3,6 +3,7 @@ import { externalizeSnapshot, hasInlinePhotos } from './importPhotos';
 import { LegacyAdapter } from './legacyAdapter';
 import { defaultChildStatus, migrateSnapshot, type LegacySnapshot } from './migrate';
 import { preparePage } from '../lib/stroke';
+import { sheetsFor } from '../lib/pageId';
 import { downscalePhoto, blobToDataUrl } from '../lib/image';
 import type { DataStore } from './DataStore';
 import { seedChildren, seedMembers, seedTags } from './seed';
@@ -164,9 +165,7 @@ export class LocalStore extends LegacyAdapter implements DataStore {
     childId: string,
     authorId = this.getCurrentMemberId() || 'dad',
   ): Page | undefined {
-    return this.snapshot.pages.find(
-      (page) => page.id === date + '__' + childId + '__' + authorId,
-    );
+    return sheetsFor(this.snapshot.pages, date, childId, authorId).slice(-1)[0];
   }
 
   savePage(page: Page): void {

@@ -1,10 +1,17 @@
+function comparePages(a, b) {
+  return (
+    a.date.localeCompare(b.date) ||
+    a.childId.localeCompare(b.childId) ||
+    a.authorId.localeCompare(b.authorId) ||
+    a.createdAt.localeCompare(b.createdAt) ||
+    a.id.localeCompare(b.id)
+  );
+}
+
 export function toMarkdown(all, month) {
   const pages = all.pages
     .filter((page) => !month || page.date.startsWith(month))
-    .sort(
-      (a, b) =>
-        a.date.localeCompare(b.date) || a.childId.localeCompare(b.childId),
-    );
+    .sort(comparePages);
   const children = new Map(all.children.map((child) => [child.id, child.name]));
   const members = new Map(
     all.members.map((member) => [member.id, member.displayName]),
@@ -71,7 +78,7 @@ export function toDatedArchive(snapshot) {
     const directory = 'diary/' + date.split('-').join('/');
     const pages = snapshot.pages
       .filter((page) => page.date === date)
-      .sort((a, b) => a.id.localeCompare(b.id));
+      .sort(comparePages);
     for (const page of pages)
       files.push({
         path:
@@ -80,6 +87,9 @@ export function toDatedArchive(snapshot) {
           encodeURIComponent(page.childId) +
           '-' +
           page.authorId +
+          (page.id === `${page.date}__${page.childId}__${page.authorId}`
+            ? ''
+            : '--' + encodeURIComponent(page.id)) +
           '.json',
         content: JSON.stringify(page, null, 2),
       });

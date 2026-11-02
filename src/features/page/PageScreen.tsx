@@ -13,6 +13,7 @@ import { addDays, dayCounter, fromKey } from '../../lib/date';
 import { usePageColorStyle } from '../../lib/usePageColorStyle';
 import { noteAuthor } from '../../data/migrate';
 import { preparePage } from '../../lib/stroke';
+import { basePageId, newSheetId, sheetsFor } from '../../lib/pageId';
 import { BadgeSheet } from './BadgeSheet';
 import { CommentsSheet } from './CommentsSheet';
 import { DiarySheet } from './DiarySheet';
@@ -33,6 +34,8 @@ export function PageScreen({
   child,
   date,
   authorId,
+  pageId,
+  onSheet,
   onAuthor,
   startEditing,
   origin,
@@ -45,6 +48,8 @@ export function PageScreen({
   child: Child;
   date: string;
   authorId?: 'dad' | 'mom';
+  pageId?: string;
+  onSheet: (pageId: string) => void;
   onAuthor: (authorId: 'dad' | 'mom') => void;
   startEditing: boolean;
   origin?: PageOrigin;
@@ -53,15 +58,20 @@ export function PageScreen({
   onSaved: (pageId: string) => void;
 }) {
   const [initial] = useState(() => {
-    const saved = store.getPage(date, child.id, authorId);
+    const author =
+      authorId ??
+      noteAuthor(store.getCurrentMemberId() || 'dad', snapshot.members);
+    const id =
+      pageId ??
+      sheetsFor(snapshot.pages, date, child.id, author).slice(-1)[0]?.id ??
+      basePageId(date, child.id, author);
+    const saved = store.getPageById(id);
     const now = new Date().toISOString();
     const blank: Page = {
-      id: `${date}__${child.id}__${authorId ?? noteAuthor(store.getCurrentMemberId() || 'dad', snapshot.members)}`,
+      id,
       childId: child.id,
       date,
-      authorId:
-        authorId ??
-        noteAuthor(store.getCurrentMemberId() || 'dad', snapshot.members),
+      authorId: author,
       drawing: [],
       photos: [],
       text: '',
@@ -71,15 +81,13 @@ export function PageScreen({
     };
     return {
       saved: !!saved || snapshot.pages.some((page) => page.id === blank.id),
+      loading: !saved && snapshot.pages.some((page) => page.id === id),
       page: structuredClone(saved ?? blank),
     };
   });
   const [page, setPage] = useState(initial.page);
   const baseline = useRef(initial.page);
-  const [loading, setLoading] = useState(
-    !store.getPage(date, child.id, authorId) &&
-      snapshot.pages.some((page) => page.id === initial.page.id),
-  );
+  const [loading, setLoading] = useState(initial.loading);
   useEffect(() => {
     if (!loading) return;
     let active = true;
@@ -109,6 +117,11 @@ export function PageScreen({
     ? undefined
     : noteAuthor(store.getCurrentMemberId(), snapshot.members);
   const ownPage = page.authorId === writer;
+  const savedSheets = sheetsFor(snapshot.pages, date, child.id, page.authorId);
+  const currentSaved = savedSheets.some((sheet) => sheet.id === page.id);
+  const sheets = currentSaved ? savedSheets : [...savedSheets, page];
+  const showSheetNumbers =
+    savedSheets.length >= 2 || (!currentSaved && !!pageId);
   const [drawing, setDrawing] = useState(false);
   const [sheet, setSheet] = useState<'badges' | 'palette' | 'comments'>();
   const [pending, setPending] = useState<() => void>();
@@ -297,6 +310,29 @@ export function PageScreen({
               <ParentFace author={author} />
             </button>
           ))}
+        </div>
+        <div className="page-sheets" role="group" aria-label="이 날의 장">
+          {showSheetNumbers &&
+            sheets.map((sheet, index) => (
+              <button
+                key={sheet.id}
+                aria-label={`${index + 1}번째 장`}
+                aria-pressed={sheet.id === page.id}
+                onClick={() => navigate(() => onSheet(sheet.id))}
+              >
+                {index + 1}
+              </button>
+            ))}
+          {ownPage && !store.readOnly && currentSaved && (
+            <button
+              aria-label="한 장 더 쓰기"
+              onClick={() =>
+                navigate(() => onSheet(newSheetId(date, child.id, page.authorId)))
+              }
+            >
+              ＋
+            </button>
+          )}
         </div>
         <DrawingArea
           page={{ ...page, color: page.color ?? child.pageColor }}

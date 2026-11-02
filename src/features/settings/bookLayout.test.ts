@@ -1,7 +1,36 @@
 import { describe, expect, it } from 'vitest';
-import { BOOK, bookFilename, fitTextPages, mmToPx, wrapText } from './bookLayout';
+import {
+  BOOK,
+  bookFilename,
+  compareBookSheets,
+  fitTextPages,
+  mmToPx,
+  wrapText,
+} from './bookLayout';
+import { page } from '../../data/testDb';
 
 describe('book layout', () => {
+  it('keeps same-day sheets in creation order and gives each image and continuation its own name', () => {
+    const first = page();
+    const second = {
+      ...first,
+      id: first.id + '__zzzzzzzz',
+      createdAt: '2026-10-26T04:00:00Z',
+    };
+    const third = {
+      ...second,
+      id: first.id + '__aaaaaaaa',
+      createdAt: '2026-10-26T05:00:00Z',
+    };
+    expect([third, second, first].sort(compareBookSheets)).toEqual([
+      first, second, third,
+    ]);
+    const names = [1, 2, 3].flatMap((number) => {
+      const name = bookFilename(first.date, '조비안', '아빠', number);
+      return [name, name.replace(/\.png$/, '_2.png')];
+    });
+    expect(new Set(names).size).toBe(6);
+  });
   it('rounds A5 millimetres to 300 dpi pixels', () => {
     expect(BOOK).toEqual({ width: 1748, height: 2480 });
     expect(mmToPx(25.4)).toBe(300);

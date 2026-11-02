@@ -21,6 +21,7 @@ type Screen =
       date: string;
       childId: string;
       authorId?: 'dad' | 'mom';
+      pageId?: string;
       editing: boolean;
       origin?: PageOrigin;
     };
@@ -54,12 +55,14 @@ export default function App({ store }: { store: DataStore }) {
     nextDate: string,
     childId: string,
     authorId?: 'dad' | 'mom',
+    pageId?: string,
   ) =>
     setScreen({
       kind: 'page',
       date: nextDate,
       childId,
       authorId,
+      pageId,
       ...source.current,
     });
   const goHome = () => setScreen({ kind: 'shell', tab: '홈' });
@@ -71,17 +74,23 @@ export default function App({ store }: { store: DataStore }) {
       <>
         <SyncBanner store={store} />
         <PageScreen
-          key={`${screen.date}__${screen.childId}__${screen.authorId ?? store.getCurrentMemberId()}`}
+          key={`${screen.date}__${screen.childId}__${screen.authorId ?? store.getCurrentMemberId()}__${screen.pageId ?? ''}`}
           store={store}
           snapshot={snapshot}
           child={child}
           date={screen.date}
           authorId={screen.authorId}
-          onAuthor={(authorId) => setScreen({ ...screen, authorId })}
+          pageId={screen.pageId}
+          onSheet={(pageId) => setScreen({ ...screen, pageId })}
+          onAuthor={(authorId) =>
+            setScreen({ ...screen, authorId, pageId: undefined })
+          }
           startEditing={screen.editing}
           origin={screen.origin}
           onBack={goHome}
-          onDate={(nextDate) => setScreen({ ...screen, date: nextDate })}
+          onDate={(nextDate) =>
+            setScreen({ ...screen, date: nextDate, pageId: undefined })
+          }
           onSaved={() => {
             setDate(screen.date);
             setSavedToast(true);

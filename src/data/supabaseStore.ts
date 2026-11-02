@@ -3,6 +3,7 @@ import { migrateSnapshot } from './migrate';
 import { externalizeSnapshot, hasInlinePhotos } from './importPhotos';
 import { LegacyAdapter } from './legacyAdapter';
 import { preparePage } from '../lib/stroke';
+import { sheetsFor } from '../lib/pageId';
 import { downscalePhoto } from '../lib/image';
 import { enterFamily, loadMembership, makeInvite, inviteRequired, inviteFailure, type FamilyMembership } from './familyAccess';
 import {
@@ -595,9 +596,7 @@ export class SupabaseStore extends LegacyAdapter implements DataStore {
     childId: string,
     authorId = this.membership?.member_id === 'mom' ? 'mom' : 'dad',
   ): Page | undefined {
-    return this.snapshot.pages.find(
-      (page) => page.id === date + '__' + childId + '__' + authorId,
-    );
+    return sheetsFor(this.snapshot.pages, date, childId, authorId).slice(-1)[0];
   }
   savePage(page: Page): void {
     if (page.photos.some((photo) => photo.src.startsWith('data:')))

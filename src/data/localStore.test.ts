@@ -65,6 +65,35 @@ beforeEach(() => {
 });
 
 describe('page migration and local persistence', () => {
+  it('saves, reloads and independently updates additional same-day sheets', async () => {
+    const store = new LocalStore();
+    const first = migrateSnapshot(legacy()).pages[0];
+    const second = {
+      ...first,
+      id: first.id + '__abc12345',
+      text: '두 번째 장',
+      createdAt: '2026-10-26T05:00:00Z',
+    };
+    store.savePage(first);
+    store.savePage(second);
+    const loaded = new LocalStore();
+    expect(await loaded.loadPage(first.id)).toEqual(first);
+    expect(await loaded.loadPage(second.id)).toEqual(second);
+    loaded.savePage({ ...second, text: '두 번째 장 수정' });
+    expect(new LocalStore().getPageById(first.id)).toEqual(first);
+    expect(new LocalStore().getPageById(second.id)?.text).toBe(
+      '두 번째 장 수정',
+    );
+    expect(loaded.getPage(first.date, first.childId, first.authorId)?.id).toBe(
+      second.id,
+    );
+    loaded.updateEntry({
+      ...second,
+      content: '호환 경로 수정',
+    });
+    expect(loaded.getPageById(second.id)?.text).toBe('호환 경로 수정');
+    expect(loaded.getPageById(first.id)).toEqual(first);
+  });
   it('normalizes stored page and default child colors on load', () => {
     const data = migrateSnapshot(legacy());
     data.pages[0].color = '#0F4D3A';

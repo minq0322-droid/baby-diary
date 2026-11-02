@@ -4,6 +4,45 @@ import { FakeDb, config, page, settle } from './testDb';
 import * as images from '../lib/image';
 
 afterEach(() => vi.restoreAllMocks());
+it('preserves and lazily reloads both same-day sheets and checks every body before export', async () => {
+  const db = new FakeDb();
+  const first = page('2020-01-01');
+  const second = {
+    ...first,
+    id: first.id + '__abc12345',
+    text: '두 번째 장',
+    createdAt: '2026-10-26T04:00:00Z',
+  };
+  const store = new ArtifactStore(db, 'viewer');
+  store.savePage(first);
+  store.savePage(second);
+  await settle();
+  store.dispose();
+  const loaded = new ArtifactStore(db, 'viewer');
+  expect(loaded.getPageById(first.id)).toBeUndefined();
+  expect(loaded.getPageById(second.id)).toBeUndefined();
+  expect(await loaded.loadPage(second.id)).toEqual(second);
+  expect(() => loaded.exportAll()).toThrow();
+  expect(await loaded.loadPage(first.id)).toEqual(first);
+  expect(loaded.exportAll().pages).toHaveLength(2);
+  loaded.savePage({
+    ...first,
+    text: '첫 장 수정',
+    updatedAt: '2026-10-26T05:00:00Z',
+  });
+  await settle();
+  expect(loaded.getPage(first.date, first.childId, first.authorId)?.id).toBe(
+    second.id,
+  );
+  expect(loaded.getPageById(second.id)?.text).toBe(second.text);
+  expect(db.bodies.get('index/2020-01')).toMatchObject({
+    pages: {
+      [first.id]: { createdAt: first.createdAt },
+      [second.id]: { createdAt: second.createdAt },
+    },
+  });
+  loaded.dispose();
+});
 it('writes one full body per page and small index summaries with no media bytes', async () => {
   const db = new FakeDb();
   const store = new ArtifactStore(db, 'viewer');

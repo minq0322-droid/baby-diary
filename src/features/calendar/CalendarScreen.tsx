@@ -11,7 +11,12 @@ import { DayPreview } from './DayPreview';
 type Props = {
   store: DataStore;
   snapshot: StoreSnapshot;
-  openPage: (date: string, childId: string, authorId?: 'dad' | 'mom') => void;
+  openPage: (
+    date: string,
+    childId: string,
+    authorId?: 'dad' | 'mom',
+    pageId?: string,
+  ) => void;
   date: string;
   setDate: (date: string) => void;
 };

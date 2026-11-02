@@ -14,7 +14,12 @@ export function ArchiveScreen({
 }: {
   store: DataStore;
   snapshot: StoreSnapshot;
-  openPage: (date: string, childId: string, authorId?: 'dad' | 'mom') => void;
+  openPage: (
+    date: string,
+    childId: string,
+    authorId?: 'dad' | 'mom',
+    pageId?: string,
+  ) => void;
   onBack: () => void;
 }) {
   const [query, setQuery] = useState('');
@@ -86,7 +91,9 @@ export function ArchiveScreen({
                   key={page.id}
                   page={page}
                   child={child}
-                  onClick={() => openPage(page.date, page.childId, page.authorId)}
+                  onClick={() =>
+                    openPage(page.date, page.childId, page.authorId, page.id)
+                  }
                 />
               ) : (
                 <PageCard
@@ -95,7 +102,7 @@ export function ArchiveScreen({
                   page={page}
                   child={child}
                   onClick={() =>
-                    openPage(page.date, page.childId, page.authorId)
+                    openPage(page.date, page.childId, page.authorId, page.id)
                   }
                 />
               ) : null;

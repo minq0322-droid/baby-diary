@@ -1,5 +1,6 @@
 import { migrateSnapshot, type LegacySnapshot } from '../data/migrate';
 import type { StoreSnapshot } from '../data/types';
+import { isValidPageId } from './pageId';
 
 export type BackupJson = StoreSnapshot & { version: 3; exportedAt: string };
 
@@ -71,8 +72,7 @@ export function fromBackupJson(value: unknown): StoreSnapshot {
     data.version === 3 &&
     snapshot.pages.some(
       (page) =>
-        !['dad', 'mom'].includes(page.authorId) ||
-        page.id !== page.date + '__' + page.childId + '__' + page.authorId ||
+        !isValidPageId(page) ||
         typeof page.text !== 'string',
     )
   )

@@ -26,6 +26,7 @@ export interface DataStore {
   listMembers(): Member[];
   listTags(): Tag[];
   listPages(range?: PageRange): Page[];
+  getPageById(id: string): Page | undefined;
   getPage(
     date: string,
     childId: string,

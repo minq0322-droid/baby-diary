@@ -15,12 +15,19 @@ export function WritingArea({ name, notes, editing, writer, onText }: Props) {
   return (
     <section className="writing" aria-label={`${name}의 일기`}>
       <div className="notes">
-        {notes.filter((note) => !editing || note.id !== current?.id).map((note) => (
-          <p key={note.id} className={`note ${note.authorId}-writing`}>
-            {note.text}
-            <span className="initial">{note.authorId === 'dad' ? '아' : '엄'}</span>
-          </p>
-        ))}
+        {notes
+          .filter(
+            (note) =>
+              note.text.trim() && (!editing || note.id !== current?.id),
+          )
+          .map((note) => (
+            <p key={note.id} className={`note ${note.authorId}-writing`}>
+              {note.text}
+              <span className="initial">
+                {note.authorId === 'dad' ? '아' : '엄'}
+              </span>
+            </p>
+          ))}
         {editing && writer && (
           <div className="editable-note">
             <span className="initial">{writer === 'dad' ? '아' : '엄'}</span>

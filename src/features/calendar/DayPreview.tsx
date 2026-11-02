@@ -9,7 +9,12 @@ type Props = {
   store: DataStore;
   snapshot: StoreSnapshot;
   date: string;
-  openPage: (date: string, childId: string, authorId?: 'dad' | 'mom') => void;
+  openPage: (
+    date: string,
+    childId: string,
+    authorId?: 'dad' | 'mom',
+    pageId?: string,
+  ) => void;
 };
 
 export function DayPreview({ store, snapshot, date, openPage }: Props) {
@@ -39,7 +44,9 @@ export function DayPreview({ store, snapshot, date, openPage }: Props) {
                   key={page?.id ?? child.id}
                   child={child}
                   page={page}
-                  onClick={() => openPage(date, child.id, page?.authorId)}
+                  onClick={() =>
+                    openPage(date, child.id, page?.authorId, page?.id)
+                  }
                 />
               );
             }
@@ -49,7 +56,7 @@ export function DayPreview({ store, snapshot, date, openPage }: Props) {
                 page={page}
                 child={child}
                 showDate={false}
-                onClick={() => openPage(date, child.id, page.authorId)}
+                onClick={() => openPage(date, child.id, page.authorId, page.id)}
               />
             ) : (
               <button

@@ -1,9 +1,16 @@
 import type { DataStore } from '../../data/DataStore';
 import type { Page, StoreSnapshot } from '../../data/types';
 import { inkFor } from '../../lib/pageColors';
+import { sheetsFor } from '../../lib/pageId';
 import { downloadFile } from '../../lib/download';
 import { paintStroke } from '../page/strokes';
-import { BOOK, bookFilename, fitTextPages, wrapText } from './bookLayout';
+import {
+  BOOK,
+  bookFilename,
+  compareBookSheets,
+  fitTextPages,
+  wrapText,
+} from './bookLayout';
 import { loadPdf, loadZip } from '../../lib/loadExportLibs';
 
 export type BookOptions = {
@@ -167,7 +174,7 @@ export async function exportBook(
         (!options.childId || page.childId === options.childId) &&
         (!options.authorId || page.authorId === options.authorId),
     )
-    .sort((a, b) => a.id.localeCompare(b.id));
+    .sort(compareBookSheets);
   if (!pages.length) throw new Error('선택한 기간에 기록이 없어요.');
   progress(0, pages.length);
   const fonts: FontFace[] = [];
@@ -253,6 +260,9 @@ export async function exportBook(
             all.children.find((child) => child.id === page.childId)?.name ??
               page.childId,
             page.authorId === 'mom' ? '엄마' : '아빠',
+            sheetsFor(pages, page.date, page.childId, page.authorId).findIndex(
+              (sheet) => sheet.id === page.id,
+            ) + 1,
           );
           zip.file(
             pageIndex ? name.replace(/\.png$/, `_${pageIndex + 1}.png`) : name,
