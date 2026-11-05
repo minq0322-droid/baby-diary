@@ -15,7 +15,7 @@ Age label (`lib/date.ts#ageLabel`, already implemented):
 - neither → `출산 전` for kid2, nothing for kid1.
 
 ## Stack (do not add other runtime deps)
-- Vite + React 18 + TypeScript (strict), `vite-plugin-pwa`, `date-fns` (ko locale), `@supabase/supabase-js`, `vitest`, plus `jspdf` and `jszip` for book export (lazy-loaded with dynamic import).
+- Vite + React 18 + TypeScript (strict), `vite-plugin-pwa`, `date-fns` (ko locale), `@supabase/supabase-js`, `vitest`, plus `jspdf` and `jszip` for book export (lazy-loaded with dynamic import). Gaegu is self-hosted in the PWA build.
 - **Plain CSS, no Tailwind, no CSS-in-JS.** Styles in `src/styles/`.
 - No router library: view state in React state.
 
@@ -28,6 +28,8 @@ Age label (`lib/date.ts#ageLabel`, already implemented):
 - Page palette: shared ColorPicker with 3 recommended colors (벚꽃 #F4B9B8, 박하 #CDEFE2, 귤 #F59157), up to 5 viewer-local recent colors, and a frozen 40-swatch pastel grid (10 rainbow hue families × 4 tones), including all 16 legacy named colors. Normalize old colors to the nearest grid color on load. Pen colors are separate: auto ink plus 8 deeper crayons, stored per Stroke.color; `ink` means auto ink. Display colors mix 90% page color + 10% #262638 in dark mode. Auto ink chooses #1E2326 or #F5F0E1 by highest WCAG contrast against the displayed color.
 - Light + dark via `prefers-color-scheme`, overridable with `data-theme` on `<html>`. Touch ≥ 44px. Respect `prefers-reduced-motion`. Safe-area insets on fixed/sticky edges.
 - Korean IME: never act on Enter while `isComposing`. Use `word-break: keep-all` for Korean labels (mockup bug to avoid: "기록 완료 · 아/빠" wrapping).
+
+For the diary sheet row, `＋ 한 장 더` is always visible on the current writer's own page (including blank and unsaved pages), and is inactive until the current blank page has content.
 
 ## Data model (`src/data/types.ts`)
 ```ts

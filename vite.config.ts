@@ -61,7 +61,12 @@ export default defineConfig(({ mode }) => {
         : [
             VitePWA({
               registerType: 'autoUpdate',
-              includeAssets: ['icon.svg'],
+              includeAssets: ['icon.svg', 'fonts/Gaegu-Regular.woff2'],
+              workbox: {
+                clientsClaim: true,
+                skipWaiting: true,
+                globPatterns: ['**/*.{js,css,html,woff2}'],
+              },
               manifest: {
                 start_url: paths.start_url,
                 scope: paths.scope,

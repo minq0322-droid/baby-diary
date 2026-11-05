@@ -26,7 +26,13 @@ type Screen =
       origin?: PageOrigin;
     };
 
-export default function App({ store }: { store: DataStore }) {
+export default function App({
+  store,
+  onUnsavedEdits,
+}: {
+  store: DataStore;
+  onUnsavedEdits?: (dirty: boolean) => void;
+}) {
   const snapshot = useStore(store);
   const [date, setDate] = useState(todayKey);
   const [screen, setScreen] = useState<Screen>({ kind: 'shell', tab: '홈' });
@@ -81,15 +87,16 @@ export default function App({ store }: { store: DataStore }) {
           date={screen.date}
           authorId={screen.authorId}
           pageId={screen.pageId}
-          onSheet={(pageId) => setScreen({ ...screen, pageId })}
+          onSheet={(pageId) => setScreen({ ...screen, pageId, origin: undefined })}
           onAuthor={(authorId) =>
-            setScreen({ ...screen, authorId, pageId: undefined })
+            setScreen({ ...screen, authorId, pageId: undefined, origin: undefined })
           }
           startEditing={screen.editing}
           origin={screen.origin}
+          onUnsavedEdits={onUnsavedEdits}
           onBack={goHome}
           onDate={(nextDate) =>
-            setScreen({ ...screen, date: nextDate, pageId: undefined })
+            setScreen({ ...screen, date: nextDate, pageId: undefined, origin: undefined })
           }
           onSaved={() => {
             setDate(screen.date);

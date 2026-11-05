@@ -21,6 +21,7 @@ import { ParentFace } from './ParentFace';
 import { DrawingArea } from './DrawingArea';
 import { writeNote } from './notes';
 import { WritingArea } from './WritingArea';
+import { getSheetAddState } from './sheetAddState';
 import '../../styles/page.css';
 export type PageOrigin = {
   x: number;
@@ -39,6 +40,7 @@ export function PageScreen({
   onAuthor,
   startEditing,
   origin,
+  onUnsavedEdits,
   onBack,
   onDate,
   onSaved,
@@ -53,6 +55,7 @@ export function PageScreen({
   onAuthor: (authorId: 'dad' | 'mom') => void;
   startEditing: boolean;
   origin?: PageOrigin;
+  onUnsavedEdits?: (dirty: boolean) => void;
   onBack: () => void;
   onDate: (date: string) => void;
   onSaved: (pageId: string) => void;
@@ -126,6 +129,7 @@ export function PageScreen({
   const [sheet, setSheet] = useState<'badges' | 'palette' | 'comments'>();
   const [pending, setPending] = useState<() => void>();
   const [error, setError] = useState('');
+  const [sheetHint, setSheetHint] = useState('');
   const [busy, setBusy] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [localComments, setLocalComments] = useState<Comment[]>([]);
@@ -136,6 +140,7 @@ export function PageScreen({
     JSON.stringify(page) !== JSON.stringify(baseline.current) ||
     !!localComments.length ||
     !!localReactions.length;
+  useEffect(() => onUnsavedEdits?.(dirty), [dirty, onUnsavedEdits]);
   const comments = initial.saved
     ? snapshot.comments.filter((item) => item.pageId === page.id)
     : localComments;
@@ -143,12 +148,13 @@ export function PageScreen({
     ? snapshot.reactions.filter((item) => item.pageId === page.id)
     : localReactions;
   const memberId = store.getCurrentMemberId();
-  const hasContent =
+  const hasContent = !!(
     page.text.trim() ||
     page.drawing.some((stroke) => stroke.color !== 'erase') ||
-    !!page.photos.length;
+    page.photos.length
+  );
   const canSave = ownPage && hasContent && !busy && !leaving && !loading;
-  const transform = origin
+  const exitTransform = origin
     ? `translate(${origin.x}px, ${origin.y}px) scale(${origin.width / window.innerWidth}, ${origin.height / window.innerHeight})`
     : 'translate(12vw, 20vh) scale(.76)';
   useLayoutEffect(() => {
@@ -156,14 +162,15 @@ export function PageScreen({
   }, []);
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!origin) return;
     ref.current?.animate(
       [
-        { transform, borderRadius: '25px', opacity: 0.6 },
+        { transform: exitTransform, borderRadius: '25px', opacity: 0.6 },
         { transform: 'none', borderRadius: '0', opacity: 1 },
       ],
       { duration: 340, easing: 'cubic-bezier(.2,.8,.2,1)' },
     );
-  }, [transform]);
+  }, [exitTransform, origin]);
   useEffect(() => {
     if (!dirty) return;
     const guard = (event: BeforeUnloadEvent) => {
@@ -192,7 +199,7 @@ export function PageScreen({
     const animation = ref.current.animate(
       [
         { transform: 'none', opacity: 1 },
-        { transform, borderRadius: '25px', opacity: 0 },
+        { transform: exitTransform, borderRadius: '25px', opacity: 0 },
       ],
       { duration: 240, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' },
     );
@@ -207,8 +214,8 @@ export function PageScreen({
     if (dirty) setPending(() => action);
     else action();
   };
-  const save = () => {
-    if (!canSave) return;
+  const persist = () => {
+    if (!canSave) return undefined;
     try {
       const saved = preparePage({
         ...page,
@@ -219,14 +226,39 @@ export function PageScreen({
       localReactions.forEach((reaction) =>
         store.toggleReaction(saved.id, reaction.memberId),
       );
-      exit(() => onSaved(saved.id));
+      baseline.current = saved;
+      setLocalComments([]);
+      setLocalReactions([]);
+      onUnsavedEdits?.(false);
+      return saved;
     } catch (reason) {
       setError(
         reason instanceof Error
           ? reason.message
           : '저장하지 못했어요. 다시 시도해 주세요.',
       );
+      return undefined;
     }
+  };
+  const save = () => {
+    const saved = persist();
+    if (saved) exit(() => onSaved(saved.id));
+  };
+  const sheetAddState = getSheetAddState({
+    ownPage,
+    readOnly: !!store.readOnly,
+    currentSaved,
+    dirty,
+    hasContent,
+  });
+  const addSheet = () => {
+    if (busy || leaving || loading) return;
+    if (sheetAddState === 'blank') {
+      setSheetHint('이 장을 먼저 써 주세요');
+      return;
+    }
+    if (sheetAddState === 'save-first' && !persist()) return;
+    onSheet(newSheetId(date, child.id, page.authorId));
   };
   const weekday = '일월화수목금토'[fromKey(date).getDay()];
   return (
@@ -323,14 +355,14 @@ export function PageScreen({
                 {index + 1}
               </button>
             ))}
-          {ownPage && !store.readOnly && currentSaved && (
+          {ownPage && !store.readOnly && (
             <button
               aria-label="한 장 더 쓰기"
-              onClick={() =>
-                navigate(() => onSheet(newSheetId(date, child.id, page.authorId)))
-              }
+              aria-disabled={busy || leaving || loading || sheetAddState === 'blank'}
+              className="add-sheet-button"
+              onClick={addSheet}
             >
-              ＋
+              ＋ 한 장 더
             </button>
           )}
         </div>
@@ -375,6 +407,7 @@ export function PageScreen({
                 : '\u00a0'}
           </p>
         )}
+        {sheetHint && <p className="diary-hint" role="status">{sheetHint}</p>}
         {error && (
           <p className="diary-error" role="alert">
             {error}
