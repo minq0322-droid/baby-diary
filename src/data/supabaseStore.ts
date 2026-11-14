@@ -469,6 +469,13 @@ export class SupabaseStore extends LegacyAdapter implements DataStore {
     }
   }
 
+  /** Joins with an invite pasted inside the installed app (its storage is separate from Safari's). */
+  joinWith = (token: string): void => {
+    if (this.disposed || this.bootstrapping) return;
+    window.history.replaceState(null, '', window.location.pathname + window.location.search + '#join=' + token);
+    void this.start();
+  };
+
   retry = (): void => {
     if (this.disposed || this.bootstrapping) return;
     if (!this.userId || this.status.phase === 'blocked') {

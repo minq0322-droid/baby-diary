@@ -81,3 +81,15 @@ describe('anonymous invite access', () => {
     expect(pwaPaths(false).base).toBe('/');
   });
 });
+
+describe('inviteToken', () => {
+  it('reads the token from a full link, a hash, or the token alone', async () => {
+    const { inviteToken } = await import('./familyAccess');
+    const token = 'Ab3_-Ab3_-Ab3_-Ab3_-Ab3_-Ab3_-Ab3_-Ab3_-Ab3';
+    expect(inviteToken(`https://minq0322-droid.github.io/baby-diary/#join=${token}`)).toBe(token);
+    expect(inviteToken(`  #join=${token}\n`)).toBe(token);
+    expect(inviteToken(token)).toBe(token);
+    expect(inviteToken('안녕하세요')).toBeUndefined();
+    expect(inviteToken('https://example.com/')).toBeUndefined();
+  });
+});

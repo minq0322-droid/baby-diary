@@ -10,6 +10,17 @@ export const inviteFailure = '이 초대 링크는 더 이상 쓸 수 없어요.
 export const inviteRequired = '가족 초대 링크로 들어와 주세요';
 export const familyAppUrl = 'https://minq0322-droid.github.io/baby-diary/';
 
+/**
+ * 2026-11-15 (작가): 아이폰은 홈 화면에 추가한 웹 앱의 저장 공간을 Safari 와 따로 둔다. 그래서 Safari 에서 들어온
+ * 가족 연결이 앱으로 넘어가지 않고, 링크를 눌러도 Safari 가 열린다. 앱 안에서 초대 링크를 붙여넣어 들어오게 한다.
+ * 링크 전체·#join=… 부분·토큰만 붙여도 된다.
+ */
+export function inviteToken(text: string): string | undefined {
+  const value = text.trim();
+  const match = value.match(/join=([A-Za-z0-9_-]{20,})/);
+  if (match) return match[1];
+  return /^[A-Za-z0-9_-]{20,}$/.test(value) ? value : undefined;
+}
 export async function hashToken(token: string): Promise<string> {
   const digest = await crypto.subtle.digest(
     'SHA-256',

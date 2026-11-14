@@ -541,3 +541,14 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .tabbar .tab.on { background: var(--field); color: var(--text); }
 .tabbar .tab.on::after { content: none; }
 .tabbar .tab:focus-visible { outline: 2px solid var(--text); outline-offset: -2px; }
+
+/* 2026-11-15: 홈 화면 앱 안에서 초대 링크 붙여넣기 */
+.invite-paste { display: grid; gap: 8px; margin-top: 16px; text-align: left; }
+.invite-paste label { font-size: 14px; font-weight: 700; }
+.invite-paste input { min-height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--field); color: var(--text); font-size: 16px; }
+.invite-paste input:focus-visible { outline: 2px solid var(--text); outline-offset: 1px; }
+.invite-paste [role="alert"] { margin: 0; color: #C2410C; font-size: 13px; }
+.invite-paste .primary-btn { background: var(--primary); color: var(--on-primary); }
+.invite-paste .primary-btn:disabled { opacity: .45; }
+.invite-paste-hint { margin: 4px 0 0; color: var(--sub); font-size: 13px; line-height: 1.5; word-break: keep-all; }
+.sign-in-card .text-btn { min-height: 44px; margin-top: 4px; color: var(--sub); }
