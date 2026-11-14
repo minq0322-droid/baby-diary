@@ -1,4 +1,6 @@
-# 육아 일기 — Codex 작업 규칙
+# 육아 일기 — 작업 규칙
+
+2026-11-14: 코드는 Claude 가 직접 쓴다(「코덱스가 코드를 쓴다」 규칙 삭제). 구조·배포는 공통 스킬 app-structure.
 
 A couple (아빠/엄마) keeps a diary for their two kids: **one or more sheets per child per day per parent** (엄마의 페이지 and 아빠의 페이지 are separate), with a drawing/photo area on top and handwritten-style text below. Mobile-first web app (PWA build + claude.ai Artifact build; an app-store release via a native wrapper is planned, so keep everything web-standard and backend-agnostic), Korean UI only. The pages may become a printed book: drawings and exports must stay high-resolution.
 Do only the phase you are asked to do. Keep changes minimal and focused; do not refactor other phases' code.
@@ -30,6 +32,10 @@ Age label (`lib/date.ts#ageLabel`, already implemented):
 - Korean IME: never act on Enter while `isComposing`. Use `word-break: keep-all` for Korean labels (mockup bug to avoid: "기록 완료 · 아/빠" wrapping).
 
 For the diary sheet row, `＋ 한 장 더` is always visible on the current writer's own page (including blank and unsaved pages), and is inactive until the current blank page has content.
+
+## Themes and saving (2026-11-14, user)
+- Settings › 화면 offers 그림 (the illustrated design above, with 시스템/라이트/다크) · 모던 낮 · 모던 밤. Modern = `html[data-look="modern"]` (`src/lib/look.ts`, `src/styles/modern.css`): Pretendard, paper fixed to the theme colour (`--paper`), card home (`ModernHome`) with a 30-day ring. Stored page colours are kept.
+- Pages save themselves: 1.2 s after a change and at once when the app is hidden or closed. A device draft (`src/lib/draft.ts`) is the safety net; a draft found on reopen is saved straight away without a banner (only a conflict with another device asks).
 
 ## Data model (`src/data/types.ts`)
 ```ts
