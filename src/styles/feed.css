@@ -141,7 +141,7 @@
 .feed-post {
   padding-bottom: 20px;
   content-visibility: auto;
-  contain-intrinsic-size: auto 620px;
+  contain-intrinsic-size: auto 400px;
 }
 .feed-writer {
   display: flex;
@@ -180,9 +180,11 @@
 .feed-paper {
   position: relative;
   display: block;
-  width: 100%;
+  overflow: hidden;
+  width: calc(100% - 32px);
+  margin: 0 16px;
   padding: 0;
-  border-radius: 0;
+  border-radius: 16px;
   background: var(--page-color);
   color: var(--page-ink);
   text-align: left;
@@ -190,16 +192,18 @@
   touch-action: manipulation;
 }
 .feed-drawing {
+  /* 2026-11-15 (작가): 카드가 너무 커서 종이는 좌우 16 띄우고 그림은 가운데 64%(최대 320)로 줄인다. */
   display: block;
-  width: 100%;
+  width: min(64%, 320px);
+  margin: 14px auto 0;
   aspect-ratio: 5 / 4;
 }
 .feed-text {
   display: -webkit-box;
   overflow: hidden;
-  padding: 4px 20px 18px;
-  font-size: 22px;
-  line-height: 1.35;
+  padding: 4px 18px 16px;
+  font-size: 19px;
+  line-height: 1.4;
   white-space: pre-wrap;
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -207,7 +211,7 @@
   -webkit-line-clamp: 8;
 }
 .feed-text:first-child {
-  padding-top: 20px;
+  padding-top: 16px;
 }
 .feed-pop {
   position: absolute;
@@ -332,7 +336,7 @@
   outline-offset: -4px;
 }
 html[data-look='modern'] .feed-text {
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.6;
 }
 @media (prefers-reduced-motion: reduce) {
