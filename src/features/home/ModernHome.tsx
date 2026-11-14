@@ -90,7 +90,7 @@ export function ModernHome({ store, snapshot, openPage, onAll, onCalendar, onSet
       <nav className="home-navigation modern-navigation" aria-label="기록장 메뉴">
         {(
           [
-            { label: '목록', icon: 'list', action: onAll },
+            { label: '기록', icon: 'feed', action: onAll },
             { label: '달력', icon: 'calendar', action: onCalendar },
             { label: '설정', icon: 'settings', action: onSettings },
           ] as const

@@ -15,7 +15,6 @@ import { SyncBanner } from './components/SyncBanner';
 
 type Screen =
   | { kind: 'shell'; tab: Tab }
-  | { kind: 'archive' }
   | {
       kind: 'page';
       date: string;
@@ -40,6 +39,8 @@ export default function App({
   const source = useRef<{ origin?: PageOrigin; editing: boolean }>({
     editing: false,
   });
+  // 기록(피드)에서 연 장은 기록으로 돌아간다.
+  const back = useRef<Tab>('홈');
   useMemberFonts(snapshot.members, store);
   useEffect(() => {
     if (!savedToast) return;
@@ -62,7 +63,8 @@ export default function App({
     childId: string,
     authorId?: 'dad' | 'mom',
     pageId?: string,
-  ) =>
+  ) => {
+    back.current = screen.kind === 'shell' ? screen.tab : back.current;
     setScreen({
       kind: 'page',
       date: nextDate,
@@ -71,6 +73,8 @@ export default function App({
       pageId,
       ...source.current,
     });
+  };
+  const leavePage = () => setScreen({ kind: 'shell', tab: back.current === '기록' ? '기록' : '홈' });
   const goHome = () => setScreen({ kind: 'shell', tab: '홈' });
 
   if (screen.kind === 'page') {
@@ -94,27 +98,27 @@ export default function App({
           startEditing={screen.editing}
           origin={screen.origin}
           onUnsavedEdits={onUnsavedEdits}
-          onBack={goHome}
+          onBack={leavePage}
           onDate={(nextDate) =>
             setScreen({ ...screen, date: nextDate, pageId: undefined, origin: undefined })
           }
           onSaved={() => {
             setDate(screen.date);
             setSavedToast(true);
-            goHome();
+            leavePage();
           }}
         />
       </>
     );
   }
 
-  const tab = screen.kind === 'archive' ? '홈' : screen.tab;
+  const tab = screen.tab;
   return (
     <div
       className={`app-shell${screen.kind === 'shell' && screen.tab === '홈' ? ' home-shell' : ''}`}
       onClickCapture={(event) => {
         const card = (event.target as HTMLElement).closest(
-          '.kid-card, .page-card, .home-face',
+          '.kid-card, .page-card, .home-face, .feed-paper, .feed-memory',
         );
         if (!card) return;
         const rect = card.getBoundingClientRect();
@@ -132,14 +136,10 @@ export default function App({
       }}
     >
       <SyncBanner store={store} />
-      {screen.kind === 'archive' ? (
-        <ArchiveScreen
-          store={store}
-          snapshot={snapshot}
-          openPage={openPage}
-          onBack={goHome}
-        />
-      ) : (
+      {tab === '기록' && (
+        <ArchiveScreen store={store} snapshot={snapshot} openPage={openPage} onBack={goHome} />
+      )}
+      {tab !== '기록' && (
         <>
           {tab === '홈' && (
             <HomeScreen
@@ -148,7 +148,7 @@ export default function App({
               openPage={openPage}
               onCalendar={() => setScreen({ kind: 'shell', tab: '달력' })}
               onSettings={() => setScreen({ kind: 'shell', tab: '설정' })}
-              onAll={() => setScreen({ kind: 'archive' })}
+              onAll={() => setScreen({ kind: 'shell', tab: '기록' })}
             />
           )}
           {tab === '달력' && (
@@ -165,7 +165,7 @@ export default function App({
           )}
         </>
       )}
-      {!(screen.kind === 'shell' && tab === '홈') && (
+      {tab !== '홈' && (
         <BottomNav
           tab={tab}
           onChange={(nextTab) => setScreen({ kind: 'shell', tab: nextTab })}
