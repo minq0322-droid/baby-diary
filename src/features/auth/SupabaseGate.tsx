@@ -40,7 +40,13 @@ export function SupabaseGate({ store, children }: { store: SupabaseStore; childr
               spellCheck={false}
               aria-invalid={wrong}
             />
-            {wrong && <p role="alert">링크 전체를 붙여 넣어 주세요.</p>}
+            {wrong && (
+              <p role="alert">
+                {/^https?:\/\//.test(text.trim())
+                  ? '이건 앱 주소예요. 끝에 「#join=」이 붙은 초대 링크가 필요해요. 설정 › 가족에서 만든 링크를 복사해 주세요.'
+                  : '링크 전체를 붙여 넣어 주세요.'}
+              </p>
+            )}
             <button type="submit" className="primary-btn" disabled={!text.trim()}>
               들어가기
             </button>
