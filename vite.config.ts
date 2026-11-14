@@ -59,13 +59,28 @@ export default defineConfig(({ mode }) => {
             viteSingleFile(),
           ]
         : [
+            {
+              // 아이폰 홈 화면 추가용 아이콘·이름. 고른 아이콘은 실행 중 src/lib/appIcon.ts 가 바꾼다.
+              name: 'home-screen-tags',
+              transformIndexHtml(html: string) {
+                const tags = [
+                  `<link rel="icon" type="image/svg+xml" href="${paths.icon}.svg"/>`,
+                  `<link rel="apple-touch-icon" href="${paths.icon}-180.png"/>`,
+                  '<meta name="apple-mobile-web-app-capable" content="yes"/>',
+                  '<meta name="mobile-web-app-capable" content="yes"/>',
+                  '<meta name="apple-mobile-web-app-title" content="육아기록"/>',
+                  '<meta name="apple-mobile-web-app-status-bar-style" content="default"/>',
+                ];
+                return html.replace('</head>', tags.join('') + '</head>');
+              },
+            },
             VitePWA({
               registerType: 'autoUpdate',
-              includeAssets: ['icon.svg', 'fonts/Gaegu-Regular.woff2'],
+              includeAssets: ['icons/*.svg', 'icons/*.png', 'fonts/Gaegu-Regular.woff2'],
               workbox: {
                 clientsClaim: true,
                 skipWaiting: true,
-                globPatterns: ['**/*.{js,css,html,woff2}'],
+                globPatterns: ['**/*.{js,css,html,woff2,svg,png}'],
               },
               manifest: {
                 start_url: paths.start_url,
@@ -77,12 +92,10 @@ export default defineConfig(({ mode }) => {
                 theme_color: '#FAF8F5',
                 background_color: '#FAF8F5',
                 icons: [
-                  {
-                    src: paths.icon,
-                    sizes: 'any',
-                    type: 'image/svg+xml',
-                    purpose: 'any maskable',
-                  },
+                  { src: paths.icon + '-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+                  { src: paths.icon + '-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+                  { src: paths.icon + '-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+                  { src: paths.icon + '.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
                 ],
               },
             }),

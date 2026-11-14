@@ -77,7 +77,7 @@ describe('anonymous invite access', () => {
     expect(rpc).toHaveBeenCalledTimes(1);
   });
   it('sets the Pages base, manifest start URL, scope, and icon consistently', () => {
-    expect(pwaPaths(true)).toEqual({ base: '/baby-diary/', start_url: '/baby-diary/', scope: '/baby-diary/', icon: '/baby-diary/icon.svg' });
+    expect(pwaPaths(true)).toEqual({ base: '/baby-diary/', start_url: '/baby-diary/', scope: '/baby-diary/', icon: '/baby-diary/icons/book' });
     expect(pwaPaths(false).base).toBe('/');
   });
 });

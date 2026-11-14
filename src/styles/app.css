@@ -525,3 +525,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 @media (min-width: 768px) {
   .calendar-screen { max-width: 784px; }
 }
+
+/* 2026-11-15: 설정 › 앱 아이콘 — 로고 세 개 중 하나 */
+.setting-icons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 6px; }
+.setting-icons button { display: grid; justify-items: center; gap: 6px; min-height: 44px; padding: 10px 4px 8px; border-radius: 16px; color: var(--sub); font-size: 12px; word-break: keep-all; }
+.setting-icons img { width: 56px; height: 56px; border-radius: 13px; box-shadow: 0 0 0 1px var(--line); }
+.setting-icons button[aria-pressed="true"] { background: var(--field); color: var(--text); font-weight: 700; }
+.setting-icons button[aria-pressed="true"] img { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--text); }
+.setting-icons button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }

@@ -15,6 +15,7 @@ import { ProfilePortrait } from '../home/ProfilePortrait';
 import { BackupSection } from './BackupSection';
 import { BookSection } from './BookSection';
 import { FamilySettings } from './FamilySettings';
+import { AppIconSection } from './AppIconSection';
 
 type Props = { store: DataStore; snapshot: StoreSnapshot };
 
@@ -173,6 +174,7 @@ export function SettingsScreen({ store, snapshot }: Props) {
         <p className="scene-settings-hint">홈의 작은 집·무당벌레·별·풍등을 누르면 장면을 바꿀 수 있어요</p>
         </>}
       </section>
+      {!__ARTIFACT__ && <AppIconSection />}
       {editingChild && (
         <ChildEditSheet
           child={

@@ -35,6 +35,7 @@ For the diary sheet row, `＋ 한 장 더` is always visible on the current writ
 
 ## Themes and saving (2026-11-14, user)
 - Settings › 화면 offers 그림 (the illustrated design above, with 시스템/라이트/다크) · 모던 낮 · 모던 밤. Modern = `html[data-look="modern"]` (`src/lib/look.ts`, `src/styles/modern.css`): Pretendard, paper fixed to the theme colour (`--paper`), card home (`ModernHome`) with a 30-day ring. Stored page colours are kept.
+- App icon (2026-11-15): 설정 › 앱 아이콘 picks one of three logos (`public/icons/{book,moon,heart}`, `src/lib/appIcon.ts`); it swaps `apple-touch-icon` for iPhone 「홈 화면에 추가」. The manifest keeps the book icon.
 - Pages save themselves: 1.2 s after a change and at once when the app is hidden or closed. A device draft (`src/lib/draft.ts`) is the safety net; a draft found on reopen is saved straight away without a banner (only a conflict with another device asks).
 
 ## Data model (`src/data/types.ts`)

@@ -4,9 +4,11 @@ import App from './App';
 import './styles/tokens.css';
 import './styles/app.css';
 import './styles/modern.css';
+import { applyAppIcon, readAppIcon } from './lib/appIcon';
 
 try {
   if (__ARTIFACT__) document.documentElement.classList.add('is-artifact');
+  else applyAppIcon(readAppIcon(), import.meta.env.BASE_URL, false);
   if (localStorage.getItem('yuga-look') === 'modern') document.documentElement.dataset.look = 'modern';
   const theme = localStorage.getItem('theme');
   if (theme === 'light' || theme === 'dark')
