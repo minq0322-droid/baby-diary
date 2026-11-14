@@ -10,6 +10,7 @@ import { PageColorSheet } from './PageColorSheet';
 import { FontUpload } from './FontUpload';
 import { BadgeManager } from './BadgeManager';
 import { applyTheme, type Theme } from '../home/sceneChoice';
+import { applyLook, choiceToLook, themeChoice, useLook, type ThemeChoice } from '../../lib/look';
 import { ProfilePortrait } from '../home/ProfilePortrait';
 import { BackupSection } from './BackupSection';
 import { BookSection } from './BookSection';
@@ -32,6 +33,14 @@ export function SettingsScreen({ store, snapshot }: Props) {
     return () => window.clearTimeout(timer);
   }, [message]);
 
+  const look = useLook();
+  const choice = themeChoice(look, theme);
+  const changeChoice = (next: ThemeChoice) => {
+    const target = choiceToLook(next);
+    applyLook(target.look);
+    if (target.theme) changeTheme(target.theme);
+    else if (look === 'modern') changeTheme('system');
+  };
   const changeTheme = (next: Theme) => {
     setTheme(next);
     applyTheme(next);
@@ -85,7 +94,7 @@ export function SettingsScreen({ store, snapshot }: Props) {
           </div>
         </section>
       )}
-      <section className="settings-group">
+      {look !== 'modern' && <section className="settings-group">
         <h2>페이지 색</h2>
         <button
           className="setting settings-list"
@@ -103,7 +112,7 @@ export function SettingsScreen({ store, snapshot }: Props) {
           </span>
           <Icon name="arrow" />
         </button>
-      </section>
+      </section>}
       <section className="settings-group">
         <h2>글씨체</h2>
         <div className="settings-list">
@@ -135,6 +144,16 @@ export function SettingsScreen({ store, snapshot }: Props) {
       <BookSection store={store} snapshot={snapshot} />
       <section className="settings-group">
         <h2>화면</h2>
+        <div className="settings-list setting-theme setting-look" role="group" aria-label="테마">
+          {(['drawing', 'modern-day', 'modern-night'] as const).map((value) => (
+            <button type="button" key={value} aria-pressed={choice === value} onClick={() => changeChoice(value)}>
+              {value === 'drawing' ? '그림' : value === 'modern-day' ? '모던 낮' : '모던 밤'}
+            </button>
+          ))}
+        </div>
+        {look === 'modern' ? (
+          <p className="scene-settings-hint">모던 테마에서는 도화지가 테마 색으로 고정돼요. 고른 페이지 색은 그대로 남아 있어 그림 테마로 돌아가면 다시 보여요.</p>
+        ) : <>
         <div className="settings-list setting-theme">
           {(['system', 'light', 'dark'] as const).map((value) => (
             <button
@@ -152,6 +171,7 @@ export function SettingsScreen({ store, snapshot }: Props) {
           ))}
         </div>
         <p className="scene-settings-hint">홈의 작은 집·무당벌레·별·풍등을 누르면 장면을 바꿀 수 있어요</p>
+        </>}
       </section>
       {editingChild && (
         <ChildEditSheet

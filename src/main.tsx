@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles/tokens.css';
 import './styles/app.css';
+import './styles/modern.css';
 
 try {
   if (__ARTIFACT__) document.documentElement.classList.add('is-artifact');
+  if (localStorage.getItem('yuga-look') === 'modern') document.documentElement.dataset.look = 'modern';
   const theme = localStorage.getItem('theme');
   if (theme === 'light' || theme === 'dark')
     document.documentElement.setAttribute('data-theme', theme);

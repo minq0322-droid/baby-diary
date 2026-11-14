@@ -3,6 +3,7 @@ import type { Page } from '../data/types';
 import type { DataStore } from '../data/DataStore';
 import { paintStroke } from '../features/page/strokes';
 import { useDarkMode } from '../lib/usePageColorStyle';
+import { useLook } from '../lib/look';
 export function StrokePreview({
   page,
   store,
@@ -14,6 +15,7 @@ export function StrokePreview({
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const dark = useDarkMode();
+  const look = useLook();
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
@@ -87,6 +89,6 @@ export function StrokePreview({
         image.onload = null;
       });
     };
-  }, [page, dark, store]);
+  }, [page, dark, look, store]);
   return <canvas className={className} ref={ref} aria-hidden="true" />;
 }

@@ -15,9 +15,18 @@ import { crossfadeScene } from './crossfadeScene';
 import { useHomePreferences } from './preferences';
 import { writtenDays } from './history';
 import { useScene } from './useScene';
+import { useLook } from '../../lib/look';
+import { ModernHome } from './ModernHome';
 import '../../styles/home.css';
 
-export function HomeScreen({
+type HomeProps = Parameters<typeof SceneHome>[0];
+
+/** 그림 테마 = 풍경 속 얼굴(SceneHome), 모던 테마 = 아이 카드(ModernHome). */
+export function HomeScreen(props: HomeProps) {
+  return useLook() === 'modern' ? <ModernHome {...props} /> : <SceneHome {...props} />;
+}
+
+function SceneHome({
   store,
   snapshot,
   openPage,

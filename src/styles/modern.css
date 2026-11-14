@@ -1,0 +1,262 @@
+/*
+ * 2026-11-14 (작가): 모던 테마 — 그림 컨셉이 아닌 깔끔하고 모던한 느낌. 모던 낮 / 모던 밤.
+ * html[data-look="modern"] 일 때만 적용. 도화지(--paper)는 테마 색으로 고정, 글꼴은 Pretendard.
+ * 저장된 페이지 색·손글씨 글꼴 설정은 그대로 두고(그림 테마로 돌아가면 다시 보임) 보이는 모습만 바꾼다.
+ */
+html[data-look='modern'] {
+  --bg: #f6f6f7;
+  --card: #ffffff;
+  --surface: #ffffff;
+  --field: #eeeef0;
+  --text: #121214;
+  --sub: #6c6c74;
+  --line: #e3e3e7;
+  --primary: #121214;
+  --on-primary: #ffffff;
+  --shadow: 0 1px 2px rgba(18, 18, 20, 0.04), 0 6px 20px rgba(18, 18, 20, 0.06);
+  --scrim: rgba(18, 18, 20, 0.32);
+  --page: #e9e9ec;
+  --paper: #ffffff;
+  --paper-ink: #141416;
+  --r-card: 20px;
+  --modern-glass: rgba(255, 255, 255, 0.78);
+}
+@media (prefers-color-scheme: dark) {
+  html[data-look='modern']:not([data-theme='light']) {
+    --bg: #0e0e10;
+    --card: #1a1a1d;
+    --surface: #1a1a1d;
+    --field: #26262a;
+    --text: #f2f2f4;
+    --sub: #9d9da6;
+    --line: #2d2d32;
+    --primary: #f2f2f4;
+    --on-primary: #0e0e10;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --scrim: rgba(0, 0, 0, 0.6);
+    --page: #050506;
+    --paper: #161618;
+    --paper-ink: #ececef;
+    --modern-glass: rgba(26, 26, 29, 0.82);
+  }
+}
+html[data-look='modern'][data-theme='dark'] {
+  --bg: #0e0e10;
+  --card: #1a1a1d;
+  --surface: #1a1a1d;
+  --field: #26262a;
+  --text: #f2f2f4;
+  --sub: #9d9da6;
+  --line: #2d2d32;
+  --primary: #f2f2f4;
+  --on-primary: #0e0e10;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --scrim: rgba(0, 0, 0, 0.6);
+  --page: #050506;
+  --paper: #161618;
+  --paper-ink: #ececef;
+  --modern-glass: rgba(26, 26, 29, 0.82);
+}
+html[data-look='modern'] body {
+  background: var(--bg);
+}
+
+/* ---- 일기장: 손글씨 → Pretendard, 손그림 타원 → 알약 ---- */
+html[data-look='modern'] .diary {
+  font: 500 17px/1.6 Pretendard, -apple-system, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+html[data-look='modern'] .dad-writing,
+html[data-look='modern'] .mom-writing {
+  font-family: Pretendard, -apple-system, system-ui, sans-serif;
+}
+html[data-look='modern'] .diary-date span {
+  font-weight: 700;
+  font-size: 16px;
+}
+html[data-look='modern'] .diary .oval {
+  width: 128px;
+  height: 52px;
+  border: 0;
+  border-radius: 26px;
+  background: var(--paper-ink);
+  color: var(--paper);
+  font-weight: 700;
+  font-size: 16px;
+  transform: none;
+}
+html[data-look='modern'] .oval span {
+  transform: none;
+}
+html[data-look='modern'] .parent-pages {
+  gap: 4px;
+  padding: 4px 0;
+}
+html[data-look='modern'] .parent-pages button {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 18px;
+  font: 600 14px/1 Pretendard, system-ui, sans-serif;
+  opacity: 0.55;
+}
+html[data-look='modern'] .parent-pages button[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--paper-ink) 8%, transparent);
+  opacity: 1;
+}
+html[data-look='modern'] .page-sheets button,
+html[data-look='modern'] .page-sheets .add-sheet-button {
+  font: 600 14px/1 Pretendard, system-ui, sans-serif;
+}
+html[data-look='modern'] .tray {
+  font-family: Pretendard, system-ui, sans-serif;
+}
+html[data-look='modern'] .tray button {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ---- 모던 홈: 아이 카드 ---- */
+.modern-home {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 24px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 104px);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--bg);
+  color: var(--text);
+}
+.modern-home-head p {
+  margin: 0;
+  color: var(--sub);
+  font-size: 14px;
+  font-weight: 500;
+}
+.modern-home-head h1 {
+  margin: 4px 0 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.modern-kids {
+  display: grid;
+  gap: 12px;
+}
+.modern-kid {
+  position: relative;
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.modern-kid-open {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 16px 16px 16px;
+  text-align: left;
+  border-radius: 20px;
+}
+.modern-ring {
+  position: relative;
+  width: 88px;
+  height: 88px;
+}
+.modern-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.modern-ring path.on {
+  stroke: var(--text);
+}
+.modern-photo {
+  position: absolute;
+  inset: 11px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--field);
+}
+.modern-kid-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.modern-kid-text b {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.modern-kid-text small {
+  color: var(--sub);
+  font-size: 13px;
+}
+.modern-today {
+  align-self: end;
+  display: grid;
+  gap: 6px;
+  padding-bottom: 2px;
+}
+.modern-today i {
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--field);
+  color: var(--sub);
+  font: 600 12px/1.2 Pretendard, system-ui, sans-serif;
+  font-style: normal;
+  text-align: center;
+}
+.modern-today i.on {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.modern-kid-more {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  color: var(--sub);
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+}
+.modern-kid-open:focus-visible,
+.modern-kid-more:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.modern-home .modern-navigation {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  transform: translateX(-50%);
+  margin: 0;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 32px;
+  border: 1px solid var(--line);
+  background: var(--modern-glass);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+.modern-home .modern-navigation button {
+  min-width: 64px;
+  min-height: 48px;
+  border-radius: 24px;
+  color: var(--sub);
+}
+.modern-home .modern-navigation button:hover {
+  color: var(--text);
+  background: var(--field);
+}

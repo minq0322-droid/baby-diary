@@ -5,6 +5,7 @@ import { downscalePhoto } from '../../lib/image';
 import { simplifyStroke } from '../../lib/stroke';
 import { penColors } from '../../lib/pageColors';
 import { useDarkMode } from '../../lib/usePageColorStyle';
+import { useLook } from '../../lib/look';
 import { paintStroke } from './strokes';
 import { PhotoFrame } from './PhotoFrame';
 import {
@@ -51,6 +52,7 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
   const latestPage = useRef(page);
   latestPage.current = page;
   const dark = useDarkMode();
+  const look = useLook();
   useEffect(() => { onDrawing(drawing && editing); }, [drawing, editing, onDrawing]);
   useEffect(() => {
     mounted.current = true;
@@ -112,7 +114,7 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
     observer.observe(box.current!);
     redraw();
     return () => observer.disconnect();
-  }, [page.drawing, page.color, dark, view.zoom]);
+  }, [page.drawing, page.color, dark, look, view.zoom]);
   // 2026-11-14: 손가락을 댄 채 앱이 내려가도 그리던 획을 끝내 임시 저장에 들어가게.
   const finishRef = useRef<() => void>(() => {});
   useEffect(() => {

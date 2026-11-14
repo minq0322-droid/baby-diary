@@ -26,6 +26,7 @@ import { clearDraft, decideDraft, flushDrafts, newestSheetDraft, readDraft, type
 import { useDraftAutosave } from './useDraftAutosave';
 import { DraftBanner } from './DraftBanner';
 import { LeaveSheet } from './LeaveSheet';
+import { useLook } from '../../lib/look';
 import '../../styles/page.css';
 export type PageOrigin = {
   x: number;
@@ -104,10 +105,13 @@ export function PageScreen({
     initial.decision === 'restore' && initial.draft ? structuredClone(initial.draft.page) : initial.page,
   );
   const baseline = useRef(initial.page);
+  // What the last save (or the stored page) looked like before preparePage — 'dirty' compares against this.
+  const savedSource = useRef(JSON.stringify(initial.page));
+  const [autoSaved, setAutoSaved] = useState(false);
   const storedAt = useRef<string | null>(initial.stored?.updatedAt ?? null);
   const [loading, setLoading] = useState(initial.loading);
   const [draftNote, setDraftNote] = useState<'restored' | 'conflict' | undefined>(
-    initial.decision === 'restore' ? 'restored' : initial.decision === 'conflict' ? 'conflict' : undefined,
+    initial.decision === 'conflict' ? 'conflict' : undefined,
   );
   const otherDraft = useRef<Draft | null>(initial.decision === 'conflict' ? initial.draft : null);
   useEffect(() => {
@@ -118,12 +122,13 @@ export function PageScreen({
       .then((page) => {
         if (active) {
           baseline.current = page;
+          savedSource.current = JSON.stringify(page);
           storedAt.current = page.updatedAt;
           const draft = readDraft(page.id);
           const decision = decideDraft(page, draft);
           if (decision === 'restore' && draft) {
             setPage(structuredClone(draft.page));
-            setDraftNote('restored');
+            if (!store.readOnly) setEditing(true);
           } else {
             setPage(page);
             if (decision === 'conflict') {
@@ -145,7 +150,7 @@ export function PageScreen({
     };
   }, [store, initial.page.id, loading]);
   const [editing, setEditing] = useState(
-    !store.readOnly && (startEditing || !initial.saved),
+    !store.readOnly && (startEditing || !initial.saved || initial.decision === 'restore'),
   );
   const writer = store.readOnly
     ? undefined
@@ -168,7 +173,7 @@ export function PageScreen({
   const ref = useRef<HTMLDivElement>(null);
   const swipe = useRef<{ x: number; y: number }>();
   const dirty =
-    JSON.stringify(page) !== JSON.stringify(baseline.current) ||
+    JSON.stringify(page) !== savedSource.current ||
     !!localComments.length ||
     !!localReactions.length;
   useEffect(() => onUnsavedEdits?.(dirty), [dirty, onUnsavedEdits]);
@@ -269,6 +274,8 @@ export function PageScreen({
         store.toggleReaction(saved.id, reaction.memberId),
       );
       baseline.current = saved;
+      savedSource.current = JSON.stringify(page);
+      setAutoSaved(true);
       storedAt.current = saved.updatedAt;
       draftSave.settle();
       clearDraft(saved.id);
@@ -291,6 +298,29 @@ export function PageScreen({
     const saved = persist();
     if (saved) exit(() => onSaved(saved.id));
   };
+  // 2026-11-14 (작가: "되살렸어요 말고 그냥 바로 저장시켜"): 그리거나 쓰면 1.2초 뒤 저절로 저장, 앱을 내리면 바로 저장.
+  // 저장 단추는 그대로(저장하고 홈으로). 기기 임시 저장은 저장이 닿기 전의 안전망으로 남는다.
+  const autoSave = useRef(() => {});
+  autoSave.current = () => {
+    if (dirty && canSave && editing && !store.readOnly) persist();
+  };
+  useEffect(() => {
+    if (!dirty || !canSave || !editing || store.readOnly) return;
+    const timer = window.setTimeout(() => autoSave.current(), 1200);
+    return () => window.clearTimeout(timer);
+  }, [page, dirty, canSave, editing, store.readOnly]);
+  useEffect(() => {
+    const hidden = () => {
+      if (document.visibilityState === 'hidden') autoSave.current();
+    };
+    const gone = () => autoSave.current();
+    document.addEventListener('visibilitychange', hidden);
+    window.addEventListener('pagehide', gone);
+    return () => {
+      document.removeEventListener('visibilitychange', hidden);
+      window.removeEventListener('pagehide', gone);
+    };
+  }, []);
   const sheetAddState = getSheetAddState({
     ownPage,
     readOnly: !!store.readOnly,
@@ -307,6 +337,8 @@ export function PageScreen({
     if (sheetAddState === 'save-first' && !persist()) return;
     onSheet(newSheetId(date, child.id, page.authorId));
   };
+  // 모던 테마: 그림 얼굴 대신 글자, 도화지 색은 테마 색으로 고정이라 색 고르기 없음.
+  const look = useLook();
   const weekday = '일월화수목금토'[fromKey(date).getDay()];
   return (
     <div
@@ -386,7 +418,7 @@ export function PageScreen({
               aria-pressed={page.authorId === author}
               onClick={() => navigate(() => onAuthor(author))}
             >
-              <ParentFace author={author} />
+              {look === 'modern' ? (author === 'mom' ? '엄마의 페이지' : '아빠의 페이지') : <ParentFace author={author} />}
             </button>
           ))}
         </div>
@@ -412,9 +444,9 @@ export function PageScreen({
               ＋ 한 장 더
             </button>
           )}
-          {ownPage && !store.readOnly && draftSave.status !== 'idle' && (
-            <span className={'draft-state ' + draftSave.status} role={draftSave.status === 'failed' ? 'alert' : 'status'}>
-              {draftSave.status === 'saved' ? '임시 저장됨' : '임시 저장 실패 · 저장을 눌러 주세요'}
+          {ownPage && !store.readOnly && (dirty ? draftSave.status !== 'idle' : autoSaved) && (
+            <span className={'draft-state ' + (dirty ? draftSave.status : 'saved')} role={dirty && draftSave.status === 'failed' ? 'alert' : 'status'}>
+              {!dirty ? '저장됨' : draftSave.status === 'saved' ? '저장하는 중' : '임시 저장 실패 · 저장을 눌러 주세요'}
             </span>
           )}
         </div>
@@ -499,7 +531,7 @@ export function PageScreen({
           >
             <span>{editing ? '저장' : '수정'}</span>
           </button>
-          {editing && ownPage ? (
+          {editing && ownPage && look !== 'modern' ? (
             <button className="page-palette" aria-label="페이지 색 고르기" onClick={() => setSheet('palette')}>
               <Icon name="palette" />
             </button>
