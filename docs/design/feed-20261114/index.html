@@ -1,0 +1,232 @@
+<title>육아 기록 피드 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 위에 고르기 막대(피드 형태 · 테마 · 낮밤), 아래 가운데 휴대폰 화면 하나(390). 시안 글은 모두 지어낸 것. */
+:root {
+  --ui: 'Noto Sans KR', 'Pretendard', system-ui, sans-serif;   /* 실제 앱은 Pretendard */
+  --hand: 'Gaegu', 'Noto Sans KR', cursive;
+  --bg: #F6F5F2; --card: #FFFFFF; --text: #1E1F24; --sub: #74757C; --line: #E6E4DF;
+  --accent: #1E1F24; --on-accent: #FFFFFF; --soft: #EFEBE5; --ink: #1E2326;
+  --mom: #D9849F; --dad: #6E8FD6; --kid1: #F4B9B8; --kid2: #CDEFE2; --mix: #262638; --mixp: 0%;
+  --chrome: #EDEBE6; --chrome-text: #2B2A27;
+}
+/* 테마 다섯: data-skin. 각 테마는 낮 값(여기)과 밤 값(아래 두 블록). */
+[data-skin="crayon"] { --bg: #FBF6EC; --card: #FFFDF8; --text: #2B241C; --sub: #857A6C; --line: #EADFCC; --accent: #D9712C; --on-accent: #FFFFFF; --soft: #F5EADB; }
+[data-skin="dawn"]   { --bg: #F1F5FB; --card: #FFFFFF; --text: #1C2433; --sub: #6C778A; --line: #DDE5F1; --accent: #4F72C4; --on-accent: #FFFFFF; --soft: #E5ECF7; }
+[data-skin="forest"] { --bg: #F2F5EF; --card: #FCFDFA; --text: #1F2A21; --sub: #6E7B70; --line: #DDE5D8; --accent: #4F7E57; --on-accent: #FFFFFF; --soft: #E6EDE1; }
+[data-skin="cotton"] { --bg: #FBF3F6; --card: #FFFDFE; --text: #2E2329; --sub: #87737D; --line: #EFDDE5; --accent: #C46A8D; --on-accent: #FFFFFF; --soft: #F6E6ED; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #262638; --card: #31314A; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --accent: #F1F0F7; --on-accent: #262638; --soft: #3B3B57; --mixp: 10%; --mix: #262638;
+  --chrome: #1D1D2B; --chrome-text: #E6E5EE; color-scheme: dark; }
+  :root:not([data-theme="light"]) [data-skin="crayon"] { --bg: #2A231D; --card: #352C24; --text: #F6EEE3; --sub: #B8A994; --line: #4A3E33; --accent: #F0A060; --on-accent: #2A231D; --soft: #40352B; --mix: #2A231D; }
+  :root:not([data-theme="light"]) [data-skin="dawn"]   { --bg: #172033; --card: #1F2A40; --text: #EDF2FA; --sub: #9DAAC2; --line: #33415C; --accent: #8FB0F2; --on-accent: #172033; --soft: #27334B; --mix: #172033; }
+  :root:not([data-theme="light"]) [data-skin="forest"] { --bg: #1B2520; --card: #232F28; --text: #EDF3EC; --sub: #A1B2A4; --line: #354539; --accent: #8DC497; --on-accent: #1B2520; --soft: #2A372F; --mix: #1B2520; }
+  :root:not([data-theme="light"]) [data-skin="cotton"] { --bg: #2A2027; --card: #352932; --text: #F7EDF2; --sub: #BBA2AF; --line: #4B3843; --accent: #EFA0BF; --on-accent: #2A2027; --soft: #3E3039; --mix: #2A2027; }
+}
+:root[data-theme="dark"] {
+  --bg: #262638; --card: #31314A; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --accent: #F1F0F7; --on-accent: #262638; --soft: #3B3B57; --mixp: 10%; --mix: #262638;
+  --chrome: #1D1D2B; --chrome-text: #E6E5EE; color-scheme: dark; }
+:root[data-theme="dark"] [data-skin="crayon"] { --bg: #2A231D; --card: #352C24; --text: #F6EEE3; --sub: #B8A994; --line: #4A3E33; --accent: #F0A060; --on-accent: #2A231D; --soft: #40352B; --mix: #2A231D; }
+:root[data-theme="dark"] [data-skin="dawn"]   { --bg: #172033; --card: #1F2A40; --text: #EDF2FA; --sub: #9DAAC2; --line: #33415C; --accent: #8FB0F2; --on-accent: #172033; --soft: #27334B; --mix: #172033; }
+:root[data-theme="dark"] [data-skin="forest"] { --bg: #1B2520; --card: #232F28; --text: #EDF3EC; --sub: #A1B2A4; --line: #354539; --accent: #8DC497; --on-accent: #1B2520; --soft: #2A372F; --mix: #1B2520; }
+:root[data-theme="dark"] [data-skin="cotton"] { --bg: #2A2027; --card: #352932; --text: #F7EDF2; --sub: #BBA2AF; --line: #4B3843; --accent: #EFA0BF; --on-accent: #2A2027; --soft: #3E3039; --mix: #2A2027; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--chrome); color: var(--chrome-text); font: 14px/1.5 var(--ui); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px 40px; display: grid; gap: 16px; justify-items: center; }
+.picker { width: 100%; max-width: 760px; display: grid; gap: 8px; }
+.picker h1 { margin: 0; font-size: 17px; font-weight: 700; text-wrap: balance; }
+.picker p { margin: 0; color: color-mix(in srgb, var(--chrome-text) 65%, transparent); font-size: 13px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row > span { font-size: 12px; font-weight: 700; letter-spacing: .02em; min-width: 52px; }
+.chip { min-height: 36px; padding: 0 12px; border: 1px solid color-mix(in srgb, var(--chrome-text) 22%, transparent); border-radius: 18px; background: transparent; color: inherit; font: 500 13px/1 var(--ui); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"] { background: var(--chrome-text); color: var(--chrome); border-color: var(--chrome-text); }
+.chip i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.chip:focus-visible, button:focus-visible { outline: 2px solid #4F72C4; outline-offset: 2px; }
+
+/* 휴대폰 화면 */
+.phone { width: 100%; max-width: 390px; height: 780px; border-radius: 28px; overflow: hidden; position: relative; background: var(--bg); color: var(--text); box-shadow: 0 12px 40px rgba(0,0,0,.18); display: flex; flex-direction: column; }
+.top { flex: none; height: 52px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; padding: 0 8px; }
+.top h2 { margin: 0; text-align: center; font-size: 17px; font-weight: 700; }
+.icon-btn { width: 44px; height: 44px; border: 0; background: transparent; color: var(--text); border-radius: 22px; display: grid; place-items: center; cursor: pointer; }
+.icon-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.filters { flex: none; display: flex; gap: 8px; padding: 0 16px 8px; }
+.seg { min-height: 32px; padding: 0 12px; border-radius: 16px; border: 0; background: var(--soft); color: var(--sub); font: 500 13px/1 var(--ui); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.seg[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.seg i { width: 8px; height: 8px; border-radius: 50%; }
+.scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 96px; }
+.nav { position: absolute; left: 0; right: 0; bottom: 0; height: 72px; padding: 8px 24px 16px; display: grid; grid-template-columns: repeat(4, 1fr); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-top: 1px solid var(--line); }
+.nav button { border: 0; background: transparent; color: var(--sub); font: 500 11px/1 var(--ui); display: grid; justify-items: center; gap: 4px; cursor: pointer; }
+.nav button[aria-current="page"] { color: var(--text); font-weight: 700; }
+.nav svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 1년 전 오늘 (Pieceful 「돌아오는 기억」) */
+.memory { margin: 4px 16px 16px; padding: 12px; border-radius: 16px; background: var(--card); display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; }
+.memory .thumb { width: 64px; height: 64px; border-radius: 12px; background: color-mix(in srgb, var(--kid1) calc(100% - var(--mixp)), var(--mix)); display: grid; place-items: center; }
+.memory .thumb svg { width: 48px; height: 48px; }
+.memory b { display: block; font-size: 13px; }
+.memory small { color: var(--sub); font-size: 12px; }
+.memory .hand { font: 400 18px/1.25 var(--hand); color: var(--text); }
+
+/* 날짜 머리 */
+.day { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 8px 16px; display: flex; align-items: baseline; gap: 8px; }
+.day b { font-size: 15px; font-weight: 700; }
+.day small { color: var(--sub); font-size: 12px; }
+.day .count { margin-left: auto; color: var(--sub); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* 형태 A: 하루 타임라인 */
+.tl { position: relative; padding: 0 16px 16px 48px; display: grid; gap: 12px; }
+.tl::before { content: ""; position: absolute; left: 27px; top: 0; bottom: 8px; width: 2px; background: var(--line); border-radius: 1px; }
+.entry { position: relative; }
+.entry .who { position: absolute; left: -32px; top: 8px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 11px/1 var(--ui); box-shadow: 0 0 0 3px var(--bg); }
+.who.mom { background: var(--mom); } .who.dad { background: var(--dad); }
+.sheet { border-radius: 16px; overflow: hidden; background: color-mix(in srgb, var(--page) calc(100% - var(--mixp)), var(--mix)); color: var(--ink); }
+.sheet .art { display: block; width: 100%; aspect-ratio: 16 / 9; }
+.sheet .body { padding: 8px 12px 12px; display: grid; gap: 4px; }
+.sheet .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font: 500 12px/1 var(--ui); opacity: .72; }
+.sheet .meta .badge { white-space: nowrap; padding: 3px 8px; border-radius: 10px; background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.sheet .text { font: 400 20px/1.3 var(--hand); margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.sheet .foot { display: flex; gap: 12px; font: 500 12px/1 var(--ui); opacity: .7; font-variant-numeric: tabular-nums; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pair .sheet .art { aspect-ratio: 1 / 1; }
+.pair .sheet .text { font-size: 18px; -webkit-line-clamp: 4; }
+.pair-label { font: 500 12px/1 var(--ui); color: var(--sub); margin: 0 0 6px; }
+
+/* 형태 B: 펼친 일기장 (한 장을 화면 폭 가득) */
+.post { margin-bottom: 20px; }
+.post .head { display: flex; align-items: center; gap: 8px; padding: 0 16px 8px; }
+.post .head .who { position: static; box-shadow: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 12px/1 var(--ui); }
+.post .head b { font-size: 14px; }
+.post .head small { color: var(--sub); font-size: 12px; }
+.post .head .more { margin-left: auto; }
+.post .page { background: color-mix(in srgb, var(--page) calc(100% - var(--mixp)), var(--mix)); color: var(--ink); }
+.post .page .art { display: block; width: 100%; aspect-ratio: 4 / 3; }
+.post .page .text { margin: 0; padding: 4px 20px 20px; font: 400 22px/1.35 var(--hand); }
+.post .actions { display: flex; gap: 4px; padding: 4px 8px 0; align-items: center; }
+.post .actions .icon-btn { width: 40px; height: 40px; }
+.post .actions .icon-btn.on { color: #E0566F; }
+.post .actions .icon-btn.on svg { fill: currentColor; }
+.post .actions small { color: var(--sub); font-size: 12px; font-variant-numeric: tabular-nums; }
+.post .reply { padding: 0 16px; font-size: 13px; color: var(--sub); }
+.post .reply b { color: var(--text); font-weight: 500; }
+
+.notes { width: 100%; max-width: 760px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.note { padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--chrome-text) 6%, transparent); font-size: 13px; }
+.note h3 { margin: 0 0 4px; font-size: 13px; }
+.note ul { margin: 0; padding-left: 18px; }
+.note a { color: inherit; }
+@media (prefers-reduced-motion: no-preference) { .phone .scroll { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+  <section class="picker" aria-label="시안 고르기">
+    <h1>육아 기록 · 피드 시안</h1>
+    <p>카드 대신 날짜순으로 흘러내리는 피드. 형태 두 가지와 테마 다섯 개를 골라 보세요. 화면의 아이 이름·글은 모두 지어낸 예시입니다.</p>
+    <div class="row" role="group" aria-label="피드 형태"><span>형태</span>
+      <button class="chip" data-layout="a" aria-pressed="true">A 하루 타임라인</button>
+      <button class="chip" data-layout="b" aria-pressed="false">B 펼친 일기장</button>
+    </div>
+    <div class="row" role="group" aria-label="테마"><span>테마</span>
+      <button class="chip" data-skin-pick="base" aria-pressed="true"><i style="background:#1E1F24"></i>지금(기본)</button>
+      <button class="chip" data-skin-pick="crayon" aria-pressed="false"><i style="background:#D9712C"></i>크레파스</button>
+      <button class="chip" data-skin-pick="dawn" aria-pressed="false"><i style="background:#4F72C4"></i>새벽 하늘</button>
+      <button class="chip" data-skin-pick="forest" aria-pressed="false"><i style="background:#4F7E57"></i>숲 산책</button>
+      <button class="chip" data-skin-pick="cotton" aria-pressed="false"><i style="background:#C46A8D"></i>솜사탕</button>
+    </div>
+    <div class="row" role="group" aria-label="낮 밤"><span>낮/밤</span>
+      <button class="chip" data-mode="system" aria-pressed="true">기기 따라</button>
+      <button class="chip" data-mode="light" aria-pressed="false">낮</button>
+      <button class="chip" data-mode="dark" aria-pressed="false">밤</button>
+    </div>
+  </section>
+
+  <div class="phone" id="phone" data-skin="base">
+    <header class="top">
+      <button class="icon-btn" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h2>기록</h2>
+      <button class="icon-btn" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></button>
+    </header>
+    <div class="filters" role="group" aria-label="아이 고르기">
+      <button class="seg" data-kid="all" aria-pressed="true">함께 보기</button>
+      <button class="seg" data-kid="k1" aria-pressed="false"><i style="background:var(--kid1)"></i>봄이</button>
+      <button class="seg" data-kid="k2" aria-pressed="false"><i style="background:var(--kid2)"></i>여름이</button>
+    </div>
+    <main class="scroll" id="feed" tabindex="-1"></main>
+    <nav class="nav" aria-label="아래 메뉴">
+      <button><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8H4z"/></svg>홈</button>
+      <button aria-current="page"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/></svg>기록</button>
+      <button><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>달력</button>
+      <button><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>설정</button>
+    </nav>
+  </div>
+
+  <section class="notes" aria-label="시안 설명">
+    <div class="note"><h3>A 하루 타임라인</h3><ul><li>날짜 머리가 위에 붙어 있고, 그 아래로 그날 쓴 장이 시간순으로 흐릅니다.</li><li>왼쪽 줄의 동그라미 = 누가 썼는지(엄마·아빠).</li><li>같은 날 두 아이 기록은 나란히(Pieceful 「형제 나란히 보기」).</li><li>한 화면에 많이 보여 훑어보기 좋습니다.</li></ul></div>
+    <div class="note"><h3>B 펼친 일기장</h3><ul><li>한 장이 화면 폭 가득, 그림 → 손글씨 전체 → ♥·댓글.</li><li>일기를 다시 읽는 느낌이 강하고, 사진·그림이 크게 보입니다.</li><li>대신 한 화면에 1~2장만 보입니다.</li></ul></div>
+    <div class="note"><h3>Pieceful 에서 가져온 것</h3><ul><li>시간순 피드(대화처럼 흘러내리는 기록)</li><li>「1년 전 오늘」 돌아오는 기억 — 맨 위 한 줄</li><li>형제 나란히 보기</li></ul><p style="margin:6px 0 0">출처: <a href="https://apps.apple.com/kr/app/pieceful-effortless-baby-log/id6756474655" target="_blank" rel="noopener">App Store 설명</a></p></div>
+  </section>
+</div>
+
+<script>
+const art = {
+  sun: '<svg class="art" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="230" cy="58" r="22"/><path d="M230 22v-8M230 102v-8M194 58h-8M274 58h-8M205 33l-6-6M261 89l-6-6M205 83l-6 6M261 27l-6 6"/><path d="M30 150q60-40 120-6t140-4"/><path d="M84 132l-6 18M84 132l10 16M84 132v-24m0 6l-12-8m12 8l12-8"/><circle cx="84" cy="100" r="8"/></g></svg>',
+  house: '<svg class="art" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M110 150V92l50-38 50 38v58z"/><path d="M146 150v-32h28v32"/><path d="M40 150h240"/><path d="M250 150v-30m0 0q-14-4-10-18 12 2 10 18zm0 0q14-4 10-18-12 2-10 18z"/><path d="M56 60q8-10 16 0 8-10 16 0"/></g></svg>',
+  ball: '<svg class="art" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="160" cy="98" r="40"/><path d="M122 86q38 18 76 0M126 114q34-14 68 0M160 58q-12 40 0 80"/><path d="M40 160q30-8 60 0t60 0 60 0 60 0"/></g></svg>',
+  moon: '<svg class="art" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M188 40a44 44 0 1 0 40 62 36 36 0 1 1-40-62z"/><path d="M80 50l3 7 7 3-7 3-3 7-3-7-7-3 7-3zM260 120l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/><path d="M60 150q50-16 100 0"/></g></svg>',
+  bunny: '<svg class="art" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="160" cy="118" rx="34" ry="30"/><path d="M146 92q-10-50 4-52 8 6 4 52M174 92q10-50-4-52-8 6-4 52"/><circle cx="150" cy="114" r="2"/><circle cx="170" cy="114" r="2"/><path d="M156 126q4 4 8 0"/></g></svg>'
+};
+const kids = { k1: { name: '봄이', age: '8개월', page: 'var(--kid1)' }, k2: { name: '여름이', age: '출산 예정 D-41', page: 'var(--kid2)' } };
+const days = [
+  { date: '11월 14일 금요일', items: [
+    { kid: 'k1', who: 'mom', time: '오전 9:12', art: 'sun', badge: '첫 경험', text: '오늘 처음으로 혼자 앉아서 블록을 쌓았다. 두 개를 올리고는 자기가 더 놀란 얼굴.', hearts: 2, replies: 1, reply: ['아빠', '나도 봤어야 했는데! 저녁에 다시 보여줘'] },
+    { kid: 'k2', who: 'dad', time: '오후 1:40', art: 'moon', badge: '태동', text: '점심 먹고 배에 손을 얹었더니 톡톡. 여름이도 밥 먹었나 보다.', hearts: 1, replies: 0 },
+    { kid: 'k1', who: 'dad', time: '오후 8:05', art: 'ball', text: '목욕하고 공 굴리기. 굴러가는 공을 끝까지 눈으로 따라간다.', hearts: 1, replies: 0 }
+  ] },
+  { date: '11월 13일 목요일', items: [
+    { kid: 'k1', who: 'mom', time: '오전 7:30', art: 'house', badge: '외출', text: '할머니 댁 가는 길. 창밖 나무를 보면서 계속 손을 흔들었다.', hearts: 2, replies: 2, reply: ['엄마', '할머니가 사진 보내 주셨어'] },
+    { kid: 'k2', who: 'mom', time: '오후 3:15', art: 'bunny', text: '여름이 내복을 하나 샀다. 토끼 귀가 달린 것.', hearts: 2, replies: 0 }
+  ] },
+  { date: '11월 11일 화요일', items: [
+    { kid: 'k1', who: 'dad', time: '오후 6:20', art: 'moon', badge: '잠', text: '오늘은 노래 두 곡 만에 잠들었다. 기록 경신.', hearts: 1, replies: 0 }
+  ] }
+];
+const whoName = { mom: '엄마', dad: '아빠' };
+const heart = '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+const bubble = '<svg viewBox="0 0 24 24"><path d="M5 6h14v10H9l-4 3z"/></svg>';
+let layout = 'a', kidFilter = 'all';
+const sheetA = (it, small) => `<article class="sheet" style="--page:${kids[it.kid].page}" aria-label="${kids[it.kid].name} · ${whoName[it.who]}의 페이지 · ${it.time}">${art[it.art]}<div class="body"><div class="meta"><span>${small ? kids[it.kid].name : it.time}</span>${it.badge ? `<span class="badge">${it.badge}</span>` : ''}</div><p class="text">${it.text}</p><div class="foot"><span>♥ ${it.hearts}</span>${it.replies ? `<span>댓글 ${it.replies}</span>` : ''}</div></div></article>`;
+function renderA(list) {
+  return list.map(day => {
+    const items = day.items.filter(it => kidFilter === 'all' || it.kid === kidFilter);
+    if (!items.length) return '';
+    // 같은 날 두 아이 기록이 있으면 첫 두 장을 나란히 (형제 나란히 보기)
+    const k1 = items.find(it => it.kid === 'k1'), k2 = items.find(it => it.kid === 'k2');
+    const paired = kidFilter === 'all' && k1 && k2 ? [k1, k2] : [];
+    const rest = items.filter(it => !paired.includes(it));
+    return `<section><div class="day"><b>${day.date}</b><small>${kidFilter === 'k2' ? kids.k2.age : kids.k1.age}</small><span class="count">${items.length}장</span></div><div class="tl">${paired.length ? `<div class="entry"><span class="who ${k1.who}" aria-hidden="true">${whoName[k1.who][0]}</span><p class="pair-label">봄이 · 여름이 나란히</p><div class="pair">${sheetA(k1, true)}${sheetA(k2, true)}</div></div>` : ''}${rest.map(it => `<div class="entry"><span class="who ${it.who}" aria-hidden="true">${whoName[it.who][0]}</span>${sheetA(it, kidFilter === 'all')}</div>`).join('')}</div></section>`;
+  }).join('');
+}
+function renderB(list) {
+  return list.map(day => {
+    const items = day.items.filter(it => kidFilter === 'all' || it.kid === kidFilter);
+    if (!items.length) return '';
+    return `<section><div class="day"><b>${day.date}</b><span class="count">${items.length}장</span></div>${items.map(it => `<article class="post" aria-label="${kids[it.kid].name} · ${whoName[it.who]}의 페이지"><div class="head"><span class="who ${it.who}" aria-hidden="true">${whoName[it.who][0]}</span><div><b>${kids[it.kid].name}</b> <small>· ${whoName[it.who]}의 페이지 · ${it.time}</small></div><button class="icon-btn more" aria-label="더 보기"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="18" cy="12" r="1"/></svg></button></div><div class="page" style="--page:${kids[it.kid].page}">${art[it.art]}<p class="text">${it.text}</p></div><div class="actions"><button class="icon-btn ${it.hearts > 1 ? 'on' : ''}" aria-label="하트">${heart}</button><button class="icon-btn" aria-label="댓글">${bubble}</button><small>♥ ${it.hearts}${it.badge ? ' · ' + it.badge : ''}</small></div>${it.reply ? `<p class="reply"><b>${it.reply[0]}</b> ${it.reply[1]}</p>` : ''}</article>`).join('')}</section>`;
+  }).join('');
+}
+const memory = `<aside class="memory" aria-label="1년 전 오늘"><div class="thumb" style="color:var(--ink)">${art.bunny.replace('class="art"', '')}</div><div><b>1년 전 오늘 · 봄이</b><small>엄마의 페이지</small><div class="hand">처음으로 손가락을 꼭 잡았다.</div></div></aside>`;
+function render() {
+  const feed = document.getElementById('feed');
+  feed.innerHTML = (kidFilter !== 'k2' ? memory : '') + (layout === 'a' ? renderA(days) : renderB(days));
+}
+const pick = (selector, attr, apply) => document.querySelectorAll(selector).forEach(button => button.addEventListener('click', () => {
+  document.querySelectorAll(selector).forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+  apply(button.getAttribute(attr));
+}));
+pick('[data-layout]', 'data-layout', value => { layout = value; render(); });
+pick('[data-skin-pick]', 'data-skin-pick', value => { document.getElementById('phone').dataset.skin = value; });
+pick('[data-mode]', 'data-mode', value => { if (value === 'system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = value; });
+pick('[data-kid]', 'data-kid', value => { kidFilter = value; render(); });
+render();
+</script>

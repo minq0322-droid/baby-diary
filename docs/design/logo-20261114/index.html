@@ -1,0 +1,124 @@
+<title>육아 기록 로고 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 시안 하나 = 한 단(큰 앱 아이콘 → 홈 화면 크기 → 글자와 함께). 넓으면 세 단, 휴대폰이면 한 줄씩. */
+:root {
+  --ui: 'Noto Sans KR', system-ui, sans-serif;
+  --hand: 'Gaegu', 'Noto Sans KR', cursive;
+  --bg: #F6F5F2; --panel: #FFFFFF; --text: #1E1F24; --sub: #74757C; --line: #E6E4DF;
+  --wall: linear-gradient(160deg, #DCD6CC, #C9C2B6);
+  --kid1: #F4B9B8; --kid2: #CDEFE2; --ink: #1E2326; --paper: #FAF8F5; --night: #262638; --star: #F5E9C8;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1D1D2B; --panel: #262638; --text: #F1F0F7; --sub: #A9A8BE; --line: #3B3B57; --wall: linear-gradient(160deg, #2E2E46, #1A1A28); color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #1D1D2B; --panel: #262638; --text: #F1F0F7; --sub: #A9A8BE; --line: #3B3B57; --wall: linear-gradient(160deg, #2E2E46, #1A1A28); color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.55 var(--ui); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; display: grid; gap: 20px; }
+header h1 { margin: 0; font-size: 20px; text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--sub); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.card { background: var(--panel); border-radius: 20px; padding: 20px; display: grid; gap: 16px; align-content: start; min-width: 0; }
+.card h2 { margin: 0; font-size: 16px; display: flex; gap: 8px; align-items: baseline; }
+.card h2 span { font-size: 12px; color: var(--sub); font-weight: 500; }
+.big { display: grid; place-items: center; padding: 8px 0; }
+.big svg { width: 180px; height: 180px; border-radius: 40px; box-shadow: 0 10px 28px rgba(0,0,0,.16); }
+.home { background: var(--wall); border-radius: 16px; padding: 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; justify-items: center; }
+.app { display: grid; justify-items: center; gap: 4px; font-size: 11px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.4); }
+.app svg, .app i { width: 56px; height: 56px; border-radius: 13px; display: block; }
+.app i { background: rgba(255,255,255,.28); }
+.lockup { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; border: 1px solid var(--line); }
+.lockup svg { width: 44px; height: 44px; border-radius: 11px; flex: none; }
+.lockup b { font: 700 26px/1 var(--hand); letter-spacing: .01em; }
+.lockup small { display: block; color: var(--sub); font-size: 12px; margin-top: 2px; }
+.lockup.dark { background: #262638; border-color: #262638; color: #F1F0F7; }
+.lockup.dark small { color: #A9A8BE; }
+.why { margin: 0; color: var(--sub); font-size: 13px; }
+.why b { color: var(--text); font-weight: 500; }
+.tiny { display: flex; gap: 12px; align-items: center; color: var(--sub); font-size: 12px; }
+.tiny svg { border-radius: 4px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>육아 기록 로고 · 시안 세 개</h1>
+    <p>큰 앱 아이콘, 아이폰 홈 화면 크기, 글자와 함께 놓았을 때를 나란히 보여 드립니다. 마음에 드는 번호를 알려 주세요.</p>
+  </header>
+
+  <div class="grid">
+    <!-- 시안 1: 두 장 한 권 -->
+    <section class="card" aria-labelledby="t1">
+      <h2 id="t1">1 · 두 장 한 권 <span>펼친 일기장</span></h2>
+      <div class="big"><svg viewBox="0 0 512 512" role="img" aria-label="시안 1 앱 아이콘"><use href="#logo1"/></svg></div>
+      <div class="home" aria-label="홈 화면 예시"><div class="app"><i></i>사진</div><div class="app"><svg viewBox="0 0 512 512"><use href="#logo1"/></svg>육아기록</div><div class="app"><i></i>메모</div><div class="app"><i></i>날씨</div></div>
+      <div class="lockup"><svg viewBox="0 0 512 512"><use href="#logo1"/></svg><div><b>육아 기록</b><small>엄마의 페이지 · 아빠의 페이지</small></div></div>
+      <div class="lockup dark"><svg viewBox="0 0 512 512"><use href="#logo1"/></svg><div><b>육아 기록</b><small>밤에도 같은 모양</small></div></div>
+      <div class="tiny"><svg viewBox="0 0 512 512" width="32" height="32"><use href="#logo1"/></svg><svg viewBox="0 0 512 512" width="16" height="16"><use href="#logo1"/></svg>탭·북마크 크기</div>
+      <p class="why"><b>이야기:</b> 왼쪽 장은 첫째 종이색, 오른쪽 장은 둘째 종이색. 크레파스 선 하나가 두 장을 건너 작은 별까지 이어집니다. 지금 아이콘의 두 동그라미를 일기장으로 바꾼 것.</p>
+    </section>
+
+    <!-- 시안 2: 달과 서른 개 별 -->
+    <section class="card" aria-labelledby="t2">
+      <h2 id="t2">2 · 달과 별 왕관 <span>홈 화면 밤 장면</span></h2>
+      <div class="big"><svg viewBox="0 0 512 512" role="img" aria-label="시안 2 앱 아이콘"><use href="#logo2"/></svg></div>
+      <div class="home" aria-label="홈 화면 예시"><div class="app"><i></i>사진</div><div class="app"><svg viewBox="0 0 512 512"><use href="#logo2"/></svg>육아기록</div><div class="app"><i></i>메모</div><div class="app"><i></i>날씨</div></div>
+      <div class="lockup"><svg viewBox="0 0 512 512"><use href="#logo2"/></svg><div><b>육아 기록</b><small>오늘 밤도 한 장</small></div></div>
+      <div class="lockup dark"><svg viewBox="0 0 512 512"><use href="#logo2"/></svg><div><b>육아 기록</b><small>밤에도 같은 모양</small></div></div>
+      <div class="tiny"><svg viewBox="0 0 512 512" width="32" height="32"><use href="#logo2"/></svg><svg viewBox="0 0 512 512" width="16" height="16"><use href="#logo2"/></svg>탭·북마크 크기</div>
+      <p class="why"><b>이야기:</b> 앱 홈의 밤 장면 그대로 — 아이 얼굴인 달과, 지난 30일 기록을 뜻하는 별 왕관. 별 일부만 밝게 켜져 「쓴 날」을 보여 줍니다. 홈 화면에서 가장 눈에 띄는 안.</p>
+    </section>
+
+    <!-- 시안 3: 크레파스 두 줄 -->
+    <section class="card" aria-labelledby="t3">
+      <h2 id="t3">3 · 크레파스 두 줄 <span>엄마 · 아빠 손글씨</span></h2>
+      <div class="big"><svg viewBox="0 0 512 512" role="img" aria-label="시안 3 앱 아이콘"><use href="#logo3"/></svg></div>
+      <div class="home" aria-label="홈 화면 예시"><div class="app"><i></i>사진</div><div class="app"><svg viewBox="0 0 512 512"><use href="#logo3"/></svg>육아기록</div><div class="app"><i></i>메모</div><div class="app"><i></i>날씨</div></div>
+      <div class="lockup"><svg viewBox="0 0 512 512"><use href="#logo3"/></svg><div><b>육아 기록</b><small>매일 한 줄씩</small></div></div>
+      <div class="lockup dark"><svg viewBox="0 0 512 512"><use href="#logo3"/></svg><div><b>육아 기록</b><small>밤에도 같은 모양</small></div></div>
+      <div class="tiny"><svg viewBox="0 0 512 512" width="32" height="32"><use href="#logo3"/></svg><svg viewBox="0 0 512 512" width="16" height="16"><use href="#logo3"/></svg>탭·북마크 크기</div>
+      <p class="why"><b>이야기:</b> 엄마 색·아빠 색 크레파스 두 줄이 만나 하트를 그립니다. 일기장 안의 손그림 잉크와 같은 결. 가장 따뜻하고 손맛 있는 안.</p>
+    </section>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 시안 1: 펼친 일기장, 두 장 = 두 아이 종이색, 크레파스 선이 장을 건너 별로 -->
+    <symbol id="logo1" viewBox="0 0 512 512">
+      <rect width="512" height="512" fill="#FAF8F5"/>
+      <path d="M256 150 C 214 128, 150 124, 104 138 L 104 372 C 150 358, 214 362, 256 384 Z" fill="#F4B9B8"/>
+      <path d="M256 150 C 298 128, 362 124, 408 138 L 408 372 C 362 358, 298 362, 256 384 Z" fill="#CDEFE2"/>
+      <path d="M256 150 V 384" stroke="#1E2326" stroke-width="6" stroke-linecap="round" opacity=".25"/>
+      <path d="M140 300 C 176 250, 214 318, 256 268 S 330 232, 352 214" fill="none" stroke="#1E2326" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M368 176 l8 18 19 4 -14 13 4 19 -17 -9 -17 9 4 -19 -14 -13 19 -4 z" fill="#F59157"/>
+    </symbol>
+    <!-- 시안 2: 밤하늘의 초승달 얼굴 + 30개 별 왕관(일부만 켜짐) -->
+    <symbol id="logo2" viewBox="0 0 512 512">
+      <rect width="512" height="512" fill="#262638"/>
+      <g fill="#F5E9C8">
+        <circle cx="256" cy="268" r="104"/>
+      </g>
+      <circle cx="300" cy="236" r="96" fill="#262638"/>
+      <g id="crown"></g>
+      <g fill="#F5E9C8">
+        <circle cx="132" cy="196" r="7"/><circle cx="148" cy="164" r="7"/><circle cx="170" cy="136" r="7"/><circle cx="198" cy="114" r="7"/><circle cx="230" cy="100" r="7"/>
+        <circle cx="264" cy="96" r="7"/><circle cx="298" cy="100" r="7"/><circle cx="330" cy="112" r="7"/>
+      </g>
+      <g fill="#F5E9C8" opacity=".3">
+        <circle cx="358" cy="132" r="6"/><circle cx="380" cy="158" r="6"/><circle cx="396" cy="188" r="6"/>
+      </g>
+      <path d="M190 300 q 10 10 22 0" fill="none" stroke="#262638" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="178" cy="262" r="7" fill="#262638"/>
+      <circle cx="178" cy="296" r="12" fill="#F4B9B8" opacity=".8"/>
+    </symbol>
+    <!-- 시안 3: 엄마 색·아빠 색 크레파스 두 줄이 만나 하트 -->
+    <symbol id="logo3" viewBox="0 0 512 512">
+      <rect width="512" height="512" fill="#FAF8F5"/>
+      <path d="M256 392 C 196 340, 120 292, 124 216 C 128 160, 196 136, 256 196" fill="none" stroke="#D9849F" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M256 392 C 316 340, 392 292, 388 216 C 384 160, 316 136, 256 196" fill="none" stroke="#6E8FD6" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M256 392 C 196 340, 120 292, 124 216 C 128 160, 196 136, 256 196" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 18" opacity=".45"/>
+      <path d="M256 392 C 316 340, 392 292, 388 216 C 384 160, 316 136, 256 196" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 18" opacity=".45"/>
+    </symbol>
+  </defs>
+</svg>

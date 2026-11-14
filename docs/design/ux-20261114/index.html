@@ -1,0 +1,267 @@
+<title>육아 기록 개선 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 휴대폰 화면 세 장(피드 · 쓰기 · 설정 앱 아이콘)을 나란히, 좁으면 한 장씩 아래로. 각 화면 밑에 바뀐 점. 테마는 지금 것(낮·밤)만. 글·이름은 지어낸 예시. */
+:root {
+  --ui: 'Noto Sans KR', 'Pretendard', system-ui, sans-serif;
+  --hand: 'Gaegu', 'Noto Sans KR', cursive;
+  --bg: #F6F5F2; --card: #FFFFFF; --field: #F4F1EC; --text: #1E1F24; --sub: #74757C; --line: #E6E4DF;
+  --primary: #1E1F24; --on-primary: #FFFFFF; --glass: rgba(255,255,255,.72); --glass-line: rgba(30,31,36,.08);
+  --mom: #D9849F; --dad: #6E8FD6; --kid1: #F4B9B8; --kid2: #CDEFE2; --ink: #1E2326; --mixp: 0%; --mix: #262638;
+  --ok: #3E7B55; --warn: #B4472F; --heart: #E0566F; --page-bg: #E9E6E0;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #262638; --card: #31314A; --field: #3B3B57; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --primary: #F1F0F7; --on-primary: #262638;
+  --glass: rgba(49,49,74,.78); --glass-line: rgba(255,255,255,.08); --mixp: 10%; --ok: #8FD0A4; --warn: #F0A28F; --heart: #F2899B; --page-bg: #1D1D2B; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #262638; --card: #31314A; --field: #3B3B57; --text: #F1F0F7; --sub: #A9A8BE; --line: #46465F; --primary: #F1F0F7; --on-primary: #262638;
+  --glass: rgba(49,49,74,.78); --glass-line: rgba(255,255,255,.08); --mixp: 10%; --ok: #8FD0A4; --warn: #F0A28F; --heart: #F2899B; --page-bg: #1D1D2B; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--page-bg); color: var(--text); font: 14px/1.5 var(--ui); }
+.wrap { max-width: 1260px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px; display: grid; gap: 20px; }
+.intro h1 { margin: 0; font-size: 19px; text-wrap: balance; }
+.intro p { margin: 4px 0 0; color: var(--sub); max-width: 70ch; }
+.modes { display: flex; gap: 8px; margin-top: 8px; }
+.modes button { min-height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: 500 13px/1 var(--ui); cursor: pointer; }
+.modes button[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.screens { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 24px; justify-items: center; }
+.col { display: grid; gap: 12px; width: 100%; max-width: 390px; }
+.col h2 { margin: 0; font-size: 15px; }
+.changes { margin: 0; padding-left: 18px; color: var(--sub); font-size: 13px; }
+.changes b { color: var(--text); font-weight: 500; }
+.phone { position: relative; width: 100%; height: 780px; border-radius: 28px; overflow: hidden; background: var(--bg); box-shadow: 0 10px 32px rgba(0,0,0,.16); display: flex; flex-direction: column; }
+.scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+.top { flex: none; height: 52px; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 0 16px; }
+.top h3 { margin: 0; font-size: 17px; font-weight: 700; text-align: center; }
+.round { width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--glass-line); background: var(--glass); backdrop-filter: blur(12px); color: var(--text); display: grid; place-items: center; cursor: pointer; }
+.back { width: auto; padding: 0 14px 0 10px; display: inline-flex; align-items: center; gap: 2px; font: 500 15px/1 var(--ui); }
+svg.i { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.chips { display: flex; gap: 8px; padding: 0 16px 8px; }
+.chip { min-height: 32px; padding: 0 12px; border-radius: 16px; border: 0; background: var(--field); color: var(--sub); font: 500 13px/1 var(--ui); display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); }
+.chip i { width: 8px; height: 8px; border-radius: 50%; }
+/* 떠 있는 캡슐 탭, 아이콘만 (HOUSE §10-2, §13) */
+.tabs { position: absolute; left: 20px; right: 20px; bottom: 12px; height: 60px; border-radius: 30px; background: var(--glass); backdrop-filter: blur(16px); border: 1px solid var(--glass-line); box-shadow: 0 6px 20px rgba(0,0,0,.12); display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px; }
+.tabs button { border: 0; border-radius: 24px; background: transparent; color: var(--sub); display: grid; place-items: center; cursor: pointer; }
+.tabs button svg { width: 26px; height: 26px; }
+.tabs button[aria-current="page"] { background: var(--primary); color: var(--on-primary); }
+/* 피드 */
+.memory { margin: 0 16px 12px; padding: 10px 12px; border-radius: 16px; background: var(--card); display: flex; gap: 12px; align-items: center; }
+.memory .th { width: 48px; height: 48px; border-radius: 10px; background: color-mix(in srgb, var(--kid1) calc(100% - var(--mixp)), var(--mix)); color: var(--ink); display: grid; place-items: center; flex: none; }
+.memory .th svg { width: 40px; height: 40px; }
+.memory small { display: block; color: var(--sub); font-size: 12px; }
+.memory span { font: 400 18px/1.2 var(--hand); }
+.day { position: sticky; top: 0; z-index: 2; background: var(--bg); height: 40px; padding: 0 16px; display: flex; align-items: center; gap: 8px; }
+.day b { font-size: 15px; }
+.day small { color: var(--sub); font-size: 12px; margin-left: auto; font-variant-numeric: tabular-nums; }
+.post { padding-bottom: 20px; }
+.who-row { height: 44px; padding: 0 8px 0 16px; display: flex; align-items: center; gap: 8px; }
+.av { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 12px/1 var(--ui); flex: none; }
+.av.mom { background: var(--mom); } .av.dad { background: var(--dad); }
+.who-row b { font-size: 14px; }
+.who-row small { color: var(--sub); font-size: 12px; }
+.who-row .more { margin-left: auto; width: 44px; height: 44px; border: 0; background: transparent; color: var(--sub); display: grid; place-items: center; }
+.paper { background: color-mix(in srgb, var(--page) calc(100% - var(--mixp)), var(--mix)); color: var(--ink); }
+.paper .art { display: block; width: 100%; aspect-ratio: 4 / 3; }
+.paper p { margin: 0; padding: 0 20px 18px; font: 400 22px/1.35 var(--hand); }
+.acts { height: 44px; padding: 0 8px; display: flex; align-items: center; gap: 0; }
+.acts button { width: 44px; height: 44px; border: 0; background: transparent; color: var(--text); display: grid; place-items: center; }
+.acts button.on { color: var(--heart); }
+.acts button.on svg { fill: currentColor; }
+.acts small { color: var(--sub); font-size: 12px; font-variant-numeric: tabular-nums; }
+.badge { margin-left: auto; margin-right: 8px; padding: 3px 8px; border-radius: 6px; background: var(--primary); color: var(--on-primary); font: 700 11px/1.2 var(--ui); }
+.reply { margin: 0; padding: 0 16px; font-size: 13px; color: var(--sub); }
+.reply b { color: var(--text); font-weight: 500; }
+.fab { position: absolute; right: 20px; bottom: 84px; width: 56px; height: 56px; border-radius: 28px; border: 0; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
+.fab svg { width: 26px; height: 26px; }
+/* 쓰기 화면 */
+.page-screen { background: color-mix(in srgb, var(--kid1) calc(100% - var(--mixp)), var(--mix)); color: var(--ink); }
+.page-screen .top h3 { font: 700 20px/1 var(--hand); display: flex; align-items: center; gap: 4px; justify-content: center; }
+.page-screen .round { background: rgba(255,255,255,.35); border-color: rgba(30,35,38,.1); color: var(--ink); }
+.writer { display: flex; justify-content: center; gap: 4px; height: 40px; align-items: center; }
+.writer button { min-height: 32px; padding: 0 12px; border-radius: 16px; border: 0; background: transparent; color: color-mix(in srgb, var(--ink) 55%, transparent); font: 700 17px/1 var(--hand); }
+.writer button[aria-pressed="true"] { background: rgba(255,255,255,.45); color: var(--ink); }
+.sheetrow { height: 32px; padding: 0 16px; display: flex; align-items: center; gap: 8px; font: 500 12px/1 var(--ui); }
+.sheetrow .dots { display: flex; gap: 6px; }
+.sheetrow .dots i { width: 8px; height: 8px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 25%, transparent); }
+.sheetrow .dots i.on { background: var(--ink); }
+.sheetrow .add { border: 0; background: transparent; color: var(--ink); font: 700 15px/1 var(--hand); padding: 0 4px; min-height: 32px; }
+.state { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: color-mix(in srgb, var(--ink) 70%, transparent); min-width: 88px; justify-content: flex-end; }
+.state i { width: 6px; height: 6px; border-radius: 50%; background: #3E7B55; }
+.canvas { position: relative; flex: none; height: 330px; }
+.canvas svg { width: 100%; height: 100%; }
+.tools { margin: 0 12px; height: 52px; border-radius: 26px; background: rgba(255,255,255,.4); display: grid; grid-template-columns: repeat(5, 1fr) auto; align-items: center; padding: 0 6px; gap: 2px; }
+.tools button { border: 0; background: transparent; color: var(--ink); font: 500 11px/1 var(--ui); display: grid; justify-items: center; gap: 2px; min-height: 44px; align-content: center; border-radius: 20px; }
+.tools button.on { background: rgba(255,255,255,.55); }
+.tools .done { padding: 0 12px; background: var(--ink); color: #FFF8F0; font-weight: 700; font-size: 12px; border-radius: 20px; height: 40px; min-height: 40px; display: inline-flex; align-items: center; }
+.tools svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.note { padding: 12px 20px 0 36px; position: relative; font: 400 22px/1.4 var(--hand); }
+.note::before { content: "아"; position: absolute; left: 16px; top: 18px; font: 500 11px/1 var(--ui); opacity: .5; }
+.note .caret { display: inline-block; width: 2px; height: 22px; background: var(--ink); vertical-align: -3px; animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .note .caret { animation: none; } }
+.bottom { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 16px 12px; }
+.bottom .save { width: 132px; height: 60px; border-radius: 50%; border: 2px solid var(--ink); background: var(--ink); color: #FFF8F0; font: 700 22px/1 var(--hand); }
+.bottom .l { justify-self: start; display: flex; align-items: center; gap: 4px; font-size: 13px; }
+.bottom .r { justify-self: end; }
+.bottom .round { width: 44px; height: 44px; }
+/* 나가기 시트 */
+.sheet-over { position: absolute; inset: 0; background: rgba(20,20,28,.32); display: flex; align-items: flex-end; }
+.leave { width: 100%; margin: 0 8px 8px; padding: 24px 20px 16px; border-radius: 32px; background: var(--card); color: var(--text); display: grid; gap: 8px; }
+.leave h4 { margin: 0; font-size: 17px; }
+.leave p { margin: 0 0 8px; color: var(--sub); font-size: 13px; }
+.leave button { height: 48px; border-radius: 24px; border: 0; font: 700 15px/1 var(--ui); }
+.leave .p { background: var(--primary); color: var(--on-primary); }
+.leave .s { background: var(--field); color: var(--text); }
+.leave .d { background: transparent; color: var(--warn); }
+/* 설정 */
+.group-title { margin: 20px 16px 8px; color: var(--sub); font-size: 13px; font-weight: 500; }
+.group { margin: 0 16px; border-radius: 20px; background: var(--card); overflow: hidden; }
+.icons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 16px; }
+.icons button { border: 0; background: transparent; color: var(--text); display: grid; justify-items: center; gap: 6px; font: 500 12px/1.2 var(--ui); padding: 8px 0; border-radius: 16px; cursor: pointer; }
+.icons button svg { width: 64px; height: 64px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.icons button[aria-checked="true"] { background: var(--field); }
+.icons button[aria-checked="true"] span { font-weight: 700; }
+.icons .tick { width: 20px; height: 20px; border-radius: 10px; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; margin-top: -2px; }
+.icons .tick svg { width: 12px; height: 12px; box-shadow: none; border-radius: 0; stroke: currentColor; fill: none; stroke-width: 3; }
+.hint { margin: 0; padding: 0 16px 16px; color: var(--sub); font-size: 12px; line-height: 1.5; }
+.row { min-height: 52px; padding: 8px 16px; display: flex; align-items: center; gap: 12px; position: relative; }
+.row + .row::before { content: ""; position: absolute; left: 16px; right: 0; top: 0; height: 1px; background: var(--line); }
+.row div { min-width: 0; flex: 1; }
+.row b { display: block; font-size: 16px; font-weight: 500; }
+.row small { color: var(--sub); font-size: 13px; }
+.pill { min-height: 36px; padding: 0 14px; border-radius: 18px; border: 0; background: var(--field); color: var(--text); font: 500 13px/1 var(--ui); white-space: nowrap; }
+button:focus-visible { outline: 2px solid #6E8FD6; outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <h1>육아 기록 · 사용성·디자인 개선 시안</h1>
+    <p>테마는 그대로(지금 것, 낮·밤). 화면 세 장: 기록 피드(인스타그램처럼), 쓰기 화면(그림이 날아가지 않게), 설정의 앱 아이콘 고르기. 이름과 글은 모두 지어낸 예시입니다.</p>
+    <div class="modes" role="group" aria-label="낮 밤 보기">
+      <button data-mode="system" aria-pressed="true">기기 따라</button><button data-mode="light" aria-pressed="false">낮</button><button data-mode="dark" aria-pressed="false">밤</button>
+    </div>
+  </header>
+
+  <div class="screens">
+    <!-- 1 피드 -->
+    <section class="col" aria-labelledby="h1">
+      <h2 id="h1">1 · 기록 피드</h2>
+      <div class="phone">
+        <div class="top"><button class="round back" aria-label="홈으로"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>홈</button><h3>기록</h3><button class="round" aria-label="찾기"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></button></div>
+        <div class="chips"><button class="chip" aria-pressed="true">함께</button><button class="chip" aria-pressed="false"><i style="background:var(--kid1)"></i>봄이</button><button class="chip" aria-pressed="false"><i style="background:var(--kid2)"></i>여름이</button></div>
+        <div class="scroll" id="feed"></div>
+        <button class="fab" aria-label="오늘 기록 쓰기"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+        <nav class="tabs" aria-label="아래 메뉴"><button aria-label="홈"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8H4z"/></svg></button><button aria-label="기록" aria-current="page"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="3"/><path d="M9 9h6M9 13h6"/></svg></button><button aria-label="달력"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></button><button aria-label="설정"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></button></nav>
+      </div>
+      <ul class="changes">
+        <li><b>한 장 = 화면 폭 가득</b> 종이색 면 → 손글씨 전체 → 하트·댓글 줄(인스타그램 순서). 면을 두 번 톡 하면 하트.</li>
+        <li>맨 위 「1년 전 오늘」(있는 날만), 날짜 머리는 위에 붙어 따라옴. 끝까지 내리면 다음 달이 저절로.</li>
+        <li><b>아래 탭</b>: 바닥에 붙은 흰 띠 → 떠 있는 캡슐, 아이콘만, 지금 화면이 켜짐(전엔 목록에서 「홈」이 켜져 있었음). 「목록」은 「기록」으로.</li>
+        <li>왼쪽 위 <b>‹ 홈</b>(돌아갈 곳 이름), 오늘 쓰기는 오른쪽 아래 <b>+</b>.</li>
+      </ul>
+    </section>
+
+    <!-- 2 쓰기 -->
+    <section class="col" aria-labelledby="h2">
+      <h2 id="h2">2 · 쓰기 화면 (그림을 잃지 않게)</h2>
+      <div class="phone page-screen">
+        <div class="top"><button class="round back" aria-label="기록으로"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>기록</button><h3><span aria-hidden="true">‹</span> 11.14 금 <span aria-hidden="true">›</span></h3><button class="round" aria-label="배지 고르기"><svg class="i" viewBox="0 0 24 24"><path d="M12 4l2.4 5 5.6.8-4 3.9 1 5.5L12 16.6 7 19.2l1-5.5-4-3.9 5.6-.8z"/></svg></button></div>
+        <div class="writer" role="group" aria-label="누구의 페이지"><button aria-pressed="false">엄마의 페이지</button><button aria-pressed="true">아빠의 페이지</button></div>
+        <div class="sheetrow"><span class="dots" aria-label="1장 중 1번째"><i class="on"></i></span><button class="add">+ 한 장 더</button><span class="state" role="status"><i></i>임시 저장됨</span></div>
+        <div class="canvas" aria-label="그림 영역"><svg viewBox="0 0 390 330"><g fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="292" cy="78" r="30"/><path d="M292 30v-10M292 136v-10M244 78h-10M350 78h-10M258 44l-7-7M326 112l-7-7M258 112l-7 7M326 44l-7 7"/><path d="M30 260q80-60 160-10t170-6"/><circle cx="118" cy="176" r="12"/><path d="M118 188v34m0-22l-16-10m16 10l16-10M118 222l-10 26M118 222l12 24"/></g></svg></div>
+        <div class="tools" role="toolbar" aria-label="그리기 도구"><button class="on"><svg viewBox="0 0 24 24"><path d="M4 20l4-1 10-10-3-3L5 16z"/></svg>펜</button><button><svg viewBox="0 0 24 24"><path d="M6 16l8-8 4 4-8 8H6z"/></svg>지우개</button><button><svg viewBox="0 0 24 24"><path d="M9 7L5 11l4 4M5 11h9a5 5 0 0 1 0 10h-2"/></svg>되돌리기</button><button><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="13" rx="2"/><circle cx="12" cy="12.5" r="3"/></svg>사진</button><button><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4M11 8v6M8 11h6"/></svg>확대</button><button class="done">그리기 끝</button></div>
+        <div class="note">오늘 공원에서 비둘기를 보고 한참 웃었다<span class="caret"></span></div>
+        <div class="bottom"><span class="l"><svg class="i" viewBox="0 0 24 24"><path d="M5 6h14v10H9l-4 3z"/></svg>0</span><button class="save">저장</button><button class="round r" aria-label="페이지 색"><svg class="i" viewBox="0 0 24 24"><path d="M12 4a8 8 0 1 0 0 16c1.2 0 1.6-1 1-2-.7-1.2.2-2.5 1.5-2.5H17a3 3 0 0 0 3-3c0-4.7-3.6-8.5-8-8.5z"/><circle cx="8" cy="11" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="15" cy="8.5" r="1"/></svg></button></div>
+        <div class="sheet-over" id="leave" hidden><div class="leave" role="dialog" aria-label="저장하지 않은 내용"><h4>아직 저장하지 않았어요</h4><p>그림과 글은 이 기기에 임시로 남아 있어요.</p><button class="p">저장하고 나가기</button><button class="s">임시로 두고 나가기</button><button class="d">버리고 나가기</button></div></div>
+      </div>
+      <div class="modes" role="group" aria-label="나가기 시트 보기"><button id="leave-toggle" aria-pressed="false">‹ 기록 눌렀을 때 보기</button></div>
+      <ul class="changes">
+        <li><b>획 하나·글 한 줄마다 기기에 임시 저장</b>, 앱을 내리거나 꺼져도 다시 열면 되살아남. 장 번호 줄 오른쪽에 <b>임시 저장됨</b>.</li>
+        <li>도구 막대의 「완료」 → <b>그리기 끝</b>(저장과 헷갈리지 않게). 그리는 동안에도 아래 글이 보임.</li>
+        <li>저장 안 한 채 나가면 <b>저장하고 나가기 / 임시로 두고 나가기 / 버리고 나가기</b>.</li>
+        <li>글 칸을 눌러도 검은 테두리 없음(커서만), 왼쪽 위 <b>‹ 기록</b>, 원형 단추는 종이 위 반투명.</li>
+      </ul>
+    </section>
+
+    <!-- 3 설정 -->
+    <section class="col" aria-labelledby="h3">
+      <h2 id="h3">3 · 설정 › 앱 아이콘</h2>
+      <div class="phone">
+        <div class="top"><button class="round back" aria-label="홈으로"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>홈</button><h3>설정</h3><span style="width:44px"></span></div>
+        <div class="scroll">
+          <p class="group-title">앱 아이콘</p>
+          <div class="group">
+            <div class="icons" role="radiogroup" aria-label="앱 아이콘">
+              <button role="radio" aria-checked="true"><svg viewBox="0 0 512 512"><use href="#logo1"/></svg><span>두 장 한 권</span><i class="tick"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></i></button>
+              <button role="radio" aria-checked="false"><svg viewBox="0 0 512 512"><use href="#logo2"/></svg><span>달과 별</span></button>
+              <button role="radio" aria-checked="false"><svg viewBox="0 0 512 512"><use href="#logo3"/></svg><span>크레파스 하트</span></button>
+            </div>
+            <p class="hint">고른 뒤 Safari 공유 › 홈 화면에 추가 하면 이 아이콘으로 들어가요. 이미 추가했다면 홈 화면에서 지우고 다시 추가하면 바뀝니다.</p>
+          </div>
+          <p class="group-title">글씨체</p>
+          <div class="group">
+            <div class="row"><div><b>아빠</b><small>기본 손글씨</small></div><button class="pill">파일 고르기</button></div>
+            <div class="row"><div><b>엄마</b><small>엄마손글씨.ttf</small></div><button class="pill">바꾸기</button></div>
+          </div>
+          <p class="group-title">백업</p>
+          <div class="group">
+            <div class="row"><div><b>백업 내려받기</b><small>마지막 11월 14일</small></div></div>
+            <div class="row"><div><b>백업 가져오기</b><small>JSON 파일</small></div><button class="pill">파일 고르기</button></div>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="아래 메뉴"><button aria-label="홈"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8H4z"/></svg></button><button aria-label="기록"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="3"/><path d="M9 9h6M9 13h6"/></svg></button><button aria-label="달력"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></button><button aria-label="설정" aria-current="page"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></button></nav>
+      </div>
+      <ul class="changes">
+        <li><b>앱 아이콘 셋 중 고르기</b> — iOS 「홈 화면에 추가」 창 안에서는 고를 수 없어서, 여기서 고른 뒤 추가하는 방식.</li>
+        <li>브라우저 기본 「파일 선택 / 선택된 파일 없음」 → 둥근 <b>파일 고르기</b> 단추 + 고른 파일 이름.</li>
+        <li>위에 <b>‹ 홈</b>, 묶음 카드 줄 구분선은 글자 시작선부터(HOUSE §10-3).</li>
+        <li>달력도 같은 위 막대·아래 탭, 오늘 칸의 두 겹 테두리 → 채운 동그라미 하나.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="logo1" viewBox="0 0 512 512"><rect width="512" height="512" fill="#FAF8F5"/><path d="M256 150 C 214 128, 150 124, 104 138 L 104 372 C 150 358, 214 362, 256 384 Z" fill="#F4B9B8"/><path d="M256 150 C 298 128, 362 124, 408 138 L 408 372 C 362 358, 298 362, 256 384 Z" fill="#CDEFE2"/><path d="M256 150 V 384" stroke="#1E2326" stroke-width="6" stroke-linecap="round" opacity=".25"/><path d="M140 300 C 176 250, 214 318, 256 268 S 330 232, 352 214" fill="none" stroke="#1E2326" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><path d="M368 176 l8 18 19 4 -14 13 4 19 -17 -9 -17 9 4 -19 -14 -13 19 -4 z" fill="#F59157"/></symbol>
+  <symbol id="logo2" viewBox="0 0 512 512"><rect width="512" height="512" fill="#262638"/><circle cx="256" cy="268" r="104" fill="#F5E9C8"/><circle cx="300" cy="236" r="96" fill="#262638"/><g fill="#F5E9C8"><circle cx="132" cy="196" r="7"/><circle cx="148" cy="164" r="7"/><circle cx="170" cy="136" r="7"/><circle cx="198" cy="114" r="7"/><circle cx="230" cy="100" r="7"/><circle cx="264" cy="96" r="7"/><circle cx="298" cy="100" r="7"/><circle cx="330" cy="112" r="7"/></g><g fill="#F5E9C8" opacity=".3"><circle cx="358" cy="132" r="6"/><circle cx="380" cy="158" r="6"/><circle cx="396" cy="188" r="6"/></g><path d="M190 300 q 10 10 22 0" fill="none" stroke="#262638" stroke-width="7" stroke-linecap="round"/><circle cx="178" cy="262" r="7" fill="#262638"/><circle cx="178" cy="296" r="12" fill="#F4B9B8" opacity=".8"/></symbol>
+  <symbol id="logo3" viewBox="0 0 512 512"><rect width="512" height="512" fill="#FAF8F5"/><path d="M256 392 C 196 340, 120 292, 124 216 C 128 160, 196 136, 256 196" fill="none" stroke="#D9849F" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/><path d="M256 392 C 316 340, 392 292, 388 216 C 384 160, 316 136, 256 196" fill="none" stroke="#6E8FD6" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<script>
+const art = {
+  sun: '<svg class="art" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="232" cy="70" r="24"/><path d="M232 32v-8M232 116v-8M194 70h-8M278 70h-8M205 43l-6-6M265 103l-6-6M205 97l-6 6M265 37l-6 6"/><path d="M24 196q70-46 140-8t140-6"/><circle cx="96" cy="128" r="10"/><path d="M96 138v28m0-18l-14-8m14 8l14-8M96 166l-8 22M96 166l10 20"/></g></svg>',
+  moon: '<svg class="art" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M190 60a50 50 0 1 0 46 70 42 42 0 1 1-46-70z"/><path d="M78 66l3 8 8 3-8 3-3 8-3-8-8-3 8-3zM258 150l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><path d="M50 200q60-18 120 0"/></g></svg>',
+  ball: '<svg class="art" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="160" cy="124" r="46"/><path d="M116 110q44 20 88 0M120 142q40-16 80 0M160 78q-14 46 0 92"/><path d="M30 206q32-8 64 0t64 0 64 0 64 0"/></g></svg>',
+  bunny: '<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><ellipse cx="160" cy="160" rx="54" ry="48"/><path d="M138 118q-16-80 6-84 12 10 6 84M182 118q16-80-6-84-12 10-6 84"/></g></svg>'
+};
+const heart = '<svg class="i" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+const bubble = '<svg class="i" viewBox="0 0 24 24"><path d="M5 6h14v10H9l-4 3z"/></svg>';
+const posts = [
+  { day: '11월 14일 금요일', count: 2 },
+  { kid: '봄이', page: 'var(--kid1)', who: 'mom', time: '오전 9:12', art: 'sun', text: '오늘 처음으로 혼자 앉아서 블록을 쌓았다. 두 개를 올리고는 자기가 더 놀란 얼굴.', hearts: 2, on: true, badge: '첫 경험', reply: ['아빠', '나도 봤어야 했는데! 저녁에 다시 보여줘'] },
+  { kid: '여름이', page: 'var(--kid2)', who: 'dad', time: '오후 1:40', art: 'moon', text: '점심 먹고 배에 손을 얹었더니 톡톡. 여름이도 밥 먹었나 보다.', hearts: 1, badge: '태동' },
+  { day: '11월 13일 목요일', count: 1 },
+  { kid: '봄이', page: 'var(--kid1)', who: 'dad', time: '오후 8:05', art: 'ball', text: '목욕하고 공 굴리기. 굴러가는 공을 끝까지 눈으로 따라간다.', hearts: 1 }
+];
+const name = { mom: '엄마', dad: '아빠' };
+document.getElementById('feed').innerHTML =
+  `<aside class="memory" aria-label="1년 전 오늘"><div class="th">${art.bunny}</div><div><small>1년 전 오늘 · 봄이 · 엄마</small><span>처음으로 손가락을 꼭 잡았다.</span></div></aside>` +
+  posts.map(p => p.day ? `<div class="day"><b>${p.day}</b><small>${p.count}장</small></div>` :
+    `<article class="post" aria-label="${p.kid} · ${name[p.who]}의 페이지"><div class="who-row"><span class="av ${p.who}" aria-hidden="true">${name[p.who][0]}</span><b>${p.kid}</b><small>${name[p.who]}의 페이지 · ${p.time}</small><button class="more" aria-label="더 보기"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="18" cy="12" r="1"/></svg></button></div><div class="paper" style="--page:${p.page}">${art[p.art]}<p>${p.text}</p></div><div class="acts"><button class="${p.on ? 'on' : ''}" aria-label="하트" aria-pressed="${!!p.on}">${heart}</button><button aria-label="댓글">${bubble}</button><small>하트 ${p.hearts}</small>${p.badge ? `<span class="badge">${p.badge}</span>` : ''}</div>${p.reply ? `<p class="reply"><b>${p.reply[0]}</b> ${p.reply[1]}</p>` : ''}</article>`).join('');
+document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-mode]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+  if (b.dataset.mode === 'system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = b.dataset.mode;
+}));
+document.querySelectorAll('.icons [role=radio]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.icons [role=radio]').forEach(o => { o.setAttribute('aria-checked', String(o === b)); o.querySelector('.tick')?.remove(); });
+  b.insertAdjacentHTML('beforeend', '<i class="tick"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></i>');
+}));
+document.querySelectorAll('.acts button[aria-label="하트"]').forEach(b => b.addEventListener('click', () => { const on = b.classList.toggle('on'); b.setAttribute('aria-pressed', String(on)); }));
+const leave = document.getElementById('leave'), toggle = document.getElementById('leave-toggle');
+toggle.addEventListener('click', () => { leave.hidden = !leave.hidden; toggle.setAttribute('aria-pressed', String(!leave.hidden)); });
+leave.addEventListener('click', e => { if (e.target === leave) { leave.hidden = true; toggle.setAttribute('aria-pressed', 'false'); } });
+</script>

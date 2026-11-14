@@ -113,6 +113,20 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
     redraw();
     return () => observer.disconnect();
   }, [page.drawing, page.color, dark, view.zoom]);
+  // 2026-11-14: 손가락을 댄 채 앱이 내려가도 그리던 획을 끝내 임시 저장에 들어가게.
+  const finishRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    const hidden = () => {
+      if (document.visibilityState === 'hidden') finishRef.current();
+    };
+    document.addEventListener('visibilitychange', hidden);
+    const gone = () => finishRef.current();
+    window.addEventListener('pagehide', gone);
+    return () => {
+      document.removeEventListener('visibilitychange', hidden);
+      window.removeEventListener('pagehide', gone);
+    };
+  }, []);
   const finish = (cancel = false) => {
     const current = active.current;
     if (!current) return;
@@ -126,6 +140,7 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
       onChange({ ...latestPage.current, drawing: [...latestPage.current.drawing, simplifyStroke(current.stroke, rect.width * viewRef.current.zoom, rect.height * viewRef.current.zoom)] });
     }
   };
+  finishRef.current = () => finish();
   const paintLive = () => {
     if (!active.current) return;
     const rect = box.current!.getBoundingClientRect();
@@ -349,7 +364,7 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
               setDrawing(false);
               setPopover(undefined);
               setView(initialView);
-            }}><span>✓</span>완료</button>
+            }} className="draw-done" aria-label="그리기 끝 (저장은 아래 저장 단추)"><span>✓</span>그리기 끝</button>
           </div>
         </div>
       )}

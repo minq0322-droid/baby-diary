@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
-export function DiarySheet({ title, onClose, children }: {
+export function DiarySheet({ title, onClose, children, closeLabel = '완료' }: {
   title: string;
+  /** The header button that closes the sheet. */
+  closeLabel?: string;
   onClose: () => void;
   children: ReactNode;
 }) {
@@ -54,7 +56,7 @@ export function DiarySheet({ title, onClose, children }: {
         }
       }}>
       <div className="handle" />
-      <div className="sheet-head"><h3 id={id}>{title}</h3><button onClick={onClose}>완료</button></div>
+      <div className="sheet-head"><h3 id={id}>{title}</h3><button onClick={onClose}>{closeLabel}</button></div>
       {children}
     </section>
   </div>);

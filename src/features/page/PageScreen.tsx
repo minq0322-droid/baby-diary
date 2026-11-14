@@ -22,6 +22,10 @@ import { DrawingArea } from './DrawingArea';
 import { writeNote } from './notes';
 import { WritingArea } from './WritingArea';
 import { getSheetAddState } from './sheetAddState';
+import { clearDraft, decideDraft, flushDrafts, newestSheetDraft, readDraft, type Draft } from '../../lib/draft';
+import { useDraftAutosave } from './useDraftAutosave';
+import { DraftBanner } from './DraftBanner';
+import { LeaveSheet } from './LeaveSheet';
 import '../../styles/page.css';
 export type PageOrigin = {
   x: number;
@@ -64,8 +68,10 @@ export function PageScreen({
     const author =
       authorId ??
       noteAuthor(store.getCurrentMemberId() || 'dad', snapshot.members);
+    const storedIds = new Set(snapshot.pages.map((item) => item.id));
     const id =
       pageId ??
+      newestSheetDraft(date, child.id, author, storedIds)?.page.id ??
       sheetsFor(snapshot.pages, date, child.id, author).slice(-1)[0]?.id ??
       basePageId(date, child.id, author);
     const saved = store.getPageById(id);
@@ -82,15 +88,28 @@ export function PageScreen({
       createdAt: now,
       updatedAt: now,
     };
+    const loading = !saved && snapshot.pages.some((page) => page.id === id);
+    const draft = readDraft(id);
+    const decision = loading ? 'none' : decideDraft(saved, draft);
     return {
       saved: !!saved || snapshot.pages.some((page) => page.id === blank.id),
-      loading: !saved && snapshot.pages.some((page) => page.id === id),
+      loading,
       page: structuredClone(saved ?? blank),
+      stored: saved,
+      draft,
+      decision,
     };
   });
-  const [page, setPage] = useState(initial.page);
+  const [page, setPage] = useState(() =>
+    initial.decision === 'restore' && initial.draft ? structuredClone(initial.draft.page) : initial.page,
+  );
   const baseline = useRef(initial.page);
+  const storedAt = useRef<string | null>(initial.stored?.updatedAt ?? null);
   const [loading, setLoading] = useState(initial.loading);
+  const [draftNote, setDraftNote] = useState<'restored' | 'conflict' | undefined>(
+    initial.decision === 'restore' ? 'restored' : initial.decision === 'conflict' ? 'conflict' : undefined,
+  );
+  const otherDraft = useRef<Draft | null>(initial.decision === 'conflict' ? initial.draft : null);
   useEffect(() => {
     if (!loading) return;
     let active = true;
@@ -99,7 +118,19 @@ export function PageScreen({
       .then((page) => {
         if (active) {
           baseline.current = page;
-          setPage(page);
+          storedAt.current = page.updatedAt;
+          const draft = readDraft(page.id);
+          const decision = decideDraft(page, draft);
+          if (decision === 'restore' && draft) {
+            setPage(structuredClone(draft.page));
+            setDraftNote('restored');
+          } else {
+            setPage(page);
+            if (decision === 'conflict') {
+              otherDraft.current = draft;
+              setDraftNote('conflict');
+            }
+          }
           setLoading(false);
         }
       })
@@ -154,6 +185,17 @@ export function PageScreen({
     page.photos.length
   );
   const canSave = ownPage && hasContent && !busy && !leaving && !loading;
+  const draftSave = useDraftAutosave({
+    page,
+    baseUpdatedAt: storedAt.current,
+    active: dirty && ownPage && !store.readOnly && !loading && !leaving,
+  });
+  const discardDraft = () => {
+    draftSave.settle();
+    clearDraft(page.id);
+    otherDraft.current = null;
+    setDraftNote(undefined);
+  };
   const exitTransform = origin
     ? `translate(${origin.x}px, ${origin.y}px) scale(${origin.width / window.innerWidth}, ${origin.height / window.innerHeight})`
     : 'translate(12vw, 20vh) scale(.76)';
@@ -227,6 +269,11 @@ export function PageScreen({
         store.toggleReaction(saved.id, reaction.memberId),
       );
       baseline.current = saved;
+      storedAt.current = saved.updatedAt;
+      draftSave.settle();
+      clearDraft(saved.id);
+      otherDraft.current = null;
+      setDraftNote(undefined);
       setLocalComments([]);
       setLocalReactions([]);
       onUnsavedEdits?.(false);
@@ -365,7 +412,28 @@ export function PageScreen({
               ＋ 한 장 더
             </button>
           )}
+          {ownPage && !store.readOnly && draftSave.status !== 'idle' && (
+            <span className={'draft-state ' + draftSave.status} role={draftSave.status === 'failed' ? 'alert' : 'status'}>
+              {draftSave.status === 'saved' ? '임시 저장됨' : '임시 저장 실패 · 저장을 눌러 주세요'}
+            </span>
+          )}
         </div>
+        {draftNote && ownPage && !store.readOnly && (
+          <DraftBanner
+            kind={draftNote}
+            onDiscard={() => {
+              if (draftNote === 'restored') setPage(structuredClone(baseline.current));
+              discardDraft();
+            }}
+            onShowDraft={() => {
+              const draft = otherDraft.current;
+              if (!draft) return;
+              setPage(structuredClone({ ...draft.page, updatedAt: baseline.current.updatedAt }));
+              otherDraft.current = null;
+              setDraftNote('restored');
+            }}
+          />
+        )}
         <DrawingArea
           page={{ ...page, color: page.color ?? child.pageColor }}
           store={store}
@@ -494,22 +562,27 @@ export function PageScreen({
         />
       )}
       {pending && (
-        <DiarySheet
-          title="저장하지 않고 나갈까요?"
-          onClose={() => setPending(undefined)}
-        >
-          <div className="leave-actions">
-            <button
-              onClick={() => {
-                setPending(undefined);
-                pending();
-              }}
-            >
-              나가기
-            </button>
-            <button onClick={() => setPending(undefined)}>계속 쓰기</button>
-          </div>
-        </DiarySheet>
+        <LeaveSheet
+          canSave={canSave}
+          onStay={() => setPending(undefined)}
+          onSave={() => {
+            const action = pending;
+            setPending(undefined);
+            if (persist()) action();
+          }}
+          onKeep={() => {
+            const action = pending;
+            setPending(undefined);
+            flushDrafts();
+            action();
+          }}
+          onDiscard={() => {
+            const action = pending;
+            setPending(undefined);
+            discardDraft();
+            action();
+          }}
+        />
       )}
     </div>
   );
