@@ -22,7 +22,7 @@ import { DrawingArea } from './DrawingArea';
 import { writeNote } from './notes';
 import { WritingArea } from './WritingArea';
 import { getSheetAddState } from './sheetAddState';
-import { clearDraft, decideDraft, flushDrafts, newestSheetDraft, readDraft, type Draft } from '../../lib/draft';
+import { clearDraft, decideDraft, newestSheetDraft, readDraft, type Draft } from '../../lib/draft';
 import { useDraftAutosave } from './useDraftAutosave';
 import { DraftBanner } from './DraftBanner';
 import { LeaveSheet } from './LeaveSheet';
@@ -108,6 +108,11 @@ export function PageScreen({
   // What the last save (or the stored page) looked like before preparePage — 'dirty' compares against this.
   const savedSource = useRef(JSON.stringify(initial.page));
   const [autoSaved, setAutoSaved] = useState(false);
+  // 2026-11-15 (작가: "저장 안 하고 나가기를 누르면 저장 안 되게"): 자동 저장이 1.2초마다 서버에 쓰므로,
+  // 버리고 나갈 때는 '이번에 연 때'의 모습으로 되돌린다. 연 때 서버에 없던 장이면 지운다.
+  const opened = useRef<Page | null>(initial.stored ? structuredClone(initial.stored) : null);
+  const openedSource = useRef(JSON.stringify(initial.page));
+  const wroteThisVisit = useRef(false);
   const storedAt = useRef<string | null>(initial.stored?.updatedAt ?? null);
   const [loading, setLoading] = useState(initial.loading);
   const [draftNote, setDraftNote] = useState<'restored' | 'conflict' | undefined>(
@@ -123,6 +128,8 @@ export function PageScreen({
         if (active) {
           baseline.current = page;
           savedSource.current = JSON.stringify(page);
+          opened.current = structuredClone(page);
+          openedSource.current = JSON.stringify(page);
           storedAt.current = page.updatedAt;
           const draft = readDraft(page.id);
           const decision = decideDraft(page, draft);
@@ -177,6 +184,8 @@ export function PageScreen({
     !!localComments.length ||
     !!localReactions.length;
   useEffect(() => onUnsavedEdits?.(dirty), [dirty, onUnsavedEdits]);
+  // 자동 저장이 끝났어도 이번에 연 뒤 바뀐 것이 있으면 나갈 때 묻는다(저장 안 하고 나가기를 고를 수 있게).
+  const changedThisVisit = dirty || JSON.stringify(page) !== openedSource.current;
   const comments = initial.saved
     ? snapshot.comments.filter((item) => item.pageId === page.id)
     : localComments;
@@ -200,6 +209,19 @@ export function PageScreen({
     clearDraft(page.id);
     otherDraft.current = null;
     setDraftNote(undefined);
+  };
+  /** 저장 안 하고 나가기: 이번에 연 뒤 자동 저장된 것까지 연 때 모습으로 되돌린다. */
+  const revertVisit = () => {
+    discardDraft();
+    if (!wroteThisVisit.current || store.readOnly) return;
+    try {
+      if (opened.current) store.savePage({ ...opened.current, updatedAt: new Date().toISOString() });
+      else store.deletePage(page.id);
+    } catch {
+      /* 되돌리기에 실패해도 나가기는 막지 않는다 */
+    }
+    wroteThisVisit.current = false;
+    onUnsavedEdits?.(false);
   };
   const exitTransform = origin
     ? `translate(${origin.x}px, ${origin.y}px) scale(${origin.width / window.innerWidth}, ${origin.height / window.innerHeight})`
@@ -258,7 +280,7 @@ export function PageScreen({
       setError('사진을 붙이고 있어요. 잠시 기다려 주세요.');
       return;
     }
-    if (dirty) setPending(() => action);
+    if (changedThisVisit && ownPage && !store.readOnly) setPending(() => action);
     else action();
   };
   const persist = () => {
@@ -269,6 +291,7 @@ export function PageScreen({
         updatedAt: new Date().toISOString(),
       });
       store.savePage(saved);
+      wroteThisVisit.current = true;
       localComments.forEach((comment) => store.createComment(comment));
       localReactions.forEach((reaction) =>
         store.toggleReaction(saved.id, reaction.memberId),
@@ -602,16 +625,10 @@ export function PageScreen({
             setPending(undefined);
             if (persist()) action();
           }}
-          onKeep={() => {
-            const action = pending;
-            setPending(undefined);
-            flushDrafts();
-            action();
-          }}
           onDiscard={() => {
             const action = pending;
             setPending(undefined);
-            discardDraft();
+            revertVisit();
             action();
           }}
         />
