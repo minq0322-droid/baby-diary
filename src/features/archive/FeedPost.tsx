@@ -10,7 +10,7 @@ const DOUBLE_TAP_MS = 280;
 
 // 2026-11-15 (작가): 인스타그램 게시물처럼 — 글쓴이 줄 → 화면 폭 가득 종이 → 하트·댓글 줄 → 댓글 한 줄.
 // 종이를 한 번 누르면 그 장이 열리고, 두 번 톡 하면 하트(켜기만 한다).
-export function FeedPost({ page, child, store, tags, members, liked, hearts, comments, onOpen, onHeart, onComments }: {
+export function FeedPost({ page, child, store, tags, members, liked, hearts, comments, onOpen, onHeart, onComments, onDelete }: {
   page: Page;
   child: Child;
   store: DataStore;
@@ -22,10 +22,19 @@ export function FeedPost({ page, child, store, tags, members, liked, hearts, com
   onOpen: () => void;
   onHeart: () => void;
   onComments: () => void;
+  /** 이 장을 지울 수 있을 때만(내가 쓴 장). 2026-11-15 (작가): 카드 삭제. */
+  onDelete?: () => void;
 }) {
   const [pop, setPop] = useState(0);
+  const [menu, setMenu] = useState(false);
   const tap = useRef<number>();
   useEffect(() => () => window.clearTimeout(tap.current), []);
+  useEffect(() => {
+    if (!menu) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setMenu(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menu]);
   const parent = page.authorId === 'dad' ? '아빠' : '엄마';
   const name = (id: string) => members.find((member) => member.id === id)?.displayName ?? (id === 'dad' ? '아빠' : '엄마');
   const hasPicture = page.drawing.length > 0 || page.photos.length > 0;
@@ -63,6 +72,23 @@ export function FeedPost({ page, child, store, tags, members, liked, hearts, com
                 {tag.label}
               </span>
             ))}
+          </span>
+        )}
+        {onDelete && (
+          <span className="feed-more-wrap">
+            <button type="button" className="feed-more" aria-label="이 장 메뉴" aria-expanded={menu} onClick={() => setMenu((open) => !open)}>
+              <Icon name="more" />
+            </button>
+            {menu && (
+              <>
+                <span className="feed-menu-scrim" aria-hidden="true" onClick={() => setMenu(false)} />
+                <span className="feed-menu" role="menu">
+                  <button type="button" role="menuitem" className="danger" onClick={() => { setMenu(false); onDelete(); }}>
+                    <Icon name="trash" />이 장 지우기
+                  </button>
+                </span>
+              </>
+            )}
           </span>
         )}
       </header>

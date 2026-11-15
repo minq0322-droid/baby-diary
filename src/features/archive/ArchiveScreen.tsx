@@ -8,12 +8,14 @@ import { Icon } from '../../components/Icon';
 import { StrokePreview } from '../../components/StrokePreview';
 import type { Page } from '../../data/types';
 import { CommentsSheet } from '../page/CommentsSheet';
+import { Toast } from '../../components/Toast';
 import { SearchPill } from './SearchPill';
 import { FeedPost } from './FeedPost';
 import { feedOrder, groupByDay, yearAgoPage } from './feed';
 import '../../styles/feed.css';
 
 const STEP = 20;
+const UNDO_MS = 5000;
 // 장을 열었다가 돌아오면 같은 자리에서 이어 보도록 화면 밖에 기억해 둔다.
 // 화면 밖 장은 높이를 어림하므로(content-visibility) 연 장을 기준으로 되찾는다.
 const memory = { y: 0, limit: STEP, filter: '', restore: false, anchor: '', top: 0 };
@@ -35,8 +37,32 @@ export function ArchiveScreen({ snapshot, store, openPage, onBack }: {
   const [commentsFor, setCommentsFor] = useState<string>();
   const sentinel = useRef<HTMLDivElement>(null);
   const memberId = store.getCurrentMemberId();
+  const me = noteAuthor(memberId, snapshot.members);
+  // 2026-11-15 (작가): 카드 삭제. 지운 장은 바로 숨기고 5초 뒤에 서버에서 지운다(그 안에 되돌리기 — HOUSE §4).
+  // 되돌릴 때 댓글·하트까지 그대로 남도록, 실제 삭제를 미룬다(서버는 장을 지우면 댓글·하트도 함께 지운다).
+  const [gone, setGone] = useState<string>();
+  const pending = useRef<{ id: string; timer: number }>();
+  const commitDelete = () => {
+    const p = pending.current;
+    if (!p) return;
+    window.clearTimeout(p.timer);
+    pending.current = undefined;
+    store.deletePage(p.id);
+  };
+  const removePage = (id: string) => {
+    commitDelete();
+    setGone(id);
+    pending.current = { id, timer: window.setTimeout(() => { commitDelete(); setGone(undefined); }, UNDO_MS) };
+  };
+  const undoRemove = () => {
+    if (pending.current) window.clearTimeout(pending.current.timer);
+    pending.current = undefined;
+    setGone(undefined);
+  };
+  // 화면을 떠나면 기다리지 않고 지운다.
+  useEffect(() => () => commitDelete(), []); // eslint-disable-line react-hooks/exhaustive-deps
   const children = useMemo(() => [...snapshot.children].sort((a, b) => a.sortOrder - b.sortOrder), [snapshot.children]);
-  const ofChild = snapshot.pages.filter((page) => !filter || page.childId === filter);
+  const ofChild = snapshot.pages.filter((page) => page.id !== gone && (!filter || page.childId === filter));
   const needle = query.trim().toLocaleLowerCase();
   const all = feedOrder(needle ? ofChild.filter((page) => page.text.toLocaleLowerCase().includes(needle)) : ofChild);
   const days = groupByDay(all.slice(0, limit));
@@ -191,6 +217,7 @@ export function ArchiveScreen({ snapshot, store, openPage, onBack }: {
                   if (!store.readOnly) store.toggleReaction(page.id);
                 }}
                 onComments={() => setCommentsFor(page.id)}
+                onDelete={!store.readOnly && page.authorId === me ? () => removePage(page.id) : undefined}
               />
             );
           })}
@@ -203,6 +230,7 @@ export function ArchiveScreen({ snapshot, store, openPage, onBack }: {
           <Icon name="plus" />
         </button>
       )}
+      <Toast message="한 장을 지웠어요" visible={!!gone} onUndo={undoRemove} />
       {sheetPage && (
         <CommentsSheet
           comments={snapshot.comments.filter((item) => item.pageId === sheetPage.id)}

@@ -30,6 +30,8 @@ export function Icon({
     | 'heartFilled'
     | 'plus'
     | 'feed'
+    | 'more'
+    | 'trash'
     | keyof typeof badgePaths;
 }) {
   const heart =
@@ -45,6 +47,8 @@ export function Icon({
     heartFilled: <path d={heart} fill="currentColor" />,
     plus: <path d="M12 5v14M5 12h14" />,
     feed: <path d="M5 3h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM4 18h16M4 21.5h10" />,
+    more: <path d="M5 12h.01M12 12h.01M19 12h.01" strokeWidth={3} />,
+    trash: <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />,
     star: (
       <path
         transform="scale(.75)"
