@@ -16,13 +16,29 @@ export function normalizedPoint(x: number, y: number, width: number, height: num
     Math.max(0, Math.min(1, (y - view.y) / (height * view.zoom))),
   ];
 }
-export type DrawingHistory = { drawing: Stroke[]; undo: Stroke[][] };
+// 2026-11-18 (작가): 되돌리기 옆에 「다시 실행」. redo 는 되돌리기 직전 그림을 통째로 쌓고,
+// 새 획을 긋거나 전부 지우면 비운다.
+export type DrawingHistory = { drawing: Stroke[]; undo: Stroke[][]; redo?: Stroke[][] };
+const redoLimit = 30;
 export function clearDrawing(state: DrawingHistory): DrawingHistory {
-  return { drawing: [], undo: [...state.undo, state.drawing].slice(-10) };
+  return { drawing: [], undo: [...state.undo, state.drawing].slice(-10), redo: [] };
 }
 export function undoDrawing(state: DrawingHistory): DrawingHistory {
+  const redo = state.redo ?? [];
+  if (!state.undo.length && !state.drawing.length) return { ...state, redo };
   return {
     drawing: state.undo[state.undo.length - 1] ?? state.drawing.slice(0, -1),
     undo: state.undo.slice(0, -1),
+    redo: [...redo, state.drawing].slice(-redoLimit),
+  };
+}
+export function redoDrawing(state: DrawingHistory): DrawingHistory {
+  const redo = state.redo ?? [];
+  const next = redo[redo.length - 1];
+  if (!next) return { ...state, redo };
+  return {
+    drawing: next,
+    undo: [...state.undo, state.drawing].slice(-10),
+    redo: redo.slice(0, -1),
   };
 }

@@ -13,7 +13,9 @@ import {
   clearDrawing,
   initialView,
   normalizedPoint,
+  redoDrawing,
   undoDrawing,
+  type DrawingHistory,
   type View,
 } from './drawingView';
 
@@ -37,6 +39,13 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
   const viewRef = useRef(view);
   viewRef.current = view;
   const [undo, setUndo] = useState<Stroke[][]>([]);
+  const [redo, setRedo] = useState<Stroke[][]>([]);
+  const step = (move: (state: DrawingHistory) => DrawingHistory) => {
+    const next = move({ drawing: latestPage.current.drawing, undo, redo });
+    setUndo(next.undo);
+    setRedo(next.redo ?? []);
+    if (next.drawing !== latestPage.current.drawing) onChange({ ...latestPage.current, drawing: next.drawing });
+  };
   const box = useRef<HTMLDivElement>(null);
   const base = useRef<HTMLCanvasElement>(null);
   const live = useRef<HTMLCanvasElement>(null);
@@ -71,11 +80,11 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
       if (event.key === ' ') spaceHeld.current = true;
       if (event.key === 'Escape') setPopover(undefined);
       if (event.isComposing || !drawing || !editing) return;
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+      if (!(event.ctrlKey || event.metaKey)) return;
+      const key = event.key.toLowerCase();
+      if (key === 'z' || key === 'y') {
         event.preventDefault();
-        const next = undoDrawing({ drawing: latestPage.current.drawing, undo });
-        setUndo(next.undo);
-        onChange({ ...latestPage.current, drawing: next.drawing });
+        step(key === 'y' || event.shiftKey ? redoDrawing : undoDrawing);
       }
     };
     const keyup = (event: KeyboardEvent) => {
@@ -87,7 +96,7 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
       window.removeEventListener('keydown', keydown);
       window.removeEventListener('keyup', keyup);
     };
-  }, [drawing, editing, onChange, undo]);
+  }, [drawing, editing, onChange, undo, redo]);
   useEffect(() => {
     const canvas = base.current!;
     const overlay = live.current!;
@@ -140,6 +149,7 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
     live.current!.getContext('2d')?.clearRect(0, 0, rect.width, rect.height);
     if (!cancel) {
       if (undo.length) setUndo(items => [...items, latestPage.current.drawing].slice(-10));
+      setRedo([]);
       onChange({ ...latestPage.current, drawing: [...latestPage.current.drawing, simplifyStroke(current.stroke, rect.width * viewRef.current.zoom, rect.height * viewRef.current.zoom)] });
     }
   };
@@ -324,9 +334,7 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
                     ))}
                   </div>
                   <button disabled={!page.drawing.length} onClick={() => {
-                    const next = clearDrawing({ drawing: page.drawing, undo });
-                    setUndo(next.undo);
-                    onChange({ ...page, drawing: next.drawing });
+                    step(clearDrawing);
                     setPopover(undefined);
                   }}>전부 지우기</button>
                 </>
@@ -346,11 +354,10 @@ export function DrawingArea({ page, store, editing, onChange, onError, onBusy, o
                 setPopover(undefined);
               }
             }}><span>▱</span>지우개</button>
-            <button disabled={!page.drawing.length && !undo.length} onClick={() => {
-              const next = undoDrawing({ drawing: page.drawing, undo });
-              setUndo(next.undo);
-              onChange({ ...page, drawing: next.drawing });
-            }}><span>↶</span>되돌리기</button>
+            <button disabled={!page.drawing.length && !undo.length} onClick={() => step(undoDrawing)}>
+              <span>↶</span>되돌리기</button>
+            <button disabled={!redo.length} onClick={() => step(redoDrawing)}>
+              <span>↷</span>다시 실행</button>
             <button onClick={() => file.current?.click()}><span>▧</span>사진</button>
             <button aria-label={`확대, 현재 ${view.zoom.toFixed(1)}배`} onClick={() => {
               finish();

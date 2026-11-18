@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Stroke } from '../../data/types';
-import { clampView, clearDrawing, initialView, normalizedPoint, undoDrawing } from './drawingView';
+import { clampView, clearDrawing, initialView, normalizedPoint, redoDrawing, undoDrawing } from './drawingView';
 
 describe('drawing view coordinates', () => {
   it('maps box coordinates to the same surface point after zoom and pan', () => {
@@ -22,7 +22,29 @@ describe('clear drawing history', () => {
     const cleared = clearDrawing({ drawing, undo: [] });
     expect(cleared.drawing).toEqual([]);
     expect(drawing).toEqual([stroke]);
-    expect(undoDrawing(cleared)).toEqual({ drawing, undo: [] });
+    expect(undoDrawing(cleared)).toEqual({ drawing, undo: [], redo: [[]] });
+  });
+  it('redoes what was undone, in order, and a new stroke ends redo', () => {
+    const a: Stroke = { ...stroke, points: [0, 0, .5, .5] };
+    const b: Stroke = { ...stroke, points: [.5, .5, 1, 1] };
+    const start = { drawing: [a, b], undo: [] };
+    const once = undoDrawing(start);
+    const twice = undoDrawing(once);
+    expect(twice.drawing).toEqual([]);
+    const back1 = redoDrawing(twice);
+    expect(back1.drawing).toEqual([a]);
+    const back2 = redoDrawing(back1);
+    expect(back2.drawing).toEqual([a, b]);
+    expect(redoDrawing(back2)).toEqual(back2);
+    // Undo after redo walks back the same way.
+    expect(undoDrawing(back2).drawing).toEqual([a]);
+    // Redo also brings back a full clear.
+    const cleared = clearDrawing(start);
+    expect(cleared.redo).toEqual([]);
+    const restored = undoDrawing(cleared);
+    expect(redoDrawing(restored).drawing).toEqual([]);
+    // Nothing to undo leaves redo untouched.
+    expect(undoDrawing({ drawing: [], undo: [], redo: [[a]] }).redo).toEqual([[a]]);
   });
   it('undoes subsequent strokes before restoring a clear, then removes the last stroke', () => {
     const cleared = clearDrawing({ drawing: [stroke], undo: [] });
