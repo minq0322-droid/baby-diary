@@ -79,7 +79,7 @@ it('splits notes by author and assigns media/activity to earliest author idempot
   expect(result.comments[0].pageId).toBe(old.id + '__mom');
   expect(migrateSnapshot(result)).toEqual(result);
 });
-it('simplifies first and enforces a real UTF-8 200 KB page limit', () => {
+it('simplifies first and enforces a real UTF-8 1 MB page limit', () => {
   const dense = {
     ...page(),
     drawing: [
@@ -87,7 +87,9 @@ it('simplifies first and enforces a real UTF-8 200 KB page limit', () => {
     ],
   };
   expect(preparePage(dense).drawing[0].points).toHaveLength(2);
-  expect(() => preparePage({ ...page(), text: '가'.repeat(70000) })).toThrow(
+  // 2026-11-18: a ~300 KB page (detailed iPad drawing) now saves; only pages over 1 MB are refused.
+  expect(() => preparePage({ ...page(), text: '가'.repeat(100000) })).not.toThrow();
+  expect(() => preparePage({ ...page(), text: '가'.repeat(400000) })).toThrow(
     '그림이 너무 커서 저장할 수 없어요. 일부를 지워 주세요',
   );
 });

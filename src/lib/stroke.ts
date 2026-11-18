@@ -29,6 +29,8 @@ export function simplifyStroke(
   return { ...stroke, points };
 }
 
+export const pageByteLimit = 1024 * 1024;
+
 export function preparePage(page: Page): Page {
   if (!isValidPageId(page)) {
     throw new Error('페이지의 날짜, 아이와 작성자는 바꿀 수 없어요.');
@@ -43,7 +45,8 @@ export function preparePage(page: Page): Page {
       return simplifyStroke(stroke, 4096, 3276.8);
     }),
   };
-  if (new Blob([JSON.stringify(result)]).size > 200 * 1024) {
+  // 2026-11-18: 200 KB stopped a detailed iPad drawing; 1 MB (DB allows 4 MB, migration 20261118000000).
+  if (new Blob([JSON.stringify(result)]).size > pageByteLimit) {
     throw new Error('그림이 너무 커서 저장할 수 없어요. 일부를 지워 주세요');
   }
   return structuredClone(result);
